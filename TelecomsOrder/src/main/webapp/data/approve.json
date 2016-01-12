@@ -1,0 +1,23 @@
+{
+  "total": 1,
+  "totalrows": 3,
+  "records": 3,
+  "rows": [
+    {
+      "approveName": "张三疯",
+      "apprRslt": "通过",
+      "apprOpinion": "严格按照规定执行",
+      "apprDate": "2015-12-16 14:00:00"
+    },{
+      "approveName": "张三疯",
+      "apprRslt": "通过",
+      "apprOpinion": "严格按照规定执行",
+      "apprDate": "2015-12-16 14:00:00"
+    },{
+      "approveName": "张三疯",
+      "apprRslt": "通过",
+      "apprOpinion": "严格按照规定执行",
+      "apprDate": "2015-12-16 14:00:00"
+    }
+  ]
+}

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="../../../css/common/bootstrap-ex.css" rel="stylesheet">
+    <style>
+
+    </style>
+
+</head>
+<body style="background: #fff;">
+<div id="wrapper">
+    <form class="form-horizontal m-t" id="refundForm" >
+
+        <div class="form-group">
+            <label class="col-sml-3 control-label">退费金额
+            </label>
+            <div class="col-sml-8">
+                <input type="text" placeholder="Disabled input here..." value="" id="refundAmt" name="refundAmt" class="form-control">
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label class="col-sml-3 control-label">退费类型
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <select class="form-control m-b" style="margin-bottom:0px;" id="refundTypeCode" name="refundTypeCode">
+
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sml-3 control-label">退费原因
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <textarea id="refundReason" name="refundReason" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="form-group" style="text-align: center;">
+            <button type="submit" class="btn btn-primary" >保存</button>
+        </div>
+    </form>
+
+    <form class="form-horizontal m-t" id="refundTicketForm" >
+
+        <div class="form-group">
+            <label class="col-sml-3 control-label">退费金额
+            </label>
+            <div class="col-sml-8">
+                <input type="text"  placeholder="Disabled input here..." value="" id="ticketAmt" name="refundAmt" class="form-control">
+            </div>
+
+        </div>
+
+        <div class="form-group">
+            <label class="col-sml-3 control-label">票据号码
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <input type="text" disabled="" placeholder="Disabled input here..." value="" id="ticketNoteNo" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sml-3 control-label">票据银行
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <input type="text" disabled="" placeholder="Disabled input here..." value="" id="ticketBankName" class="form-control">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sml-3 control-label">退费类型
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <select class="form-control m-b" style="margin-bottom:0px;" id="ticketTypeCode" name="refundTypeCode">
+                    <option value="">--请选择--</option>
+                    <option value="01">支票异常</option>
+                    <option value="02">支票兑换失败</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sml-3 control-label">退费原因
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <textarea id="ticketReason" name="refundReason" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="form-group" style="text-align: center;">
+            <button type="submit" class="btn btn-primary" >保存</button>
+        </div>
+    </form>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+<script>
+
+    var params = getQueryString();
+
+    $(function() {
+
+        if (params.settleMode && params.settleMode == "0102"){
+            //退票
+            if (params.chargeAmt) {
+                $("#ticketAmt").val(params.chargeAmt);
+            }
+            if (params.settleNoteNo) {
+                $("#ticketNoteNo").val(decodeURI(params.settleNoteNo));
+            }
+            if (params.settleBankName) {
+                $("#ticketBankName").val(decodeURI(params.settleBankName));
+            }
+            $("#refundTicketForm").show();
+            $("#refundForm").hide();
+        }else{
+            if (params.chargeAmt) {
+                $("#refundAmt").val(params.chargeAmt);
+            }else{
+                $("#refundAmt").val(" ");
+            }
+            $("#refundForm").show();
+            $("#refundTicketForm").hide();
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '../../../system/code/querySysCodes',
+            data: {codeSortName: 'REFUND_TYPE_CODE'},
+            dataType: 'json',
+            success: function(data){
+                if('0' == data.status){
+                    $("#refundTypeCode").empty();
+                    $("#refundTypeCode").append('<option value="">--请选择--</option>');
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].name).val(items[i].value);
+                        $("#refundTypeCode").append(option);
+                    }
+                } else{
+                    BModal.alert("失败");
+                }
+            }
+        });
+
+        var e = "<i class='fa fa-times-circle'></i> ";
+        $('#refundForm').validate({
+            rules: {
+                refundTypeCode: {
+                    required: !0
+                }
+            },
+            messages: {
+                refundReason: e + "请输入退费原因"
+            },
+            submitHandler:function(form){
+
+                BModal.confirm("确认申请退费吗？",appRefund,null);
+            }
+        });
+
+        $('#refundTicketForm').validate({
+            rules: {
+                refundTypeCode: {
+                    required: !0
+                }
+            },
+            messages: {
+                refundReason: e + "请输入退费原因"
+            },
+            submitHandler:function(form){
+
+                BModal.confirm("确认申请退费吗？",appTicketRefund,null);
+            }
+        });
+    });
+
+    function appRefund(){
+        $.ajax({
+            type: 'POST',
+            async: true,
+            url: '../../../charge/refund/refundApply',
+            data: $('#refundForm').serialize() + "&chargeId=" + params.chargeId + "&settleMode=0101",
+            dataType: 'json',
+            success: function(data){
+                //成功
+                if(data.status == "0"){
+                    BModal.alert("发起退费流程成功");
+                }else{
+                    BModal.alert("发起退费流程失败");
+                }
+                closeModal();
+            }
+        });
+    }
+
+    function appTicketRefund(){
+        $.ajax({
+            type: 'POST',
+            async: true,
+            url: '../../../charge/refund/refundApply',
+            data: $('#refundTicketForm').serialize() + "&chargeId=" + params.chargeId + "&settleMode=0102",
+            dataType: 'json',
+            success: function(data){
+                //成功
+                if(data.status == "0"){
+                    BModal.alert("发起退费流程成功");
+                }else{
+                    BModal.alert("发起退费流程失败");
+                }
+                closeModal();
+            }
+        });
+    }
+
+    function closeModal() {
+        // 关闭dialog
+        var frameId = $(parent.document).find(".page-tabs .page-tabs-content .active").attr("data-id");
+        var refreshButton = $(parent.document).find('#J_frame_'+frameId)[0].contentWindow.$("#refresh_payFlowDataTable");
+        var modalLayerId = $(parent.document).find(".layui-layer-iframe");
+        refreshButton.click();
+
+        //利用layer.js关闭弹框
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //执行关闭之前的层
+    }
+
+
+</script>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>应收账单</title>
+
+    <link href="../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/common/animate.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../css/common/style.css" rel="stylesheet">
+    <style type="text/css">
+        #alertPrintDiv {
+            display: none;
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            padding-top: 15%;
+            z-index: 9999999;
+            left: 0px;
+            top: 0px;
+
+        }
+
+    </style>
+</head>
+
+<body class="gray-bg">
+<div id="alertPrintDiv" style="margin:0;padding:0;">
+    <table width=800 border="0" cellpadding="3" cellspacing="1" style="background: #f2f2f2;padding-top: 5px;" align="center">
+        <tr>
+            <td colspan = "6" align="center"><h2 style="color: #ff0000;font-family: 微软雅黑">江苏工业园区代收发票</h2></td>
+        </tr>
+        <tr>
+            <td colspan = "3" > <font color="red">开票日期：</font><label id="releaseDate"  /></td>
+            <td colspan = "3" align = "right"> <font color="red">物业服务电话：</font>025-51548647</td>
+        </tr>
+
+        <tr border="2">
+            <td colspan = "2"> <font color="red">户号：</font><label id="consId"  /></td>
+            <td colspan = "4"> <font color="red">付款单位（个人）：</font> <label id="consName"  /></td>
+        </tr>
+        <tr style = "border:1px solid #ff0000;">
+            <td colspan="2" width="40%" style = "border:1px solid #ff0000;">&nbsp;&nbsp;&nbsp;<font color="red">项目</font></td>
+            <td colspan="2" width="20%" style = "border:1px solid #ff0000;">&nbsp;&nbsp;&nbsp;<font color="red">用量</font></td>
+            <td width="20%" style = "border:1px solid #ff0000;">&nbsp;&nbsp;&nbsp;<font color="red">单价</font></td>
+            <td width="20%" style = "border:1px solid #ff0000;">&nbsp;&nbsp;&nbsp;<font color="red">金额（元）</font></td>
+        </tr>
+        <tr style = "border:1px solid #ff0000;" height=200>
+            <td colspan="6" valign="top">
+                <table id="subPrintTable" width = "100%" border="0">
+                    <tr>
+                        <td width="40%">房屋租赁费</td>
+                        <td width="20%">8190.00</td>
+                        <td width="20%">6,666.00</td>
+                        <td width="20%">21036000.00</td>
+                    </tr>
+                    <tr>
+                        <td>物业费</td>
+                        <td>273.00</td>
+                        <td>63.00</td>
+                        <td>17199.00</td>
+                    </tr>
+                    <tr>
+                        <td>水费</td>
+                        <td>100.00</td>
+                        <td>1.70</td>
+                        <td>170.00</td>
+                    </tr>
+                    <tr>
+                        <td>电费</td>
+                        <td>432.00</td>
+                        <td>2.50</td>
+                        <td>1080.00</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr style = "border:1px solid #ff0000;">
+            <td align="center">&nbsp;&nbsp;&nbsp;<font color="red">减免</font></td>
+            <td align="left">&nbsp;&nbsp;&nbsp;<label id="derateAmt"  /></td>
+            <td align="center">&nbsp;&nbsp;&nbsp;<font color="red">违约金</font></td>
+            <td align="left">&nbsp;&nbsp;&nbsp;<label id="rcvblPenalty"  /></td>
+            <td align="right">&nbsp;&nbsp;&nbsp;<font color="red">小计</font></td>
+            <td >&nbsp;&nbsp;&nbsp;<label id="rcvblAmt"  />&nbsp;&nbsp;<font color="red">元</font></td>
+        </tr>
+        <tr style = "border:1px solid #ff0000;">
+            <td align="center"><font color="red">金额</font></td>
+            <td colspan="5"><label id="rcvblAmt_dx"  /></td>
+        </tr>
+        <tr style = "border:1px solid #ff0000;">
+            <td colspan="5" width="80%" align="right">&nbsp;&nbsp;&nbsp;<font color="red">代收单位：</font></td>
+            <td colspan="1" width="20%">&nbsp;&nbsp;&nbsp;<label id="orgName"/>&nbsp;&nbsp;</td>
+        </tr>
+        <tr>
+            <td colspan="6" align="center"><input type="button" value="关 闭" onClick="closePrintWindow()" style="cursor: hand;"></td>
+        </tr>
+    </table>
+
+</div>
+<div class="wrapper wrapper-content animated fadeInRight" id="modeDiv">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>应收账单</h5>
+                    <div class="ibox-tools">
+                        <button type="button" onclick="toTransAcct()">生成扣款计划</button>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="ibox-content" style="padding:20px 20px 20px 20px;">
+                    <div class="jqGrid_wrapper" style="width:99%">
+                        <table id="rcvblFlowTable"></table>
+                        <div id="rcvblFlowPager"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+<!--
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>历史审批信息 </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-down"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" id="historyApproveIboxId" style="padding:20px 20px 20px 20px;">
+                    <div class="jqGrid_wrapper" style="width:99%;">
+                        <table id="historyApproveTable"></table>
+                        <div id="historyApprovePager"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    -->
+
+</div>
+
+
+<!-- Mainly scripts -->
+<script src="../../js/common/jquery-2.1.1.js"></script>
+<script src="../../js/common/bootstrap.min.js"></script>
+<script src="../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Flot -->
+<script src="../../js/common/plugins/flot/jquery.flot.js"></script>
+<script src="../../js/common/plugins/flot/jquery.flot.tooltip.min.js"></script>
+<script src="../../js/common/plugins/flot/jquery.flot.resize.js"></script>
+<script src="../../js/common/plugins/flot/jquery.flot.pie.js"></script>
+<script src="../../js/common/plugins/flot/jquery.flot.time.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="../../js/common/inspinia.js"></script>
+<script src="../../js/common/plugins/pace/pace.min.js"></script>
+
+<!-- Flot demo data -->
+
+<script src="../../js/common/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="../../js/common/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js"></script>
+<script src="../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../js/common/common.js"></script>
+
+<script src="../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+
+
+
+<script>
+    var appNo = "100003";
+//    var v_ym = '201511';
+//    var v_orgNo = '3201011000';
+//    var v_planNo = '5f4bd4e8-a239-11e5-a55e-c03fd571c1d1';
+    $(function() {
+
+        $.jgrid.defaults.styleUI = "Bootstrap";
+        //初始化停电用户
+        initRcvblFlowTable();
+        //初始化删除的停电用户
+        //initOtherAppPowerOffTable();
+        //初始化历史审批信息
+        //queryHistoryApprove();
+
+        //对历史审批panel隐藏
+        //document.getElementById("historyApproveIboxId").style.display="none";
+    });
+
+    //初始化费用核算信息
+    function initRcvblFlowTable(){
+        $("#rcvblFlowTable").jqGrid({
+            url: "../../account/consPrcAmt/queryRcvblFlowInfo",
+            postData:{
+                appNo:appNo
+            },
+            datatype : "json",
+            height: '235px',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '应收账单编号', '费用年月','用户ID','单位编码','用户名称', '费用类型', '缴费方式', '总量','金额','结清状态','发行日期' ],
+            colModel : [
+                {name : 'rcvblAmtId',index : 'rcvblAmtId',width : 55, hidden: true},
+                {name : 'rcvblYm', index : 'rcvblYm',width : 55, align : "center",summaryType:'max'},
+                {name : 'consId',index : 'consId',width : 80, hidden: true,summaryType:'max'},
+                {name : 'orgNo',index : 'orgNo',width : 80, hidden: true,summaryType:'max'},
+                {name : 'consName',  index : 'consName',width : 100, align : "center"},
+                {name : 'amtType',index : 'amtType',width : 80, align : "left"},
+                {name : 'payMode',index : 'payMode',  width : 80,  align : "center"},
+                {name : 'tSettlePq',index : 'tSettlePq',width : 80,align : "center"},
+                {name : 'rcvblAmt',index : 'rcvblAmt',width : 120, align : "center",summaryType:'sum'},
+                {name : 'settleFlag',index : 'settleFlag',width : 80,align : "center"},
+                {name : 'releaseDate',index : 'releaseDate',width : 120, align : "center"}
+
+            ],
+           // rowNum : 10,
+           // rowList : [ 10, 20, 30 ],
+            pager : '#rcvblFlowPager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            caption : "应收账单",
+            hidegrid: false,
+            viewrecords: true,
+            sortname: 'consName',
+            grouping:true,
+            groupingView : {
+                groupField : ['consName'],
+                groupColumnShow : [true],
+                groupText : ['<b>{0}&nbsp;&nbsp;&nbsp;共计&nbsp;{1}&nbsp;项费用，总金额:&nbsp;{rcvblAmt}&nbsp;元</b>&nbsp;&nbsp;&nbsp;<a style="color:green;"  onClick=printRcvbl({orgNo},{consId},{rcvblYm})>' + "查看账单发票" + '</a>'],
+//                groupText : ['<b>{0}&nbsp;&nbsp;{consId}&nbsp;&nbsp;共计&nbsp;{1}&nbsp;项费用，总金额:&nbsp;{rcvblAmt}&nbsp;元</b>'],
+                groupCollapse : false,
+                groupOrder: ['asc'],
+                groupSummary : [false]
+            }
+        });
+        $("#rcvblFlowTable").jqGrid("navGrid", "#rcvblFlowPager", {
+            add: false,
+            edit: false,
+            del: false,
+            search: false
+        },
+        {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+    }
+
+
+    // 生成扣款计划
+    function toTransAcct() {
+        $.ajax({
+            url: '../../account/consPrcAmt/toTransAcct',
+            data: {
+                appNo:appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    BModal.alert("扣款计划生成成功！");
+//                    $("#consPrcAmtTable").jqGrid('setGridParam',{
+//                        datatype: 'json',
+//                        postData:{
+//                            appNo:appNo,
+//                            ym:v_ym,
+//                            orgNo:v_orgNo,
+//                            planNo:v_planNo
+//                        },
+//                        page: 1
+//                    }).trigger("reloadGrid");
+
+                }else{
+                    BModal.alert(data.msg);
+                }
+            },
+            error: function () {
+                BModal.alert("扣款计划生成失败！");
+            }
+        });
+    }
+
+
+    function saveProcess(){
+        $.ajax({
+            url: '../../power/appPowerOff/saveProcess',
+            data: {
+                appNo:appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    BModal.alert("流程提交成功");
+                }else{
+                    BModal.alert(data.msg);
+                }
+            },
+            error: function () {
+                BModal.alert("提供流程异常！");
+            }
+        });
+    }
+
+    function printRcvbl(org_no,cons_id,ym) {
+        $.ajax({
+            url: '../../account/consPrcAmt/findConsPrint',
+            data: {
+                orgNo:org_no,
+                consId:cons_id,
+                ym:ym
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    if (data.data.length > 0) {
+                        var printMode = data.data[0];
+//                        alert(JSON.stringify(printMode));
+
+
+                        $("#releaseDate").html(printMode["releaseDate"]);
+                        $("#consId").html(printMode["consId"]);
+                        $("#consName").html(printMode["consName"]);
+                        $("#orgName").html(printMode["orgName"]);
+                        $("#derateAmt").html(printMode["derateAmt"]);
+                        $("#rcvblPenalty").html(printMode["rcvblPenalty"]);
+                        $("#rcvblAmt").html(printMode["rcvblAmt"]);
+                        $("#rcvblAmt_dx").html(DX(printMode["rcvblAmt"]));
+                        //发票子项
+                        var subPrintMode = printMode["subPrints"];
+                        $("#subPrintTable").empty();
+                        for (var i = 0;i < subPrintMode.length;i++) {
+//                            alert(subPrintMode[i]["amtType"]);
+                            var v_amtType = subPrintMode[i]["amtType"];
+                            var v_tSettlePq = subPrintMode[i]["tSettlePq"];
+                            var v_price = subPrintMode[i]["price"];
+                            var v_tAmt = subPrintMode[i]["tAmt"];
+                            var trHTML = "<tr><td width=\"40%\">"+v_amtType+"</td><td width=\"20%\">"+v_tSettlePq+"</td><td width=\"20%\">"+v_price+"</td><td width=\"20%\">"+v_tAmt+"</td></tr>";
+                            $("#subPrintTable").append(trHTML);
+                        }
+                    } else {
+                        $("#releaseDate").html("");
+                        $("#consId").html("");
+                        $("#consName").html("");
+                        $("#orgName").html("");
+                        $("#derateAmt").html("");
+                        $("#rcvblPenalty").html("");
+                        $("#rcvblAmt").html("");
+                        $("#subPrintTable").empty();
+                    }
+                    openPrintWindow();
+                }else{
+                    alert(data.msg);
+                }
+            },
+            error: function () {
+                alert("账单发票查询异常！");
+            }
+        });
+    }
+    function openPrintWindow(){
+        document.getElementById('modeDiv').style.display='none';
+        document.getElementById('alertPrintDiv').style.display='block';
+    }
+    function closePrintWindow(){
+        document.getElementById('modeDiv').style.display='block';
+        document.getElementById('alertPrintDiv').style.display='none';
+    }
+    function DX(num) {
+        var strOutput = "",
+                strUnit = '仟佰拾亿仟佰拾万仟佰拾元角分';
+        num += "00";
+        var intPos = num.indexOf('.');
+        if (intPos >= 0){
+            num = num.substring(0, intPos) + num.substr(intPos + 1, 2);
+        }
+        strUnit = strUnit.substr(strUnit.length - num.length);
+        for (var i=0; i < num.length; i++){
+            strOutput += '零壹贰叁肆伍陆柒捌玖'.substr(num.substr(i,1),1) + strUnit.substr(i,1);
+        }
+        return strOutput.replace(/零角零分$/, '整').replace(/零[仟佰拾]/g, '零').replace(/零{2,}/g, '零').replace(/零([亿|万])/g, '$1').replace(/零+元/, '元').replace(/亿零{0,3}万/, '亿').replace(/^元/, "零元")
+    };
+
+</script>
+</body>
+</html>

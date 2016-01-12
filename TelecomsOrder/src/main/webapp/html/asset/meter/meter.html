@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInUp">
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5>计量装置管理</h5>
+            <div class="ibox-tools">
+                <a class="collapse-link">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+        </div>
+        <div class="ibox-content" style="padding:10px;" id="meterIboxId">
+            <div id="mrSectTableToolbar" style="margin-bottom: 5px;">
+                <form role="form" class="form-inline" id="queryForm">
+                    <div class="form-group">
+                        <label class="control-label">表计类型：</label>
+                        <select class="form-control" id="param_meterType" name="meterType">
+                        </select>
+                    </div>
+                    <label class="control-label"> 资产编号：</label>
+                    <div class="form-group">
+                        <input type="text" placeholder="请输入资产编号" id="param_assetNo" name="assetNo" class="form-control">
+                    </div>
+                    <label class="control-label"> 表计状态：</label>
+                    <div class="form-group">
+                        <select class="form-control" id="param_statusCode" name="statusCode">
+                        </select>
+                    </div>
+
+                    <button class="btn btn-sm btn-primary pull-right" type="button" onclick="queryMeter()">查询</button>
+                </form>
+                <hr style="width: 100%; height: 1px; margin: 2px 0px 3px 0px;"/>
+                <div style="">
+                    <button class="btn btn-sm btn-info" type="button" onclick="addMeter();"><i class="fa fa-plus"></i> 新增</button>
+                    <button class="btn btn-sm btn-info" type="button" onclick="deleteMeter();"><i class="fa fa-trash"></i> 删除</button>
+                </div>
+            </div>
+            <div class="jqGrid_wrapper">
+                <table id="meterTable">
+                </table>
+                <div id="meterPager"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+
+<script>
+
+    $(function() {
+
+        $.ajax({
+            type: 'POST',
+            url: '../../../system/code/querySysCodes',
+            data: {codeSortName: 'EQUIP_TYPE_CODE'},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#param_meterType").empty();
+                    $("#param_meterType").append('<option value="">--请选择--</option>');
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].name).val(items[i].value);
+                        $("#param_meterType").append(option);
+                    }
+                } else{
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '../../../system/code/querySysCodes',
+            data: {codeSortName: 'IR_STATUS_CODE'},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#param_statusCode").empty();
+                    $("#param_statusCode").append('<option value="">--请选择--</option>');
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].name).val(items[i].value);
+                        $("#param_statusCode").append(option);
+                    }
+                } else{
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+
+        $.jgrid.defaults.styleUI = "Bootstrap";
+        $("#meterTable").jqGrid({
+            url: "../../../asset/meter/queryMeter",
+            datatype : "json",
+            height: 380,
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '序号','表计类型', '资产编号', '设备编号',  '自身倍率', '是否借用','表计示数', '表计状态'],
+            colModel : [
+                {name : 'meterId',index : 'meterId',width : 55, hidden: true},
+                {name : 'meterTypeName',index : 'meterTypeName',  width : 60,  align : "center"},
+                {name : 'assetNo',index : 'assetNo',width : 80, align : "center"},
+                {name : 'barCode',  index : 'barCode',width : 80, align : "center"},
+                {name : 'selfFactor',index : 'selfFactor',width : 60,align : "center"},
+                {name : 'borrowFlagName',index : 'borrowFlagName',width : 50,align : "center"},
+                {name : 'meterRead',index : 'meterRead',width : 60, align : "center"},
+                {name : 'statusCodeName',index : 'statusCodeName',width : 60, sortable : false, align : "center"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#meterPager',
+            viewrecords: true,
+            multiselect : true,
+            hidegrid: false,
+            ondblClickRow : editMeter
+        });
+        $("#meterTable").jqGrid("navGrid", "#meterPager", {
+            add: false,
+            edit: false,
+            del: false,
+            search: false
+        },
+        {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+
+    });
+
+    //表格自动调整
+    $(window).bind("resize",
+    function() {
+        var width = $("#meterIboxId").width();
+        $("#meterTable").setGridWidth(width);
+    })
+
+    function queryMeter() {
+        var params = {meterType: $("#queryForm #param_meterType").val(),
+                      assetNo:   $("#queryForm #param_assetNo").val(),
+                      statusCode: $("#queryForm #param_statusCode").val()
+                    };
+        //alert(JSON.stringify(params));
+        $("#meterTable").jqGrid('setGridParam',{
+            datatype: 'json',
+            postData: params,
+            page: 1
+        }).trigger("reloadGrid");
+    }
+
+    function addMeter() {
+        BModal.open('计量装置', '../../../html/asset/meter/meterEdit.html', '600px', '400px');
+    }
+
+    function editMeter(rowid) {
+        var rowData = $("#meterTable").jqGrid('getRowData', rowid);
+        var index = BModal.open('计量装置', '../../../html/asset/meter/meterEdit.html?meterId=' + rowData.meterId, '600px', '400px');
+    }
+
+    function deleteMeter() {
+        var selIds = $("#meterTable").jqGrid('getGridParam', 'selarrrow');
+        if(selIds.length == 0){
+            BModal.alert("请选择要删除的记录");
+            return;
+        }
+        var meterIds = '';
+        $.each(selIds, function(index, item){
+            var rowData = $("#meterTable").jqGrid('getRowData', item);
+            meterIds += meterIds.length == 0 ? '' : ',';
+            meterIds += rowData.meterId;
+        });
+        BModal.confirm("确认删除吗？", function (data) {
+            $.ajax({
+                type: 'POST',
+                url: '../../../asset/meter/deleteMeter',
+                data: {meterIds: meterIds},
+                dataType: 'json',
+                success: function(data){
+                    if('0' == data.status) {
+                        BModal.msg("删除计量装置成功");
+                        $("#meterTable").jqGrid('setGridParam',{
+                            datatype: 'json',
+                            page: 1
+                        }).trigger("reloadGrid");
+                    } else {
+                        BModal.alert(data.msg);
+                    }
+                }
+            });
+        });
+    }
+
+</script>
+</html>

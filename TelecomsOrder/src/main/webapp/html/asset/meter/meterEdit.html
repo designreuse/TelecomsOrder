@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="../../../css/common/bootstrap-ex.css" rel="stylesheet">
+    <style>
+
+    </style>
+
+</head>
+<body style="background: #fff;">
+<div id="wrapper">
+    <form class="form-horizontal m-t" id="meterForm" modelAttribute="mrSect">
+        <input id="meterId" name="meterId" type="hidden">
+        <div class="form-group">
+            <label class="col-sml-3 control-label" style="text-align: right;">
+                资产编号
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <input id="assetNo" name="assetNo" class="form-control" type="text" aria-required="true" aria-describedby="name-error">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sml-3 control-label">
+                表计类型
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <select class="form-control m-b" id="meterType" name="meterType">
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sml-3 control-label" style="text-align: right;">
+                自身倍率
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <input id="selfFactor" name="selfFactor" class="form-control" type="text" aria-required="true" aria-describedby="name-error">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sml-3 control-label">
+                是否借用
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <select class="form-control m-b" id="borrowFlag" name="borrowFlag">
+                    <option value="01">是</option>
+                    <option value="02" selected>否</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sml-3 control-label" style="text-align: right;">
+                表计示数
+                <span style="color:red;">*</span>
+            </label>
+            <div class="col-sml-8">
+                <input id="meterRead" name="meterRead" class="form-control" type="text" aria-required="true" aria-describedby="name-error">
+            </div>
+        </div>
+        <div class="form-group" style="text-align: center;">
+            <button type="submit" class="btn btn-primary">保存</button>
+        </div>
+    </form>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+<script>
+
+    var params = getQueryString();
+    $(function() {
+        //var params = getQueryString();
+        if(params && params.meterId) {
+            $("#meterId").val(params.meterId);
+            $.ajax({
+                type: 'GET',
+                url: '../../../asset/meter/queryMeter',
+                data: {meterId: params.meterId},
+                dataType: 'json',
+                success: function(data){
+                    //alert(JSON.stringify(data));
+                    if(data.total > 0){
+                        $("#meterType").prop("disabled", true);
+                        var sectObj = data.rows[0];
+                        initComboData(sectObj);
+                    }
+                }
+            });
+        } else {
+            initComboData();
+        }
+
+        var e = "<i class='fa fa-times-circle'></i> ";
+        $('#meterForm').validate({
+            rules: {
+                assetNo: {
+                    required: !0
+                },
+                meterType: {
+                    required: !0
+                },
+                selfFactor: {
+                    required: !0
+                },
+                borrowFlag: {
+                    required: !0
+                },
+                meterRead: {
+                    required: !0
+                }
+            },
+            messages: {
+                assetNo: e + "请输入资产编号",
+                meterType: e + "请选择表计类型",
+                selfFactor: e + "请输入自身倍率",
+                borrowFlag: e + "请选择是否借用",
+                meterRead: e + "请输入表计示数"
+            },
+            submitHandler:function(form){
+                //alert($('#meterForm').serialize());
+                $.ajax({
+                    type: 'POST',
+                    url: '../../../asset/meter/saveMeter',
+                    data: $('#meterForm').serialize(),
+                    dataType: 'json',
+                    success: function(data){
+                        //alert(JSON.stringify(data));
+                        if('0' == data.status){
+                            BModal.msg("保存计量装置成功");
+                            var frameId = $(parent.document).find(".page-tabs .page-tabs-content .active").attr("data-id");
+                            $(parent.document).find('#J_frame_'+frameId)[0].contentWindow.$("#meterTable").jqGrid('setGridParam',{
+                                datatype: 'json',
+                                page: 1
+                            }).trigger("reloadGrid");
+                        } else{
+                            BModal.alert(data.msg);
+                        }
+                        parent.layer.closeAll("iframe");
+                    }
+                });
+            }
+        });
+    });
+
+    function initComboData(sectObj) {
+
+        $.ajax({
+            type: 'POST',
+            url: '../../../system/code/querySysCodes',
+            data: {codeSortName: 'EQUIP_TYPE_CODE'},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#meterType").empty();
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].name).val(items[i].value);
+                        $("#meterType").append(option);
+                    }
+                    if(sectObj) {
+                        $("#meterType").val(sectObj.meterType);
+                    }
+                } else{
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '../../../system/code/querySysCodes',
+            data: {codeSortName: 'IR_STATUS_CODE'},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#statusCode").empty();
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].name).val(items[i].value);
+                        $("#statusCode").append(option);
+                    }
+                    if(sectObj) {
+                        $("#statusCode").val(sectObj.statusCode);
+                    }
+                } else{
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+
+        if(sectObj) {
+            $("#meterForm #meterId").val(sectObj.meterId);
+            $("#meterForm #assetNo").val(sectObj.assetNo);
+            $("#meterForm #selfFactor").val(sectObj.selfFactor);
+            $("#meterForm #borrowFlag").val(sectObj.borrowFlag);
+            $("#meterForm #meterRead").val(sectObj.meterRead);
+        }
+    }
+
+
+    function closeModal() {
+        var frameId = $(parent.document).find(".page-tabs .page-tabs-content .active").attr("data-id");
+        //alert(frameId);
+        //var name = $('#J_frame_'+frameId)[0].contentWindow.$("input[id='params_name']").val();
+        var name = $(parent.document).find('#J_frame_'+frameId)[0].contentWindow.$("input[id='param_name']").val();
+        //alert(name);
+
+    }
+
+
+</script>
+</html>

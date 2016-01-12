@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="../../../css/common/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/webuploader/webuploader.css" rel="stylesheet">
+    <link href="../../../css/asset/building/uploader.css" rel="stylesheet">
+    <link href="../../../css/common/filebox.css" rel="stylesheet">
+
+    <!-- Mainly scripts -->
+    <script src="../../../js/common/jquery-2.1.1.js"></script>
+    <script src="../../../js/common/bootstrap.min.js"></script>
+    <script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <script src="../../../js/common/plugins/blueimp/jquery.blueimp-gallery.min.js"></script>
+
+    <script src="../../../js/common/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../../../js/common/plugins/webuploader/webuploader.js"></script>
+    <script src="../../../js/common/inspinia.js"></script>
+    <script src="../../../js/common/filebox.js"></script>
+    <script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+    <script src="../../../js/common/plugins/layer/layer.js"></script>
+    <script src="../../../js/asset/building/util.js"></script>
+    <script src="../../../js/asset/building/roomEdit.js"></script>
+    <script src="../../../js/asset/building/uploader.js"></script>
+</head>
+
+<body class="white-bg">
+    <div class="wrapper wrapper-content white-bg" style="padding: 20px 20px 40px;">
+        <form id="roomForm" class="form-horizontal">
+            <div class="form-group">
+                <label for="room_FloorNumberIn" class="col-sm-2 control-label">所属楼层</label>
+                <div class="col-sm-10">
+                    <input type="hidden" id="room_buildingId" name="buildingId" />
+                    <input type="hidden" id="room_floorId" name="floorId" />
+                    <input type="hidden" id="roomId" name="roomId"/>
+                    <input type="hidden" id="anchorId" name="anchorId"/>
+                    <input type="hidden" id="posX" name="posX"/>
+                    <input type="hidden" id="posY" name="posY"/>
+                    <input type="hidden" id="attachIdsIn" name="attachIds" value="">
+                    <input type="text" disabled="disabled" class="form-control" id="room_FloorNumberIn">
+                </div>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div class="form-group">
+                <label for="roomNoIn" class="col-sm-2 control-label">房间号<span style="color:red">*</span></label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="roomNoIn" name="roomNo">
+                </div>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div class="form-group">
+                <label for="roomTypeIn" class="col-sm-2 control-label">类型</label>
+                <div class="col-sm-10">
+                    <select  class="form-control" id="roomTypeIn" name="roomType">
+                    </select>
+                </div>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div class="form-group">
+                <label for="roomAreaIn" class="col-sm-2 control-label">实用面积(㎡)<span style="color:red">*</span></label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="roomAreaIn" name="roomArea">
+                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 实用面积用于费用核算，请正确填写</span>
+                </div>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">备注</label>
+                <div class="col-sm-10">
+                    <textarea id="remarkIn" name="remark" class="form-control"></textarea>
+                </div>
+            </div>
+            <div id="img-group">
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">房间实景图</label>
+                    <div class="col-sm-10">
+                        <div id="filebox">
+                            <ul class="filelist lightBoxGallery">
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hr-line-dashed"></div>
+            <div id="uploader" class="wu-example">
+                <div class="queueList">
+                    <div id="dndArea" class="placeholder">
+                        <div id="filePicker"></div>
+                        <p>或将照片拖到这里，最多可选5张</p>
+                    </div>
+                </div>
+                <div class="statusBar" style="display:none;">
+                    <div class="progress">
+                        <span class="text">0%</span>
+                        <span class="percentage"></span>
+                    </div><div class="info"></div>
+                    <div class="btns">
+                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-4 col-sm-offset-8 text-right">
+                    <button id="roomCloseBtn" type="button" class="btn btn-white" onclick="closeRoom()"><i class="fa fa-close"></i>&nbsp;关闭</button>
+                    <button id="roomSavebtn" type="button" class="btn btn-primary" onclick="saveRoom()"><i class="fa fa-save"></i>&nbsp;保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <link href="../../../css/asset/building/menu.css" rel="stylesheet">
+    <link href="../../../css/asset/building/floorEdit.css" rel="stylesheet">
+
+    <!-- Mainly scripts -->
+    <script src="../../../js/common/jquery-2.1.1.js"></script>
+    <script src="../../../js/common/bootstrap.min.js"></script>
+    <script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <script src="../../../js/common/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../../../js/common/inspinia.js"></script>
+    <script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+    <script src="../../../js/common/additional-methods.js"></script>
+    <script src="../../../js/common/plugins/layer/layer.js"></script>
+    <script src="../../../js/asset/building/util.js"></script>
+    <script src="../../../js/asset/building/floorEdit.js"></script>
+</head>
+
+<body class="gray-bg">
+    <div class="wrapper wrapper-content animated" style="padding-left:20px;padding-right:20px;">
+        <div class="row">
+            <div class="col-sm-1">
+                <div class="vertical-container">
+                    <div class="operfloor">
+                        <a class="animated bounceInUp" href="#" title="添加楼层" onclick="addFloor()">
+                            <i class="fa fa-plus"></i>
+                        </a>
+                    </div>
+                    <div id="copyFloorBtn" class="operfloor" style="display: none;">
+                        <a class="animated bounceInUp" style="background: #1a7bb9;" href="#" title="复制楼层" onclick="openCopyFloor()">
+                            <i class="fa fa-copy"></i>
+                        </a>
+                    </div>
+                    <div id="vertical-timeline" class="light-timeline">
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-11">
+                <div id="floorContent" class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>楼层信息</h5>
+                        <div class="ibox-tools">
+                            <a id="collapse_floor" class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <form id="floorForm" novalidate="novalidate" class="form-horizontal">
+                            <div class="form-group">
+                                <label for="belongBuildingNameIn" class="col-sm-2 control-label">所属楼宇</label>
+                                <div class="col-sm-10">
+                                    <input type="hidden" id="belongBuildingIdIn" name="buildingId" value="">
+                                    <input type="hidden" id="floorIdIn" name="floorId" value="">
+                                    <input type="text" disabled="disabled" class="form-control" id="belongBuildingNameIn" value="">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="floorNumberIn" class="col-sm-2 control-label">楼层号<span style="color:red">*</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="floorNumberIn" name="floorNumber">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="floorHeightIn" class="col-sm-2 control-label">层高(m)</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="floorHeightIn" name="floorHeight">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label for="floorAreaIn" class="col-sm-2 control-label">实用面积(㎡)</label>
+                                <div class="col-sm-10">
+                                    <input type="text" disabled="disabled" class="form-control" id="floorAreaIn" name="floorArea">
+                                    <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 通过该楼层下房间实用面积自动叠加生成</span>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">备注</label>
+                                <div class="col-sm-10">
+                                    <textarea id="remarkIn" name="remark" class="form-control"></textarea>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group" style="margin-bottom:0px;">
+                                <div class="col-sm-12 text-right">
+                                    <button class="btn btn-white" type="button" onclick="deleteFloor()"><i class="fa fa-trash"></i>&nbsp;删除</button>
+                                    <button class="btn btn-primary" type="button" onclick="saveFloor()"><i class="fa fa-save"></i>&nbsp;保存</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>房间编辑</h5>
+                        <div class="ibox-tools">
+                        </div>
+                    </div>
+                    <div id="anchorContent" class="ibox-content">
+                        <div class="row">
+                            <div class="col-sm-2"><h4 style="margin: 10px 0;">第<label id="roomEditTitle">-</label>层</h4></div>
+                            <div id="dragDiv" class="col-sm-7 text-left" style="margin: 3px 0;">
+                            </div>
+                            <div class="col-sm-3 text-right">
+                                <a href="javascript:;" class="a-upload">
+                                    <form id="floorImgForm">
+                                        <input type="hidden" name="floorId" id="belongFloorId">
+                                        <input type="file" name="file" id="floorImgIn" accept="image/*" onchange="floorFileChange(this)"><i class="fa fa-upload"></i>&nbsp;上传楼层平面图
+                                    </form>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed" style="margin: 10px 0 20px;"></div>
+                        <div class="row">
+                            <!-- 							<div class="col-sm-12" id="div2" style="width:100%;height:350px;background-image:url('img/loucengpingmiantu.png'); -->
+                            <!-- 								-moz-background-size:100% 100%;-webkit-background-size:100% 100%;-o-background-size:100% 100%;background-size:100% 100%;"  -->
+                            <!-- 								ondrop="drop(event)" ondragover="allowDrop(event)"> -->
+                            <!-- 							</div> -->
+                            <div id="imgDiv">
+                                <img id="floorImg" ondrop="drop(event)" ondragover="allowDrop(event)" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="floorCopyDiv" style="display: none;">
+        <div class="ibox-content">
+            <form id="floorCopyForm" class="form-horizontal">
+                <div class="form-group">
+                    <label for="copyFloorNumberSelect" class="col-sm-3 control-label">被复制楼层</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="copyFloorNumberSelect" name="copyFloorNumber">
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="startFloorNumberIn" class="col-sm-3 control-label">开始楼层<span style="color:red">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="startFloorNumberIn" name="startFloorNumber">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="endFloorNumberIn" class="col-sm-3 control-label">结束楼层<span style="color:red">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="endFloorNumberIn" name="endFloorNumber">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-4 col-sm-offset-8 text-right">
+                        <button type="button" class="btn btn-white" onclick="closeCopyLayer()"><i class="fa fa-close"></i>&nbsp;关闭</button>
+                        <button type="button" class="btn btn-primary" onclick="copyFloor()"><i class="fa fa-save"></i>&nbsp;确定</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+	<div id="calMenu" for="" style="display: none; position: absolute; z-index: 999;" class="rgtbox">
+		<div onclick="deleteRoom()"><a href="javascript:void(0)">删除</a><em></em></div>
+	</div>
+</body>
+</html>

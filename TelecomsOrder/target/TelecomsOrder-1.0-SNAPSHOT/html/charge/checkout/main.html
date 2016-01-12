@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+    <style>
+
+        .rcvbl-table tbody > tr > td:last-child/*,
+        .rcvbl-table tbody > tr > td:nth-child(4),
+        .rcvbl-table tbody > tr > td:nth-child(3),
+        .rcvbl-table tbody > tr > td:nth-child(2)*/ {
+            text-align: right;
+        }
+        .rcvbl-table thead > tr > th:last-child/*,
+        .rcvbl-table thead > tr > th:nth-child(4),
+        .rcvbl-table thead > tr > th:nth-child(3),
+        .rcvbl-table thead > tr > th:nth-child(2)*/ {
+            text-align: right;
+        }
+        .rcvbl-total > tbody > tr > td:first-child {
+            text-align: right;
+        }
+        .rcvbl-total > tbody > tr > td {
+            border: 0 none;
+        }
+        .rcvbl-total > tbody > tr > td:last-child {
+            border-bottom: 1px solid #DDDDDD;
+            text-align: right;
+            width: 15%;
+        }
+
+    </style>
+</head>
+<!-- 坐收收费 -->
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInUp">
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5>收银台</h5>
+            <!--<div class="ibox-tools">
+                <button class="btn btn-default btn-xs btn-print" disabled=""><i class="fa fa-print"></i> 打印</button>
+                <button class="btn btn-default btn-xs btn-pay" disabled=""><i class="fa fa-dollar"></i> 缴费</button>
+            </div>-->
+        </div>
+        <div class="ibox-content" style="padding:10px;">
+            <div id="checkoutToolbar">
+                <form role="form" class="form-horizontal" id="queryForm">
+                    <input type="text" class="hidden"/>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <input type="hidden" id="param_consId" name="consId" />
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="mrConsNameSuggest" placeholder="请输入用户名称">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                                    </ul>
+                                    <button class="btn btn-primary pull-right btn-query" type="button" onclick="queryRcvblFees()"><i class="fa fa-search"></i>查询</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    用户信息
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <dl class="dl-horizontal">
+                                <dt>客户名称：</dt>
+                                <dd id="consName"></dd>
+                                <dt>用户分类：</dt>
+                                <dd id="consSortName"></dd>
+                                <dt>用户地址：</dt>
+                                <dd id="consAddr"></dd>
+
+                            </dl>
+                        </div>
+                        <div class="col-sm-6">
+                            <dl class="dl-horizontal">
+                                <dt>预收余额：</dt>
+                                <dd id="prepayBalance"></dd>
+                                <dt>冻结金额：</dt>
+                                <dd id="frozenBalance"></dd>
+                                <dt>在途票据余额：</dt>
+                                <dd id="transitNoteBalance"></dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    欠费账单
+                </div>
+                <div class="panel-body rcvbl-bill">
+                    <div class="table-responsive">
+                        <table class="table rcvbl-table">
+                            <thead>
+                            <tr>
+                                <th>费用类别</th>
+                                <th>应收年月</th>
+                                <th>总结算量</th>
+                                <th>应收金额</th>
+                                <th>实收金额</th>
+                                <!--<th>应收违约金</th>
+                                <th>实收违约金</th>-->
+                                <th>发行日期</th>
+                                <th>减免金额</th>
+                                <th>欠费余额</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <div class="empty hidden text-center">
+                        </div>
+                    </div>
+                    <table class="table rcvbl-total">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--<div class="rcvbl-bill">
+
+            </div>-->
+            <div class="text-right">
+                <button class="btn btn-default btn-lg btn-print" disabled="" style="font-size: 24px;"><i class="fa fa-print"></i> 打印</button>
+                <button class="btn btn-default btn-lg btn-pay" disabled="" style="font-size: 24px;"><i class="fa fa-dollar"></i> 缴费</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+
+<script>
+
+    $(function() {
+
+        $("#mrConsNameSuggest").bsSuggest({
+            allowNoKeyword: false,
+            getDataMethod: "url",
+            url: '../../../global/cons/queryConsumers/',
+            showBtn: false,
+            idField: "consId",
+            keyField: "consName",
+            effectiveFields: ['consName','consAddr'],
+            effectiveFieldsAlias: {consName: '用户名称', consAddr: '用户地址'},
+            processData: function (json) {    // url 获取数据时，对数据的处理，作为 getData 的回调函数
+                //alert(JSON.stringify(json));
+                var data = {value: []};
+                if (!json || !json.data || json.data.length === 0) {
+                    return false;
+                }
+                for (i = 0; i < json.data.length; i++) {
+                    data.value.push({
+                        consId : json.data[i].consId,
+                        consName : json.data[i].consName,
+                        consAddr : json.data[i].consAddr
+                    });
+                }
+                return data;
+            }
+        }).on("onDataRequestSuccess",
+                function(e, result) {
+                    //alert(JSON.stringify(result));
+                    //console.log("onDataRequestSuccess: ", result)
+                }).on("onSetSelectValue",
+                function(e, keyword) {
+                    $("#queryForm #param_consId").val(keyword.id);
+                    //console.log("onSetSelectValue: ", keyword)
+                }).on("onUnsetSelectValue",
+                function(e) {
+                    $("#queryForm #param_consId").val('');
+                    //console.log("onUnsetSelectValue")
+                }).on("keydown",
+                function(e) {
+                    if (e && e.keyCode == 13) { // 按 Enter
+                        $(".btn-query").click();
+                        e.stopPropagation();
+                    }
+                });
+
+    });
+
+    function queryRcvblFees() {
+        resetData();
+        if($("#queryForm #param_consId").val() == '') {
+            if($("#queryForm #mrConsNameSuggest").val() != '') {
+                BModal.alert("您输入的用户不存在，请重新输入。");
+            } else {
+                BModal.alert("请输入用户。");
+            }
+            return;
+        }
+        $.ajax({
+            type: 'GET',
+            url: '../../../charge/checkout/queryRcvblFees',
+            data: {consId: $("#queryForm #param_consId").val()},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    var consObj = data.data.Consumer;
+                    if(consObj && consObj != null) {
+                        $("#consName").text(consObj.consName);
+                        $("#consSortName").text(consObj.consSortName);
+                        $("#consAddr").text(consObj.consAddr);
+                        /*$("#bizTransactor").text(consObj.bizTransactor);
+                        $("#contactTel").text(consObj.contactTel);
+                        $("#contactAddr").text(consObj.contactAddr);
+                        $("#billCycleName").text(consObj.billCycleName);
+                        $("#payModeName").text(consObj.payModeName);*/
+                    }
+                    var accountBalance = data.data.AccountBalance;
+                    if(accountBalance && accountBalance != null) {
+                        $("#prepayBalance").html('&yen;' + Number(replaceEmptyNum(accountBalance.prepayBalance)).toFixed(2));
+                        $("#frozenBalance").html('&yen;' + Number(replaceEmptyNum(accountBalance.frozenBalance)).toFixed(2));
+                        $("#transitNoteBalance").html('&yen;' + Number(replaceEmptyNum(accountBalance.transitNoteBalance)).toFixed(2));
+                    }
+
+                    var rcvblPayTotal = 0; //应缴金额总计
+                    var lastCHG;
+                    var thisCHG;
+                    if(data.data.RcvblFees.length > 0) {
+                        /*$(".rcvbl-table").removeClass("hidden").addClass("show");*/
+                        $(".empty").removeClass("show").addClass("hidden");
+
+                        var tbodyHtml = '';
+                        var dataArr = data.data.RcvblFees;
+                        var oweAMTTotal = 0; //欠费余额总计
+                        var rcvblAMTTotal = 0;//应收金额总计
+                        var rcvedAMTTotal = 0;//实收金额总计
+                        /*var rcvblPenaltyTotal = 0;//应收违约金总计
+                        var rcvedPenaltyTotal = 0;//实收违约金总计*/
+                        var derateAMTTotal = 0;//减免金额总计
+                        for(var i = 0; i < dataArr.length; i++) {
+                            var dataObj = dataArr[i];
+                            var tSettlePQ = dataObj.tSettlePQ;
+                            switch (dataObj.feeType) {
+                                case '0101' :
+                                    tSettlePQ += '平方米';
+                                    break;
+                                case '0111' :
+                                    tSettlePQ += '立方米';
+                                    break;
+                                case '0112' :
+                                    tSettlePQ += '度';
+                                    break;
+                                default :
+                                    break;
+                            }
+
+                            tbodyHtml += '<tr>';
+                            tbodyHtml += '<td>' + replaceEmptyStr(dataObj.feeTypeName) + '</td>';
+                            tbodyHtml += '<td>' + replaceEmptyStr(dataObj.rcvblYM) + '</td>';
+                            tbodyHtml += '<td>' + replaceEmptyStr(tSettlePQ) + '</td>';
+                            tbodyHtml += '<td>&yen;' + Number(replaceEmptyNum(dataObj.rcvblAMT)).toFixed(2) + '</td>';
+                            tbodyHtml += '<td>&yen;' + Number(replaceEmptyNum(dataObj.rcvedAMT)).toFixed(2) + '</td>';
+                            /*tbodyHtml += '<td>' + replaceEmptyStr(dataObj.penaltyBeginDate) + '</td>';*/
+                            /*tbodyHtml += '<td>&yen;' + Number(replaceEmptyNum(dataObj.rcvblPenalty)).toFixed(2) + '</td>';
+                            tbodyHtml += '<td>&yen;' + Number(replaceEmptyNum(dataObj.rcvedPenalty)).toFixed(2) + '</td>';*/
+                            tbodyHtml += '<td>' + replaceEmptyStr(dataObj.releaseDate) + '</td>';
+                            tbodyHtml += '<td>&yen;' + Number(replaceEmptyNum(dataObj.derateAMT)).toFixed(2) + '</td>';
+                            tbodyHtml += '<td>&yen;' + Number(replaceEmptyNum(dataObj.oweAMT)).toFixed(2) + '</td>';
+                            tbodyHtml += '</tr>';
+
+                            rcvblAMTTotal += Number(dataObj.rcvblAMT);
+                            rcvedAMTTotal += Number(dataObj.rcvedAMT);
+                            /*rcvblPenaltyTotal += Number(dataObj.rcvblPenalty);
+                            rcvedPenaltyTotal += Number(dataObj.rcvedPenalty);*/
+                            derateAMTTotal += Number(dataObj.derateAMT);
+                            oweAMTTotal += Number(dataObj.oweAMT);
+                        }
+                        tbodyHtml += '<tr>';
+                        tbodyHtml += '<td>合计</td>';
+                        tbodyHtml += '<td>-</td>';
+                        tbodyHtml += '<td>-</td>';
+                        tbodyHtml += '<td>&yen;' + rcvblAMTTotal.toFixed(2) + '</td>';
+                        tbodyHtml += '<td>&yen;' + rcvedAMTTotal.toFixed(2) + '</td>';
+                        /*tbodyHtml += '<td>' + replaceEmptyStr(dataObj.penaltyBeginDate) + '</td>';*/
+                        /*tbodyHtml += '<td>&yen;' + rcvblPenaltyTotal.toFixed(2) + '</td>';
+                        tbodyHtml += '<td>&yen;' + rcvedPenaltyTotal.toFixed(2) + '</td>';*/
+                        tbodyHtml += '<td>-</td>';
+                        tbodyHtml += '<td>&yen;' + derateAMTTotal.toFixed(2) + '</td>';
+                        tbodyHtml += '<td>&yen;' + oweAMTTotal.toFixed(2) + '</td>';
+                        tbodyHtml += '</tr>';
+                        $(".rcvbl-table tbody").empty();
+                        $(".rcvbl-table tbody").append(tbodyHtml);
+                        $(".rcvbl-table tbody").trigger('create');
+
+                        lastCHG = Number(accountBalance.chgBalance);
+                        rcvblPayTotal = parseInt(oweAMTTotal + lastCHG);
+                        thisCHG = Number(oweAMTTotal + lastCHG - rcvblPayTotal);
+
+                        $(".rcvbl-total tbody").empty();
+                        /*$(".rcvbl-total tbody").append('<tr><td><strong>应收金额总计</strong></td><td>&yen;' + rcvblAMTTotal.toFixed(2) + '</td></tr>');
+                        $(".rcvbl-total tbody").append('<tr><td><strong>实收金额总计</strong></td><td>&yen;' + rcvedAMTTotal.toFixed(2) + '</td></tr>');
+                        $(".rcvbl-total tbody").append('<tr><td><strong>应收违约金总计</strong></td><td>&yen;' + rcvblPenaltyTotal.toFixed(2) + '</td></tr>');
+                        $(".rcvbl-total tbody").append('<tr><td><strong>实收违约金总计</strong></td><td>&yen;' + rcvedPenaltyTotal.toFixed(2) + '</td></tr>');
+                        $(".rcvbl-total tbody").append('<tr><td><strong>减免金额总计</strong></td><td>&yen;' + derateAMTTotal.toFixed(2) + '</td></tr>');*/
+                        $(".rcvbl-total tbody").append('<tr><td><strong>应收总计</strong></td><td>&yen;' + oweAMTTotal.toFixed(2) + '</td></tr>');
+                        $(".rcvbl-total tbody").append('<tr><td><strong>上次调尾</strong></td><td>&yen;' + lastCHG.toFixed(2) + '</td></tr>');
+                        $(".rcvbl-total tbody").append('<tr><td><strong>本次调尾</strong></td><td>&yen;' + thisCHG.toFixed(2) + '</td></tr>');
+                        $(".rcvbl-total tbody").append('<tr><td><strong>应缴总金额</strong></td><td><h1 class="text-danger">&yen;' + rcvblPayTotal.toFixed(2) + '</h1></td></tr>');
+                        $(".rcvbl-total tbody").trigger('create');
+                        if(rcvblPayTotal > 0) {
+                            $(".btn-print").removeClass("btn-default").addClass("btn-primary").attr("disabled", false);
+                            /*$(".btn-pay").removeClass("btn-default").addClass("btn-primary").attr("disabled", false);*/
+                            $(".btn-print").unbind('click');
+                            $(".btn-print").bind('click', function() {
+                                top.openTab("缴费结算单", "chargeBillPrint", "../../../html/charge/checkout/chargeBillPrint.html", {
+                                    content: $(".rcvbl-bill").html()
+                                });
+                            });
+                        } else {
+                            setBtnDisabled();
+                        }
+                    } else {
+                        /*$(".rcvbl-table").removeClass("show").addClass("hidden");*/
+                        $(".empty").removeClass("hidden").addClass("show");
+                        $(".rcvbl-table tbody").empty();
+                        $(".empty").empty();
+                        $(".empty").append('<h3 class="text-success">暂无欠费信息</h3>');
+                        $(".empty").trigger('create');
+
+                        $(".rcvbl-total tbody").empty();
+                        setBtnDisabled();
+                    }
+                    if(consObj) {
+                        $(".btn-pay").removeClass("btn-default").addClass("btn-primary").attr("disabled", false);
+                        $(".btn-pay").unbind('click');
+                        $(".btn-pay").bind('click', function() {
+                            BModal.open('缴费', '../../../html/charge/checkout/chargeEdit.html', '600px', '480px', false, function(layero, index) {
+                                var body = parent.layer.getChildFrame('body', index);
+                                body.find('#consId').val(consObj.consId);
+                                body.find('#orgNo').val(consObj.org.orgNo);
+                                body.find('#rcvblPayAMT').val(rcvblPayTotal.toFixed(2));
+                                /*body.find('#chargeAMT').val(rcvblPayTotal.toFixed(2));*/
+                                body.find('#accountId').val(accountBalance.accountId);
+                                body.find('#lastCHG').val(lastCHG);
+                                body.find('#thisCHG').val(thisCHG);
+                            });
+                        });
+                    }
+                } else{
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+    }
+
+    function resetData() {
+        setBtnDisabled();
+        $("#consName").text("");
+        $("#consSortName").text("");
+        $("#consAddr").text("");
+        /*$("#bizTransactor").text("");
+        $("#contactTel").text("");
+        $("#contactAddr").text("");
+        $("#billCycleName").text("");
+        $("#payModeName").text("");*/
+
+        $("#prepayBalance").html("");
+        $("#frozenBalance").html("");
+        $("#transitNoteBalance").html("");
+
+        $(".empty").removeClass("hidden").addClass("show");
+        $(".rcvbl-table tbody").empty();
+        $(".empty").empty();
+
+        $(".rcvbl-total tbody").empty();
+    }
+
+    function setBtnDisabled() {
+        $(".btn-print").removeClass("btn-primary").addClass("btn-default").attr("disabled", true);
+        /*$(".btn-pay").removeClass("btn-primary").addClass("btn-default").attr("disabled", true);*/
+    }
+
+</script>
+</html>

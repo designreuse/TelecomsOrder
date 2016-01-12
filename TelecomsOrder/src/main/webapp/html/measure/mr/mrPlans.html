@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+</head>
+<!-- 抄表计划生成 -->
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>抄表计划</h5>
+            <div class="ibox-tools">
+                <a href="javascript: submitData();" class="btn btn-xs btn-primary">提交</a>
+                <a class="collapse-link">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+        </div>
+        <div class="ibox-content" style="padding:10px;">
+            <div id="mrPlanTableToolbar">
+                <button class="btn btn-info" type="button" onclick="showMRSectCons();"><i class="fa fa-search"></i> 查看抄表用户</button>
+            </div>
+            <div class="jqGrid_wrapper">
+                <table id="mrPlanTable">
+                </table>
+                <div id="mrPlanPager"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+
+<script>
+
+    //var appNo = "1000001";
+    $(function() {
+        $("#mrEmpNameSuggest").bsSuggest({
+            allowNoKeyword: false,
+            getDataMethod: "url",
+            url: '../../../measure/mrSect/queryMReaders?userName=',
+            showBtn: false,
+            idField: "empNo",
+            keyField: "userName",
+            processData: function (json) {    // url 获取数据时，对数据的处理，作为 getData 的回调函数
+                //alert(JSON.stringify(json));
+                var data = {value: []};
+                if (!json || !json.data || json.data.length === 0) {
+                    return false;
+                }
+                for (i = 0; i < json.data.length; i++) {
+                    data.value.push({
+                        empNo: json.data[i].empNo,
+                        userName : json.data[i].userName
+                    });
+                }
+                return data;
+            }
+        }).on("onDataRequestSuccess",
+                function(e, result) {
+                    //alert(JSON.stringify(result));
+                    console.log("onDataRequestSuccess: ", result)
+                }).on("onSetSelectValue",
+                function(e, keyword) {
+                    console.log("onSetSelectValue: ", keyword)
+                }).on("onUnsetSelectValue",
+                function(e) {
+                    console.log("onUnsetSelectValue")
+                });
+
+        $("#mrPlanTable").jqGrid({
+            url: "../../../measure/mrInput/queryMRPlans4Page",
+            datatype : "json",
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '抄表计划ID', '抄表段ID', '抄表段名称', '抄表事件类型', '抄表计划类型', '抄表年月', '抄表员','计划抄表日期' ],
+            colModel : [
+                {name : 'mrPlanId',index : 'mrPlanId',width : 55, hidden: true},
+                {name : 'mrSect.mrSectId',index : 'mrSectId',width : 55, hidden: true},
+                {name : 'mrSect.name',  index : 'mrSect.name',width : 100, align : "left"},
+                {name : 'eventTypeName',index : 'eventTypeName',width : 80, align : "center"},
+                {name : 'planTypeName',index : 'planTypeName',  width : 80,  align : "center"},
+                {name : 'mrYM',index : 'mrYM',width : 60,align : "center"},
+                {name : 'mrSect.mrEmpName',index : 'mrSect.mrEmpName',width : 80,align : "center"},
+                {name : 'planReadDate',index : 'planReadDate',width : 120, align : "center"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#mrPlanPager',
+            viewrecords: true,
+            multiselect : true,
+            caption : "抄表计划列表",
+            hidegrid: false
+        });
+        $("#mrPlanTable").jqGrid("navGrid", "#mrPlanPager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+    });
+
+    function getHeight() {
+        return $(window).height() - $('#mrPlanTableToolbar').outerHeight(true);
+    }
+
+    function queryMRSects() {
+        var params = {sectType: $("#queryForm #param_sectType").val(),
+            name: $("#queryForm #param_name").val(),
+            mrEmpNo: $("#queryForm #param_mrEmpNo").val(),
+            offset: '0'
+        };
+        //alert(JSON.stringify(params));
+        $("#mrPlanTable").bootstrapTable('refresh', {silent: true, query: params});
+    }
+
+    function showMRSectCons() {
+        var selIds = $("#mrPlanTable").jqGrid('getGridParam', 'selarrrow');
+        if(selIds.length == 0){
+            BModal.alert("请选择一条抄表段");
+            return;
+        }
+        if(selIds.length > 1){
+            BModal.alert("不能选择多个抄表段，请重新选择");
+            return;
+        }
+        var rowData = $("#mrPlanTable").jqGrid('getRowData', selIds[0]);
+        BModal.open('抄表段用户', '../../../html/measure/mr/mrSectConsMeters.html?mrSectId=' + rowData["mrSect.mrSectId"], '720px', '480px');
+    }
+
+    function submitData() {
+        $.ajax({
+            type: 'POST',
+            url: '../../../measure/mrInput/submitMRPlan',
+            data: {mrSectIds: mrSectIds},
+            dataType: 'json',
+            success: function(data){
+                if('0' == data.status) {
+                    BModal.msg("删除抄表段成功");
+                    $("#mrSectTable").jqGrid('setGridParam',{
+                        datatype: 'json',
+                        page: 1
+                    }).trigger("reloadGrid");
+                    //$("#mrSectTable").bootstrapTable('refresh', {silent: true, query: {offset: '0'}});
+                } else {
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+    }
+
+</script>
+</html>

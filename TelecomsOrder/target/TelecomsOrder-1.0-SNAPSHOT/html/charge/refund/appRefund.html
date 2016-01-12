@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>退费申请</title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+        <!-- 收费明细列表 -->
+        <div class="wrapper wrapper-content animated fadeInUp">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>收费明细</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" style="padding:10px;">
+
+                    <div id="cashChkTableToolbar" style="margin-bottom: 5px;">
+                        <form role="form" class="form-inline" id="queryForm">
+
+                            <label class="control-label"> 用户名称：</label>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="formConsName" name="formConsName" placeholder="请输入用户名称">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label"> 收费时间：</label>
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" readonly style="background-color: #fff;" id="formChargeDateStart" name="formChargeDateStart" class="form-control" >
+                                </div>
+                                 ~
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" readonly style="background-color: #fff;" id="formChargeDateEnd" name="formChargeDateEnd" class="form-control" >
+                                </div>
+                            </div>
+
+                            <button class="btn btn-sm btn-primary pull-right" type="button" onclick="reloadGrid()">查询</button>
+                        </form>
+                        <hr style="width: 100%; height: 1px; margin: 2px 0px 3px 0px;"/>
+
+                    </div>
+
+                    <div class="jqGrid_wrapper">
+                        <table id="payFlowDataTable">
+                        </table>
+                        <div id="payFlowDataPager"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+
+<script src="../../../js/common/plugins/fullcalendar/moment.min.js"></script>
+<script src="../../../js/common/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="../../../js/common/plugins/daterangepicker/daterangepicker.js"></script>
+
+<script src="../../../js/common/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="../../../js/common/plugins/datapicker/locales/bootstrap-datepicker.zh-CN.js"></script>
+
+
+<script>
+
+    $(function() {
+        var dt = new Date() ;
+        dt.setDate(dt.getDate() - 1);
+        var year = dt.getFullYear();
+        var month = dt.getMonth() + 1;
+        var day = dt.getDate();
+        var dtStr = year + "-" + month + "-" + day;
+
+        $("#formChargeDateStart").val(dtStr);
+        $("#formChargeDateEnd").val(dtStr);
+
+        $('.input-group.date').datepicker({
+            language: 'zh-CN',
+            todayBtn: "linked",
+            endDate : new Date(),
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true,
+            //startDate : true ,
+            format : 'yyyy-mm-dd'
+        });
+
+        initPayFlowData();
+    });
+
+    function reloadGrid(){
+        $("#payFlowDataTable").jqGrid('setGridParam',{
+            datatype: 'json',
+            //postData: $('#queryForm').serialize(),
+            page: 1
+        }).trigger("reloadGrid");
+    }
+
+    function initPayFlowData() {
+        $.jgrid.defaults.styleUI = "Bootstrap";
+        $("#payFlowDataTable").jqGrid({
+            url: "../../../charge/refund/queryChargeRecord",
+            height:360,
+            datatype: 'json',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [  '操作','用户名称', '收费时间','结算code', '结算方式', '收费金额',
+                '票据号码','票据银行','对账状态','在途情况',
+                '收费标识','流程编号','dataSource'
+            ],
+            colModel : [
+                {name : 'action',  index : 'action',width : 60, align : "center"},
+                {name : 'consName',  index : 'consName',width : 80, align : "center"},
+                {name : 'chargeDate',index : 'chargeDate',width : 80, align : "center"},
+                {name : 'settleMode',index : 'settleMode',width : 80, hidden: true},
+                {name : 'settleModeName',index : 'settleModeName',width : 60, align : "center"},
+                {name : 'rcvAmt',index : 'rcvAmt',width : 60, align : "center"},
+                {name : 'settleNoteNo',index : 'settleNoteNo',width : 80, align : "center"},
+                {name : 'settleBankName',index : 'settleBankName',width : 80, align : "center"},
+                {name : 'checkStatus',index : 'checkStatus',width : 80, align : "center"},
+                {name : 'transitStatus',index : 'transitStatus',width : 80, align : "center"},
+                {name : 'chargeId',index : 'chargeId',hidden: true},
+                {name : 'appNo',index : 'appNo',hidden: true},
+                {name : 'dataSource',index : 'dataSource', hidden: true}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#payFlowDataPager',
+            viewrecords: true,
+            /*multiselect : true,*/
+            hidegrid: false,
+            cellEdit: true,
+            cellsubmit: 'remote',
+            beforeRequest:function(){
+                var gridParam = $("#payFlowDataTable").jqGrid('getGridParam');
+                //gridParam.postData = $('#queryForm').serialize();
+                $.extend(gridParam.postData, getFormData($('#queryForm')));
+            },
+            gridComplete: function(){
+                var ids = jQuery("#payFlowDataTable").jqGrid('getDataIDs');
+                for(var i=0;i < ids.length;i++){
+                    var rowData = $("#payFlowDataTable").jqGrid('getRowData', ids[i]);
+                    var settleMode =  rowData["settleMode"];
+                    var chargeId =  rowData["chargeId"];
+                    var chargeAmt = rowData["rcvAmt"];
+                    var appNo = rowData["appNo"];
+                    var settleNoteNo = rowData["settleNoteNo"];
+                    var settleBankName = rowData["settleBankName"];
+
+                    var refundButton = "<input style='width:60px;' class='btn btn-sm btn-info' type='button' " +
+                            "value='退票' onclick=\"rowRefund('"+settleMode+"','"+chargeId+"','"+chargeAmt+"','"+appNo+"','"+settleNoteNo+"','"+settleBankName+"');\"  />";
+                    jQuery("#payFlowDataTable").jqGrid('setRowData',ids[i],{action:refundButton});
+                }
+            }
+        });
+        $("#payFlowDataTable").jqGrid("navGrid", "#payFlowDataPager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+    }
+
+    function getFormData($form){
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function(n, i){
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
+    }
+
+    function rowRefund(settleMode,chargeId,chargeAmt,appNo,settleNoteNo,settleBankName) {
+
+        var reqUrl = null;
+        var reqDialogUrl = null;
+
+        if (settleMode == "0102"){
+            reqDialogUrl = '../../../html/charge/refund/refundDialog.html?settleMode=' + settleMode + "&chargeId=" + chargeId
+                    + "&chargeAmt=" + chargeAmt + "&settleNoteNo=" + settleNoteNo + "&settleBankName=" + settleBankName;
+            reqUrl = '../../../charge/refund/refundFlowing?settleMode=' + settleMode + "&chargeId=" + chargeId
+                    + "&chargeAmt=" + chargeAmt + "&settleNoteNo=" + settleNoteNo + "&settleBankName=" + settleBankName;
+        }else{
+            reqDialogUrl = '../../../html/charge/refund/refundDialog.html?settleMode=' + settleMode + "&chargeId=" + chargeId
+                    + "&chargeAmt=" + chargeAmt + "&settleNoteNo=" + settleNoteNo + "&settleBankName=" + settleBankName;
+            reqUrl = '../../../charge/refund/refundFlowing?settleMode=' + settleMode + "&chargeId=" + chargeId
+                    + "&chargeAmt=" + chargeAmt + "&settleNoteNo=" + settleNoteNo + "&settleBankName=" + settleBankName
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: reqUrl,
+            dataType: 'json',
+            async :false,
+            success: function(data){
+                //成功
+                if(data.status == "0"){
+                    if (data.object == "true"){
+                        BModal.alert("该笔收费已申请过退费流程！无法重复申请");
+                        return;
+                    }
+                }else{
+                    BModal.alert("查询失败，系统异常");
+                    return;
+                }
+            }
+        });
+
+        if (appNo == "undefined" || $.trim(appNo) == "") {
+            if (settleMode == "0102"){
+                BModal.open('退费申请',reqDialogUrl, '600px', '450px');
+            }else{
+                BModal.open('退费申请', reqDialogUrl,'600px', '300px');
+            }
+        } else {
+            BModal.alert("该笔收费已申请过退费流程！无法重复申请");
+        }
+    }
+
+</script>
+
+</html>

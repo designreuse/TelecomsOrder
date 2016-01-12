@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+</head>
+<!-- 抄表计划用户及表计列表 -->
+<body class="gray-bg">
+<div id="wrapper">
+    <!-- 用户及表计列表 -->
+    <div class="jqGrid_wrapper">
+        <table id="mrConsMeterTable">
+        </table>
+        <div id="mrConsMeterPager"></div>
+    </div>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+<script>
+
+    $(function() {
+        var params = getQueryString();
+        //alert(params.mrSectId);
+        $("#mrConsMeterTable").jqGrid({
+            url: "../../../measure/mrInput/queryMRData4Page?mrPlanId=" + params.mrPlanId,
+            datatype : "json",
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '抄表数据ID', '用户名称', '用户地址', '表计资产编号', '综合倍率', '上次抄见示数', '上次抄见量',
+                         '本次抄见示数', '本次抄见量', '上次抄表日期', '本次抄表日期', '数据来源'
+                        ],
+            colModel : [
+                {name : 'mrDataId',index : 'mrDataId',width : 55, hidden: true},
+                {name : 'consMeter.consName',  index : 'consMeter.consName',width : 100, align : "left"},
+                {name : 'consMeter.consAddr',index : 'consMeter.consAddr',width : 120, align : "center"},
+                {name : 'consMeter.assetNo',index : 'consMeter.assetNo',  width : 80,  align : "center"},
+                {name : 'tFactor',index : 'tFactor',width : 60, align : "center"},
+                {name : 'lastRead',index : 'lastRead',width : 60, align : "center"},
+                {name : 'lastPQ',index : 'lastPQ',width : 60, align : "center"},
+                {name : 'thisRead',index : 'thisRead',width : 60, align : "center"},
+                {name : 'thisPQ',index : 'thisPQ',width : 60, align : "center"},
+                {name : 'lastMRDate',index : 'lastMRDate',width : 60, align : "center"},
+                {name : 'thisMRDate',index : 'thisMRDate',width : 60, align : "center"},
+                {name : 'dataSourceName',index : 'dataSourceName',width : 60, align : "center"},
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#mrConsMeterPager',
+            viewrecords: true,
+            /*multiselect : true,*/
+            caption : "用户及表计列表",
+            hidegrid: false,
+            cellEdit: true,
+            cellsubmit: 'remote',
+            cellurl: '../../../measure/mrInput/updateMRData',
+            afterSaveCell : function(rowid,name,val,iRow,iCol) {
+                if(name == 'mrSect.mrSectId') {
+                    var taxval = $("#mrPlanTable").jqGrid('getCell', rowid, iCol+1);
+                    //alert(taxval);
+                    $("#mrPlanTable").jqGrid('setRowData', rowid, {'mrSect.mrSectId': taxval});
+                }
+            }
+        });
+        $("#mrConsMeterTable").jqGrid("navGrid", "#mrConsMeterPager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+        $("#mrConsMeterTable").setGridHeight($(window).height() - 120);
+    });
+
+</script>
+</html>

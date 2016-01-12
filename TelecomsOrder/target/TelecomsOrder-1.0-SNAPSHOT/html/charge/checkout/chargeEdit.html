@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="../../../css/common/bootstrap-ex.css" rel="stylesheet">
+    <style>
+
+    </style>
+
+</head>
+<body class="gray-bg">
+<div class="animated fadeInUp">
+    <form class="form-horizontal" id="chargeForm">
+        <input id="consId" name="consId" type="hidden">
+        <input id="orgNo" name="orgNo" type="hidden">
+        <input id="accountId" name="accountId" type="hidden">
+        <input id="thisCHG" name="thisCHG" type="hidden">
+        <input id="lastCHG" name="lastCHG" type="hidden">
+        <div class="panel panel-default no-borders gray-bg">
+            <div class="panel-body" style="height: 360px; overflow: auto;">
+                <div class="form-group">
+                    <label class="col-sml-3 control-label">
+                        应缴金额
+                    </label>
+                    <div class="col-sml-8">
+                        <input id="rcvblPayAMT" class="form-control text-danger" style="font-size: 24px;" type="text" disabled="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sml-3 control-label">结算方式
+                    </label>
+                    <div class="col-sml-8">
+                        <select class="form-control" id="settleMode" name="settleMode">
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sml-3 control-label">费用类别
+                    </label>
+                    <div class="col-sml-8">
+                        <select class="form-control" id="amtType" name="amtType">
+                            <option VALUE="01">缴费</option>
+                            <option VALUE="02">预收</option>
+                            <option VALUE="03">押金</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group check-item hidden">
+                    <label class="col-sml-3 control-label">
+                        支票
+                        <span style="color:red;">*</span>
+                    </label>
+                    <div class="col-sml-8">
+                        <div class="row m-b">
+                            <div class="col-sml-6">
+                                <input name="noteNo" class="form-control" type="text" placeholder="支票号码">
+                            </div>
+                            <div class="col-sml-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon">&yen;</span>
+                                    <input name="noteAMT" class="form-control" type="text" placeholder="支票金额">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sml-12">
+                                <div class="input-group">
+                                    <input name="settleBankName" class="form-control" type="text" placeholder="结算票据银行名称">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-primary btn-add" onclick="addCheckItem()">添加</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sml-3 control-label">缴费金额
+                        <span style="color:red;">*</span>
+                    </label>
+                    <div class="col-sml-8">
+                        <div class="input-group">
+                            <span class="input-group-addon">&yen;</span>
+                            <input type="text" class="form-control" id="chargeAMT" name="chargeAMT">
+                            <!--<span class="input-group-addon">.00</span>-->
+                        </div>
+                        <!--<input id="chargeAMT" name="chargeAMT" class="form-control" type="text" aria-required="true" aria-describedby="chargeAMT-error">-->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sml-3 control-label">备注：</label>
+                    <div class="col-sml-8">
+                        <textarea id="remark" name="remark" class="form-control" style="resize: none;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="panel-footer">
+                <div class="text-center">
+                    <button type="button" class="btn btn-default" onclick="closeModal();">关闭</button>
+                    <button type="submit" class="btn btn-primary btn-pay">缴费</button>
+                </div>
+            </div>-->
+        </div>
+        <div class="text-center">
+            <button type="button" class="btn btn-default" onclick="closeModal();">关闭</button>
+            <button type="submit" class="btn btn-primary btn-pay">缴费</button>
+        </div>
+    </form>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../../js/common/plugins/validate/validate-method.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+<script>
+
+    var e = "<i class='fa fa-times-circle'></i> ";
+    var params = getQueryString();
+
+    // 判断支票号码是否存在
+    jQuery.validator.addMethod("existNoteNo", function(value, element) {
+        return this.optional(element) || !noteNoExist(value, element)
+    }, "支票号码已存在");
+
+    $(function() {
+        initComboData();
+        validator();
+    });
+
+    function validator() {
+        $('#chargeForm').validate({
+            rules: {
+                chargeAMT: {
+                    required: !0,
+                    number: !0,
+                    min: 0.01,
+                    max: 9999999999
+                },
+                noteNo: {
+                    required: !0,
+                    minlength: 8,
+                    maxlength: 8,
+                    remote:{  //验证支票号码是否存在
+                        type: "POST",
+                        url: "../../../charge/checkout/validateNoteNoExist",
+                        dataType: 'json',
+                        data: {
+                            noteNo: function(){
+                                return $("input[name='noteNo']").val();
+                            }
+                        }
+                    }
+                },
+                noteAMT: {
+                    required: !0,
+                    number: !0,
+                    min: 0.01,
+                    max: 9999999999
+                },
+                settleBankName: {
+                    required: !0
+                }
+            },
+            messages: {
+                chargeAMT: {
+                    required: e + "请输入缴费金额",
+                    number : e + "请输入有效正数",
+                    min: e + "缴费金额不能小于0.01",
+                    max: e + "缴费金额不能大于9999999999"
+                },
+                noteNo: {
+                    required: e + "请输入支票号码",
+                    minlength: e + "支票号码为8位数字",
+                    maxlength: e + "支票号码为8位数字",
+                    remote: e + "支票号码已存在"
+                },
+                noteAMT: {
+                    required: e + "请输入支票金额",
+                    number : e + "请输入有效正数",
+                    min: e + "支票金额不能小于0.01",
+                    max: e + "支票金额不能大于9999999999"
+                },
+                settleBankName: {
+                    required: e + "请输入结算票据银行名称"
+                }
+            },
+            submitHandler:function(form){
+                //return;
+                $(".btn-pay").removeClass("btn-primary").addClass("btn-default").attr("disabled", true);
+                $.ajax({
+                    type: 'POST',
+                    url: '../../../charge/checkout/charge',
+                    data: $('#chargeForm').serialize(),
+                    dataType: 'json',
+                    success: function(data){
+                        //alert(JSON.stringify(data));
+                        if('0' == data.status){
+                            BModal.msg("缴费成功");
+                            /*var frameId = $(parent.document).find(".page-tabs .page-tabs-content .active").attr("data-id");
+                             $(parent.document).find('#J_frame_'+frameId)[0].contentWindow.$("#mrSectTable").jqGrid('setGridParam',{
+                             datatype: 'json',
+                             page: 1
+                             }).trigger("reloadGrid");*/
+                            var frameId = $(parent.document).find(".page-tabs .page-tabs-content .active").attr("data-id");
+                            //$(parent.document).find('#J_frame_'+frameId)[0].contentWindow.$(".btn-pay").removeClass("btn-primary").addClass("btn-default").attr("disabled", true);
+                            $(parent.document).find('#J_frame_'+frameId)[0].contentWindow.queryRcvblFees();
+                            closeModal();
+                        } else{
+                            BModal.alert(data.msg);
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    function noteNoExist(value, element) {
+        var existNum = 0;
+        $.each($(".check-item"), function(key, node) {
+            //alert(element.name + "  " + $(node).find("input[name^='noteNo']").attr("name"));
+            if(element.name != $(node).find("input[name^='noteNo']").attr("name")) {
+                var noteNo = $(node).find("input[name^='noteNo']").val();
+                if (noteNo && noteNo != '' && value == noteNo) {
+                    existNum++;
+                }
+            }
+        });
+        if(existNum > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    function initComboData(sectObj) {
+        $.ajax({
+            type: 'POST',
+            url: '../../../system/code/querySysCodes',
+            data: {codeSortName: 'SETTLE_MODE'},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#settleMode").empty();
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].name).val(items[i].value);
+                        $("#settleMode").append(option);
+                    }
+                    if(sectObj) {
+                        $("#settleMode").val(sectObj.settleMode);
+                    }
+                    $("#settleMode").change(function(){
+                        var selectedVal = $(this).children('option:selected').val();
+                        if(selectedVal == '0102') {
+                            $(".hidden").addClass("show").removeClass("hidden");
+                            $("#chargeAMT").attr("disabled", true);
+
+                            $("input[name='noteAMT']").bind('input propertychange', function() {
+                                setChargeAMT();
+                            });
+                        } else {
+                            $(".show").addClass("hidden").removeClass("show");
+                            $("#chargeAMT").attr("disabled", false);
+                        }
+                        $("#chargeAMT").val("");
+                    });
+                } else{
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+
+    }
+
+    function addCheckItem() {
+        var num = $(".check-item").length + 1;
+        var htmlItem = '<div class="form-group check-item show">';
+        htmlItem += '<label class="col-sml-3 control-label">支票<span style="color:red;">*</span></label>';
+        htmlItem += '<div class="col-sml-8">';
+        htmlItem += '<div class="row m-b">';
+        htmlItem += '<div class="col-sml-6">';
+        htmlItem += '<input name="noteNo' + num + '" class="form-control" type="text" placeholder="支票号码">';
+        htmlItem += '</div>';
+        htmlItem += '<div class="col-sml-6">';
+        htmlItem += '<div class="input-group">';
+        htmlItem += '<span class="input-group-addon">&yen;</span>';
+        htmlItem += '<input name="noteAMT' + num + '" class="form-control" type="text" placeholder="支票金额">';
+        htmlItem += '</div>';
+        htmlItem += '</div>';
+        htmlItem += '</div>';
+        htmlItem += '<div class="row">';
+        htmlItem += '<div class="col-sml-12">';
+        htmlItem += '<div class="input-group">';
+        htmlItem += '<input name="settleBankName' + num + '" class="form-control" type="text" placeholder="结算票据银行名称">';
+        htmlItem += '<span class="input-group-btn">';
+        htmlItem += '<button type="button" class="btn btn-primary btn-add" onclick="deleteCheckItem(this)">删除</button>';
+        htmlItem += '</span>';
+        htmlItem += '</div>';
+        htmlItem += '</div>';
+        htmlItem += '</div>';
+        htmlItem += '</div>';
+        htmlItem += '</div>';
+
+        $(".check-item").last().after(htmlItem);
+        $(".check-item").last().trigger('create');
+
+        $('input[name="noteAMT' + num + '"]').bind('input propertychange', function() {
+            setChargeAMT();
+        });
+
+        $('input[name="noteNo' + num + '"]').rules("add", {
+            required: true,
+            minlength: 8,
+            maxlength: 8,
+            remote:{  //验证支票号码是否存在
+                type: "POST",
+                url: "../../../charge/checkout/validateNoteNoExist",
+                dataType: 'json',
+                data: {
+                    noteNo: function(){
+                        return $('input[name="noteNo' + num + '"]').val();
+                    }
+                }
+            },
+            existNoteNo: !0,
+            messages: {
+                required: e + "请输入支票号码",
+                minlength: e + "支票号码为8位数字",
+                maxlength: e + "支票号码为8位数字",
+                remote: e + "支票号码已存在",
+                existNoteNo: e + "支票号码已存在"
+            }
+        });
+        $('input[name="noteAMT' + num + '"]').rules("add", {
+            required: true,
+            number: !0,
+            min: 0.01,
+            max: 9999999999,
+            messages: {
+                required: e + "请输入支票金额",
+                number : e + "请输入有效正数",
+                min: e + "支票金额不能小于0.01",
+                max: e + "支票金额不能大于9999999999"
+            }
+        });
+        $('input[name="settleBankName' + num + '"]').rules("add", {
+            required: true,
+            messages: {
+                required: e + "请输入结算票据银行名称"
+            }
+        });
+    }
+
+    function deleteCheckItem(dom) {
+        $.each($(dom).closest(".check-item").find("input"), function(key, node) {
+            $(node).rules("remove");
+        });
+        $(dom).closest(".check-item").remove();
+        setChargeAMT();
+    }
+
+    function setChargeAMT() {
+        var val = 0;
+        $.each($(".check-item"), function(key, node) {
+            var noteAMT = $(node).find("input[name^='noteAMT']").val();
+            if (noteAMT && noteAMT != '') {
+                val += parseFloat(noteAMT);
+            }
+        });
+        $("input[name='chargeAMT']").val(val);
+    }
+
+    function closeModal() {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //再执行关闭
+    }
+
+</script>
+</html>

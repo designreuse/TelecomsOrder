@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>对账解款申请</title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+    <ul id="myTab" class="nav nav-tabs">
+        <li class="active"><a href="#home" data-toggle="tab">
+            未解款信息</a>
+        </li>
+        <li><a href="#history" data-toggle="tab">历史解款信息</a></li>
+    </ul>
+
+    <div id="myTabContent" class="tab-content">
+        <div class="tab-pane fade in active" id="home">
+            <div class="form-group" style="margin-bottom:0px;">
+                <div class="text-right">
+                    <button class="btn btn-white" type="button" onclick="saveApp(9901);reloadGrid();">保存</button>
+                </div>
+            </div>
+
+            <!-- 未解款明细列表 -->
+            <div class="wrapper wrapper-content animated fadeInUp">
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>未解款明细</h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="padding:10px;">
+
+                        <div id="cashChkTableToolbar" style="margin-bottom: 5px;">
+                            <form role="form" class="form-inline" id="queryForm">
+                                <label class="control-label"> 结算方式：</label>
+                                <div class="form-group">
+                                    <div class="col-sm-9">
+                                        <select class="form-control m-b" style="margin-bottom:0px;" name="formSettleMode" name="formSettleMode">
+                                            <option value="">请选择</option>
+                                            <option value="0101">现金</option>
+                                            <option value="0102">转账支票</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <label class="control-label"> 用户名称：</label>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="formConsName" name="formConsName" placeholder="请输入用户名称">
+                                    </div>
+                                </div>
+                                <label class="control-label"> 票据编号：</label>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="formSettleNo" name="formSettleNo" placeholder="请输入票据编号">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label"> 收费时间：</label>
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" readonly style="background-color: #fff;" id="formChargeDate" name="formChargeDate"  class="form-control" >
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-sm btn-primary pull-right" type="button" onclick="reloadGrid();">查询</button>
+                            </form>
+                            <hr style="width: 100%; height: 1px; margin: 2px 0px 3px 0px;"/>
+
+                        </div>
+
+                        <div class="jqGrid_wrapper">
+                            <table id="cashChkDataTable">
+                            </table>
+                            <div id="cashChkDataPager"></div>
+                        </div>
+                        <br/>
+                        <div class="jqGrid_wrapper">
+                            <table id="cashChkSumDataTable">
+                            </table>
+                            <div id="cashChkSumDataPager"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="history">
+            <div class="wrapper wrapper-content animated fadeInUp">
+
+                <div class="ibox">
+                    <div class="ibox-content" style="padding:10px;">
+                        <div id="historyTableToolbar" style="margin-bottom: 5px;">
+                            <form role="form" class="form-inline" id="historyForm">
+                                <label class="control-label"> 对账状态：</label>
+                                <div class="form-group">
+                                    <div class="col-sm-9">
+                                        <select class="form-control m-b" style="margin-bottom:0px;" name="historyFormSettleMode" name="historyFormSettleMode">
+                                            <option value="">请选择</option>
+                                            <option value="01">对账中</option>
+                                            <option value="02">已对账</option>
+                                            <option value="03">待退票</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <label class="control-label"> 用户名称：</label>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="historyFormConsName" name="historyFormConsName" placeholder="请输入用户名称">
+                                    </div>
+                                </div>
+                                <label class="control-label"> 票据编号：</label>
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="historyFormSettleNo" name="historyFormSettleNo" placeholder="请输入票据编号">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label"> 对账时间：</label>
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" readonly style="background-color: #fff;" id="historyFormAcctDate" name="historyFormAcctDate"  class="form-control" >
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-sm btn-primary pull-right" type="button" onclick="reloadHistoryGrid()">查询</button>
+                            </form>
+                            <hr style="width: 100%; height: 1px; margin: 2px 0px 3px 0px;"/>
+
+                        </div>
+                        <div class="jqGrid_wrapper">
+                            <table id="historyTable">
+                            </table>
+                            <div id="historyPager"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+
+<script src="../../../js/common/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+<script>
+
+    /*
+    function init(params) {
+        appNo = params.bizKey;
+        return function (data){
+//            saveAppPowerOffDelay(data);
+            parent.$.workflow.completeTask(data);
+        };
+        //初始化对账信息
+        initCashChkPage();
+    }
+    */
+
+    $(function() {
+        $('body').slimscroll({
+            width: 'auto', //可滚动区域宽度
+            height: '100%', //可滚动区域高度
+            opacity: .4, //滚动条透明度
+            wheelStep: 10 //滚轮滚动量
+        });
+        initCashChkPage();
+    });
+
+    function initCashChkPage () {
+        $('.input-group.date').datepicker({
+            todayBtn: "linked",
+            keyboardNavigation: false,
+            forceParse: false,
+            calendarWeeks: true,
+            autoclose: true,
+            startDate : null,
+            format : 'yyyy-mm-dd'
+        });
+
+        $('#myTab li:eq(0) a').tab('show');
+        initCashChkData();
+        initCashChkSumData();
+        initHistoryData();
+    }
+
+    function saveApp(appNo){
+        $.ajax({
+            type: 'POST',
+            url: "../../../charge/cashchk/generateCheckData",
+            data: {appNo:appNo},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    BModal.alert('对账记录生成成功！');
+                } else{
+                    BModal.alert('对账记录生成失败！' + data.msg);
+                }
+            }
+        });
+        window.setTimeout(reloadGrid(),1000);
+    }
+
+    function reloadGrid(){
+        $("#cashChkDataTable").jqGrid('setGridParam',{
+            datatype: 'json',
+            //postData: $('#queryForm').serialize(),
+            page: 1
+        }).trigger("reloadGrid");
+
+        $("#cashChkSumDataTable").jqGrid('setGridParam',{
+            datatype: 'json',
+            //postData: $('#queryForm').serialize(),
+            page: 1
+        }).trigger("reloadGrid");
+    }
+
+    function reloadHistoryGrid(){
+        $("#historyTable").jqGrid('setGridParam',{
+            datatype: 'json',
+            //postData: $('#historyForm').serialize(),
+            page: 1
+        }).trigger("reloadGrid");
+    }
+
+    function initCashChkData() {
+        $.jgrid.defaults.styleUI = "Bootstrap";
+        $("#cashChkDataTable").jqGrid({
+            url: "../../../charge/cashchk/queryCashChkRecord",
+            datatype: 'json',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [  '用户名称', '收款单位', '收费员', '收费时间', '收费类型',
+                '结算方式', '收费金额', '票据号码','票据银行','dataSource'
+            ],
+            colModel : [
+
+                {name : 'consName',  index : 'consName',width : 60, align : "center"},
+                {name : 'rcvDeptNo',index : 'rcvDeptNo',width : 100, align : "center"},
+                {name : 'chargeEmpName',index : 'chargeEmpName',  width : 60,  align : "center"},
+                {name : 'chargeDate',index : 'chargeDate',width : 80, align : "center"},
+                {name : 'typeCodeName',index : 'typeCode',width : 60, align : "center"},
+                {name : 'settleModeName',index : 'settleMode',width : 60, align : "center"},
+                {name : 'rcvAmt',index : 'rcvAmt',width : 60, align : "center"},
+                {name : 'settleBankNote',index : 'settleBankNote',width : 80, align : "center"},
+                {name : 'settleBankName',index : 'settleBankName',width : 80, align : "center"},
+                {name : 'dataSource',index : 'dataSource', hidden: true}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#cashChkDataPager',
+            viewrecords: true,
+            /*multiselect : true,*/
+            hidegrid: false,
+            cellEdit: true,
+            cellsubmit: 'remote',
+            beforeRequest:function(){
+                var gridParam = $("#cashChkDataTable").jqGrid('getGridParam');
+                //gridParam.postData = $('#queryForm').serialize();
+                $.extend(gridParam.postData, getFormData($('#queryForm')));
+            }
+        });
+        $("#cashChkDataTable").jqGrid("navGrid", "#cashChkDataPager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+    }
+
+    function initCashChkSumData() {
+        $("#cashChkSumDataTable").jqGrid({
+            url: "../../../charge/cashchk/queryCashChkSumStat",
+            //postData: $('#queryForm').serialize(),
+            datatype : "json",
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '结算方式', '结算银行', '笔数', '金额','dataSource'
+            ],
+            colModel : [
+                {name : 'settleModeName',  index : 'settleModeName',width : 60, align : "center"},
+                {name : 'settleBankName',index : 'settleBankName',width : 100, align : "center"},
+                {name : 'recordsNum',index : 'recordsNum',  width : 60,  align : "center"},
+                {name : 'totalAmt',index : 'totalAmt',width : 60, align : "center"},
+                {name : 'dataSource',index : 'dataSource', hidden: true}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#cashChkSumDataPager',
+            viewrecords: true,
+            hidegrid: false,
+            cellEdit: true,
+            caption : "未解款汇总信息",
+            bSort : true,
+            cellsubmit: 'remote',
+            beforeRequest:function(){
+                var gridParam = $("#cashChkDataTable").jqGrid('getGridParam');
+                //gridParam.postData = $('#queryForm').serialize();
+                $.extend(gridParam.postData, getFormData($('#queryForm')));
+            }
+        });
+        $("#cashChkSumDataTable").jqGrid("navGrid", "#cashChkSumDataPager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+    }
+
+    function initHistoryData(appNo) {
+        $("#historyTable").jqGrid({
+            url: "../../../charge/cashchk/queryCashChkHistory",
+            height:360,
+            datatype : "json",
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '结算方式','用户名称', '金额', '票据号码', '票据银行','对账时间','状态','对账状态','备注','对账标识','操作'
+            ],
+            colModel : [
+                {name : 'settleModeName',index : 'settleModeName',width : 80, align : "center"},
+                {name : 'consName',index : 'consName',width : 140, align : "center"},
+                {name : 'checkAmt',  index : 'checkAmt',width : 130, align : "center"},
+                {name : 'settleNoteNo',index : 'settleNoteNo',width : 150, align : "center"},
+                {name : 'settleBankName',index : 'settleBankName',  width : 150,  align : "center"},
+                {name : 'checkDate',index : 'checkDate',  width : 100,  align : "center"},
+                {name : 'status',index : 'status',  width : 80, hidden:true},
+                {name : 'statusValue',index : 'statusValue',  width : 100,  align : "center"},
+                {name : 'remark',index : 'remark',  width : 190,  align : "center"},
+                {name : 'checkAcctId',index : 'checkAcctId',  hidden: true},
+                {name : 'action',index : 'action',  width : 130,align : "center"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#historyPager',
+            viewrecords: true,
+            multiselect : false,
+            hidegrid: false,
+            cellEdit: true,
+            bSort : true,
+            cellsubmit: 'remote',
+            beforeRequest:function(){
+                var gridParam = $("#historyTable").jqGrid('getGridParam');
+                $.extend(gridParam.postData, getFormData($('#historyForm')));
+            },
+            gridComplete: function(){
+                var ids = jQuery("#historyTable").jqGrid('getDataIDs');
+                for(var i=0;i < ids.length;i++){
+                    var rowData = $("#historyTable").jqGrid('getRowData', ids[i]);
+                    var checkAcctId =  rowData["checkAcctId"];
+                    var status =  rowData["status"];
+
+                    if (status == '03'){
+                        se = "<input style='width:110px;' class='btn btn-sm btn-info' type='button' value='退票' onclick=\"saveRow('"+checkAcctId+"');\"  />";
+                        jQuery("#historyTable").jqGrid('setRowData',ids[i],{action:se});
+                    }
+
+                }
+            }
+        });
+        $("#historyTable").jqGrid("navGrid", "#historyPager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+    }
+
+    function saveRow(checkAcctId){
+        BModal.alert("发起退费申请：" + checkAcctId);
+    }
+
+    function getFormData($form){
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function(n, i){
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
+    }
+
+</script>
+
+</html>

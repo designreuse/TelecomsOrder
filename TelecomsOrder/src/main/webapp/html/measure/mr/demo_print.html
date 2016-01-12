@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+</head>
+<!-- 抄表计划生成 -->
+<body class="gray-bg">
+<div class="wrapper wrapper-content p-xl">
+    <div class="ibox-content p-xl">
+        <div class="row">
+            <div class="col-sm-6">
+                <address>
+                    <strong>北京百度在线网络技术有限公司</strong><br>
+                    北京市海淀区上地十街10号<br>
+                    <abbr title="Phone">总机：</abbr> (+86 10) 5992 8888
+                </address>
+            </div>
+
+            <div class="col-sm-6 text-right">
+                <h4>单据编号：</h4>
+                <h4 class="text-navy">H+-000567F7-00</h4>
+                <address>
+                    <strong>阿里巴巴集团</strong><br>
+                    中国杭州市华星路99号东部软件园创业大厦6层(310099)<br>
+                    <abbr title="Phone">总机：</abbr> (86) 571-8502-2088
+                </address>
+                <p>
+                    <span><strong>日期：</strong> 2014-11-11</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="table-responsive m-t">
+            <table class="table invoice-table">
+                <thead>
+                <tr>
+                    <th>清单</th>
+                    <th>数量</th>
+                    <th>单价</th>
+                    <th>税率</th>
+                    <th>总价</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <div><strong>尚都比拉2013冬装新款女装 韩版修身呢子大衣 秋冬气质羊毛呢外套</strong>
+                        </div>
+                    </td>
+                    <td>1</td>
+                    <td>&yen;26.00</td>
+                    <td>&yen;1.20</td>
+                    <td>&yen;31,98</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div><strong>11*11夏娜 新款斗篷毛呢外套 女秋冬呢子大衣 韩版大码宽松呢大衣</strong>
+                        </div>
+                        <small>双十一特价
+                        </small>
+                    </td>
+                    <td>2</td>
+                    <td>&yen;80.00</td>
+                    <td>&yen;1.20</td>
+                    <td>&yen;196.80</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div><strong>2013秋装 新款女装韩版学生秋冬加厚加绒保暖开衫卫衣 百搭女外套</strong>
+                        </div>
+                    </td>
+                    <td>3</td>
+                    <td>&yen;420.00</td>
+                    <td>&yen;1.20</td>
+                    <td>&yen;1033.20</td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <!-- /table-responsive -->
+
+        <table class="table invoice-total">
+            <tbody>
+            <tr>
+                <td><strong>总价：</strong>
+                </td>
+                <td>&yen;1026.00</td>
+            </tr>
+            <tr>
+                <td><strong>税：</strong>
+                </td>
+                <td>&yen;235.98</td>
+            </tr>
+            <tr>
+                <td><strong>总计</strong>
+                </td>
+                <td>&yen;1261.98</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="well m-t"><strong>注意：</strong> 请在30日内完成付款，否则订单会自动取消。
+        </div>
+    </div>
+
+</div>
+<div class="wrapper wrapper-content p-xl">
+        <div class="ibox-content p-xl">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="m-b-md">
+                        <h2 id="planName">抄表计划0205</h2>
+                    </div>
+                    <dl class="dl-horizontal">
+                        <dt>状态：</dt>
+                        <dd><span class="label label-primary" id="planStatus">初始化</span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5">
+                    <dl class="dl-horizontal">
+                        <dt>抄表员：</dt>
+                        <dd id="mrEmpName"></dd>
+                        <dt>抄表年月：</dt>
+                        <dd id="mrYM"></dd>
+                        <dt>抄表事件类型：</dt>
+                        <dd id="eventTypeName"></dd>
+                        <dt>抄表计划类型：</dt>
+                        <dd id="planTypeName"></dd>
+                    </dl>
+                </div>
+                <div class="col-sm-7" id="cluster_info">
+                    <dl class="dl-horizontal">
+                        <dt>上次抄表日期：</dt>
+                        <dd id="lastReadDate"></dd>
+                        <dt>计划抄表日期：</dt>
+                        <dd id="planReadDate"></dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="ibox-content p-xl" style="padding:10px;">
+            <div class="jqGrid_wrapper">
+                <table id="mrDataTable">
+                </table>
+                <div id="mrDataPager"></div>
+            </div>
+        </div>
+</div>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+
+<script>
+
+    var params = getQueryString();
+    params.appNo = "100000";
+    $(function() {
+        $.ajax({
+            type: 'GET',
+            url: '../../../measure/mrInput/queryMRPlan',
+            data: {appNo: params.appNo},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    if(data.data.length > 0) {
+                        var planObj = data.data[0];
+                        //alert(JSON.stringify(planObj));
+                        $("#mrEmpName").text(planObj.mrSect.mrEmpName);
+                        $("#mrYM").text(planObj.mrYM);
+                        $("#eventTypeName").text(planObj.eventTypeName);
+                        $("#planTypeName").text(planObj.planTypeName);
+                        $("#lastReadDate").text(planObj.lastReadDate);
+                        $("#planReadDate").text(planObj.planReadDate);
+
+                        initMRData();
+                    }
+                } else{
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+    });
+
+    function initMRData() {
+        $("#mrDataTable").jqGrid({
+            url: "../../../measure/mrInput/queryMRData4Page?appNo=" + params.appNo,
+            datatype : "json",
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '抄表数据ID', '用户名称', '用户地址', '表计资产编号', '综合倍率', '上次抄见示数', '上次抄见量',
+                '本次抄见示数', '本次抄见量', '上次抄表日期', '本次抄表日期', '数据来源','dataSource'
+            ],
+            colModel : [
+                {name : 'mrDataId',index : 'mrDataId',width : 55, hidden: true},
+                {name : 'consMeter.cons.consName',  index : 'consMeter.cons.consName',width : 100, align : "left"},
+                {name : 'consMeter.cons.consAddr',index : 'consMeter.cons.consAddr',width : 120, align : "center"},
+                {name : 'consMeter.assetNo',index : 'consMeter.assetNo',  width : 80,  align : "center"},
+                {name : 'tFactor',index : 'tFactor',width : 60, align : "center"},
+                {name : 'lastRead',index : 'lastRead',width : 60, align : "center"},
+                {name : 'lastPQ',index : 'lastPQ',width : 60, align : "center"},
+                {name : 'thisRead',index : 'thisRead',width : 60, align : "center", editable : true, editrules:{number:true}},
+                {name : 'thisPQ',index : 'thisPQ',width : 60, align : "center"},
+                {name : 'lastMRDate',index : 'lastMRDate',width : 60, align : "center"},
+                {name : 'thisMRDate',index : 'thisMRDate',width : 60, align : "center"},
+                {name : 'dataSourceName',index : 'dataSourceName',width : 60, align : "center"},
+                {name : 'dataSource',index : 'dataSource', hidden: true}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#mrDataPager',
+            viewrecords: true,
+            /*multiselect : true,*/
+            hidegrid: false,
+            cellEdit: true,
+            cellsubmit: 'remote',
+            cellurl: '../../../measure/mrInput/updateMRData',
+            beforeEditCell: function (rowid, cellname, value, iRow, iCol) {
+                if (cellname == 'thisRead') {
+                    var rowData =  $("#mrDataTable").jqGrid('getRowData', rowid);
+                    //alert(JSON.stringify(rowData));
+                    if (rowData.dataSource == '03' && rowData.lastRead != '') {
+                        setTimeout(function () {
+                            $("#mrDataTable").jqGrid('restoreCell', iRow, iCol);
+                            //===>或者设置为只读
+                            //$('#' + rowid + '_amount').attr('readonly', true);
+                        }, 1);
+                    }
+                }
+            },
+            beforeSubmitCell : function(rowid, celname, value, iRow, iCol) {
+                var rowData =  $("#mrDataTable").jqGrid('getRowData', rowid);
+                return {mrDataId: rowData.mrDataId};
+            },
+            afterSaveCell : function(rowid,name,val,iRow,iCol) {
+                /*var curPageNum = $("#mrDataTable").jqGrid('getGridParam', 'page');//当前页码
+                 $("#mrDataTable").jqGrid('setGridParam',{
+                 datatype: 'json',
+                 page: curPageNum
+                 }).trigger("reloadGrid");*/
+                $("#mrDataTable").jqGrid('setRowData', rowid, {dataSource: '01',dataSourceName: '手工抄表'});
+            },
+            loadComplete : function() {
+                window.print();
+            }
+            /*afterSubmitCell : function(serverresponse, rowid, cellname, value, iRow, iCol) {
+             //alert(serverresponse.responseText);
+             }*/
+        });
+        $("#mrDataTable").jqGrid("navGrid", "#mrDataPager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+    }
+
+    function submitData() {
+        /*$.ajax({
+         type: 'POST',
+         url: '../../../measure/mrInput/submitMRPlan',
+         data: {appNo: appNo},
+         dataType: 'json',
+         success: function(data){
+         if('0' == data.status) {
+         BModal.msg("提交抄表计划成功");
+         } else {
+         BModal.alert(data.msg);
+         }
+         }
+         });*/
+    }
+
+</script>
+</html>

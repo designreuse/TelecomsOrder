@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>到账确认</title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/daterangepicker/daterangepicker-bs3.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+        <!-- 到账处理清单 -->
+        <div class="wrapper wrapper-content animated fadeInUp">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>未到账票据明细</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" style="padding:10px;">
+
+                    <div id="cashChkTableToolbar" style="margin-bottom: 5px;">
+                        <form role="form" class="form-inline" id="queryForm">
+
+                            <label class="control-label"> 用户名称：</label>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="formConsName" name="formConsName" placeholder="请输入用户名称">
+                                </div>
+                            </div>
+                            <label class="margin-left:20px;control-label"> 票据号：</label>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="formSettleNo" name="formSettleNo" placeholder="请输入票据编号">
+                                </div>
+                            </div>
+
+                            <button class="btn btn-sm btn-primary " style="margin-left:20px;" type="button" onclick="reloadGrid();reloadGrid();">查询</button>
+                        </form>
+                        <hr style="width: 100%; height: 1px; margin: 2px 0px 3px 0px;"/>
+
+                    </div>
+
+                    <div class="jqGrid_wrapper">
+                        <table id="acctConfirmDataTable">
+                        </table>
+                        <div id="acctConfirmDataPager"></div>
+                    </div>
+                </div>
+            </div>
+
+</div>
+
+
+
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+
+<script src="../../../js/common/plugins/fullcalendar/moment.min.js"></script>
+<script src="../../../js/common/plugins/datapicker/bootstrap-datepicker.js"></script>
+<script src="../../../js/common/plugins/daterangepicker/daterangepicker.js"></script>
+
+
+
+
+
+<script>
+
+    $(function() {
+        initAcctConfirmData();
+    });
+
+    function reloadGrid(){
+        $("#acctConfirmDataTable").jqGrid('setGridParam',{
+            datatype: 'json',
+            //postData: $('#queryForm').serialize(),
+            page: 1
+        }).trigger("reloadGrid");
+    }
+
+    function initAcctConfirmData() {
+        $.jgrid.defaults.styleUI = "Bootstrap";
+        $("#acctConfirmDataTable").jqGrid({
+            url: "../../../charge/cashchk/queryAcctConfirm",
+            height:400,
+            datatype: 'json',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '票据号码','票据银行', '收费时间', '用户名称', '在途金额', '收费员','操作','对账标识'
+            ],
+            colModel : [
+                {name : 'settleNoteNo',index : 'settleNoteNo',width : 80, align : "center"},
+                {name : 'settleBankName',index : 'settleBankName',width : 80, align : "center"},
+                {name : 'chargeDate',  index : 'chargeDate',width : 80, align : "center"},
+                {name : 'consName',index : 'consName',width : 100, align : "center"},
+                {name : 'transitAmt',index : 'transitAmt',  width : 60,  align : "center"},
+                {name : 'chargeEmpName',index : 'chargeEmpName',width : 80, align : "center"},
+                {name : 'action',index : 'action',  width : 150,align : "center"},
+                {name : 'checkAcctId',index : 'checkAcctId',  width : 10,hidden:true}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#acctConfirmDataPager',
+            viewrecords: true,
+            /*multiselect : true,*/
+            hidegrid: false,
+            cellEdit: true,
+            cellsubmit: 'remote',
+            beforeRequest:function(){
+                var gridParam = $("#acctConfirmDataTable").jqGrid('getGridParam');
+                //gridParam.postData = $('#queryForm').serialize();
+                $.extend(gridParam.postData, getFormData($('#queryForm')));
+            },
+            gridComplete: function(){
+                var ids = jQuery("#acctConfirmDataTable").jqGrid('getDataIDs');
+                for(var i=0;i < ids.length;i++){
+                    var rowData = $("#acctConfirmDataTable").jqGrid('getRowData', ids[i]);
+                    var settleBankNote =  rowData["settleNoteNo"];
+                    var checkAcctId =  rowData["checkAcctId"];
+
+                    var confirmButton = "<input style='width:60px;margin-right:10px;' class='btn btn-sm btn-info' type='button' value='确认' onclick=\"rowConfirm('"+checkAcctId+"');\"  />";
+                    var refundButton = "<input style='width:60px;margin-left:10px;' class='btn btn-sm btn-info' type='button' value='退票' onclick=\"rowRefund('"+settleBankNote+"');\"  />";
+                    jQuery("#acctConfirmDataTable").jqGrid('setRowData',ids[i],{action:confirmButton + refundButton});
+                }
+            }
+            /*cellurl: '../../../measure/mrInput/updateMRData',*/
+        });
+        $("#acctConfirmDataTable").jqGrid("navGrid", "#acctConfirmDataPager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+    }
+
+    function rowRefund(checkAcctId){
+        BModal.alert("发起退费申请：" + checkAcctId);
+    }
+
+    function rowConfirm(checkAcctId){
+        $.ajax({
+            type: 'POST',
+            url: "../../../charge/cashchk/acctConfirm?checkAcctId=" + checkAcctId,
+            dataType: 'json',
+            success: function(data){
+                if('0' == data.status){
+                    BModal.alert('到账确认处理成功！');
+                } else{
+                    BModal.alert('到账确认处理失败！' + data.msg);
+                }
+            }
+        });
+
+        window.setTimeout(reloadGrid(),1000);
+    }
+
+    function getFormData($form){
+        var unindexed_array = $form.serializeArray();
+        var indexed_array = {};
+
+        $.map(unindexed_array, function(n, i){
+            indexed_array[n['name']] = n['value'];
+        });
+
+        return indexed_array;
+    }
+
+</script>
+
+</html>

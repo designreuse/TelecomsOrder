@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>费用核算</title>
+
+    <link href="../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/common/animate.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../css/common/style.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>费用核算</h5>
+                    <div class="ibox-tools">
+                        <button type="button" onclick="reCalc()">重新计算</button>
+                        <button type="button" onclick="toRcvbl()">发行传递</button>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="ibox-content" style="padding:20px 20px 20px 20px;">
+                    <div class="jqGrid_wrapper" style="width:99%">
+                        <table id="consPrcAmtTable"></table>
+                        <div id="consPrcAmtPager"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+<!--
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>历史审批信息 </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-down"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" id="historyApproveIboxId" style="padding:20px 20px 20px 20px;">
+                    <div class="jqGrid_wrapper" style="width:99%;">
+                        <table id="historyApproveTable"></table>
+                        <div id="historyApprovePager"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    -->
+
+</div>
+
+
+<!-- Mainly scripts -->
+<script src="../../js/common/jquery-2.1.1.js"></script>
+<script src="../../js/common/bootstrap.min.js"></script>
+<script src="../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Flot -->
+<script src="../../js/common/plugins/flot/jquery.flot.js"></script>
+<script src="../../js/common/plugins/flot/jquery.flot.tooltip.min.js"></script>
+<script src="../../js/common/plugins/flot/jquery.flot.resize.js"></script>
+<script src="../../js/common/plugins/flot/jquery.flot.pie.js"></script>
+<script src="../../js/common/plugins/flot/jquery.flot.time.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="../../js/common/inspinia.js"></script>
+<script src="../../js/common/plugins/pace/pace.min.js"></script>
+
+<!-- Flot demo data -->
+
+<script src="../../js/common/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="../../js/common/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js"></script>
+<script src="../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../js/common/common.js"></script>
+
+<script src="../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+
+
+
+<script>
+    var appNo = "100003";
+//    var v_ym = '201511';
+//    var v_orgNo = '3201011000';
+//    var v_planNo = '5f4bd4e8-a239-11e5-a55e-c03fd571c1d1';
+    $(function() {
+
+        $.jgrid.defaults.styleUI = "Bootstrap";
+        //初始化停电用户
+
+        initConsPrcAmtTable();
+        //初始化删除的停电用户
+        //initOtherAppPowerOffTable();
+        //初始化历史审批信息
+        //queryHistoryApprove();
+
+        //对历史审批panel隐藏
+        //document.getElementById("historyApproveIboxId").style.display="none";
+    });
+
+    //初始化费用核算信息
+    function initConsPrcAmtTable(){
+
+        $("#consPrcAmtTable").jqGrid({
+            url: "../../account/consPrcAmt/queryConsPrcAmtInfo",
+            postData:{
+                appNo:appNo
+            },
+            datatype : "json",
+            height: '235px',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '费用核算编号', '费用年月','用户名称', '费用类型', '单价', '总量','金额' ],
+            colModel : [
+                {name : 'prcAmtId',index : 'prcAmtId',width : 55, hidden: true},
+                {name : 'ym', index : 'ym',width : 55, align : "center"},
+                {name : 'consName',  index : 'consName',width : 100, align : "center"},
+                {name : 'amtType',index : 'amtType',width : 80, align : "left"},
+                {name : 'price',index : 'price',  width : 80,  align : "center"},
+                {name : 'tSettlePq',index : 'tSettlePq',width : 80,align : "center"},
+                {name : 'tAmt',index : 'tAmt',width : 120, align : "center",summaryType:'sum'}
+
+            ],
+           // rowNum : 10,
+           // rowList : [ 10, 20, 30 ],
+            pager : '#consPrcAmtPager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            caption : "费用核算用户",
+            hidegrid: false,
+            viewrecords: true,
+            sortname: 'consName',
+            grouping:true,
+            groupingView : {
+                groupField : ['consName'],
+                groupColumnShow : [true],
+                groupText : ['<b>{0}&nbsp;&nbsp;&nbsp;共计&nbsp;{1}&nbsp;项费用，总金额:&nbsp;{tAmt}&nbsp;元</b>'],
+                groupCollapse : false,
+                groupOrder: ['asc', 'asc'],
+                groupSummary : [false, false]
+            }
+        });
+        $("#consPrcAmtTable").jqGrid("navGrid", "#consPrcAmtPager", {
+            add: false,
+            edit: false,
+            del: false,
+            search: false
+        },
+        {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+    }
+
+    // 重新计算函数
+    function reCalc() {
+        $.ajax({
+            url: '../../account/consPrcAmt/reCalc',
+            data: {
+                appNo:appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    BModal.alert("重新计算成功！");
+                    $("#consPrcAmtTable").jqGrid('setGridParam',{
+                        datatype: 'json',
+                        postData:{
+                            appNo:appNo
+                        },
+                        page: 1
+                    }).trigger("reloadGrid");
+
+                }else{
+                    BModal.alert(data.msg);
+                }
+            },
+            error: function () {
+                BModal.alert("重新计算失败！");
+            }
+        });
+    }
+
+    // 发行传递
+    function toRcvbl() {
+        $.ajax({
+            url: '../../account/consPrcAmt/toRcvbl',
+            data: {
+                appNo:appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    BModal.alert("账单发行成功！");
+                }else{
+                    BModal.alert(data.msg);
+                }
+            },
+            error: function () {
+                BModal.alert("账单发行失败！");
+            }
+        });
+    }
+
+    function saveProcess(){
+        $.ajax({
+            url: '../../power/appPowerOff/saveProcess',
+            data: {
+                appNo:appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    BModal.alert("流程提交成功");
+                }else{
+                    BModal.alert(data.msg);
+                }
+            },
+            error: function () {
+                BModal.alert("提供流程异常！");
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

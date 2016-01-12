@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+</head>
+<!-- 抄表计划用户及表计列表 -->
+<body class="gray-bg">
+<div id="wrapper">
+    <!-- 用户及表计列表 -->
+    <div class="jqGrid_wrapper">
+        <table id="mrConsMeterTable">
+        </table>
+        <div id="mrConsMeterPager"></div>
+    </div>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+<script>
+
+    $(function() {
+        var params = getQueryString();
+        //alert(params.mrSectId);
+        $("#mrConsMeterTable").jqGrid({
+            url: "../../../measure/mrInput/queryMRConsMeters4Page?mrSectId=" + params.mrSectId,
+            datatype : "json",
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '用户ID', '表计ID', '用户名称', '用户地址', '表计资产编号', '表计类型', '表计自身倍率' ],
+            colModel : [
+                {name : 'cons.consId',index : 'cons.consId',width : 55, hidden: true},
+                {name : 'meterId',index : 'meterId',width : 55, hidden: true},
+                {name : 'cons.consName',  index : 'cons.consName',width : 100, align : "left"},
+                {name : 'cons.consAddr',index : 'cons.consAddr',width : 120, align : "center"},
+                {name : 'assetNo',index : 'assetNo',  width : 80,  align : "center"},
+                {name : 'meterType.name',index : 'meterType.name',width : 80,align : "center"},
+                {name : 'selfFactor',index : 'selfFactor',width : 60, align : "center"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#mrConsMeterPager',
+            viewrecords: true,
+            /*multiselect : true,*/
+            caption : "用户及表计列表",
+            hidegrid: false
+        });
+        $("#mrConsMeterTable").jqGrid("navGrid", "#mrConsMeterPager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+        $("#mrConsMeterTable").setGridHeight($(window).height() - 120);
+    });
+
+</script>
+</html>

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+</head>
+<!-- 抄表段管理 -->
+<body>
+<div id="wrapper" style="background: #fff;">
+    <!-- Example Events -->
+    <div class="example-wrap">
+        <div class="example">
+            <div class="" id="mrSectTableToolbar">
+                <div style="padding: 5px; margin-bottom: 5px; width: 100%;">
+                    <form role="form" class="form-inline" id="queryForm">
+                        <div class="form-group">
+                            <label class="control-label">抄表段类型：</label>
+                            <select class="form-control" id="param_sectType" name="sectType">
+                                <!--<option value="">--请选择--</option>-->
+                                <!--<option value="01">电</option>-->
+                                <!--<option value="02">水</option>-->
+                                <!--<option value="03">水电</option>-->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">抄表段名称：</label>
+                            <input type="text" placeholder="请输入抄表段名称" id="param_name" name="name" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">抄表员：</label>
+                            <select class="form-control" id="param_mrEmpNo" name="mrEmpNo">
+
+                            </select>
+                            <!--<input type="text" placeholder="请选择抄表责任人" id="param_mrEmpNo" name="mrEmpNo" class="form-control">-->
+                        </div>
+                        <button class="btn btn-primary" type="button" onclick="queryMRSects()">查询</button>
+                    </form>
+                </div>
+                <hr style="width: 100%; height: 1px; margin: 2px 0px 3px 0px;"/>
+                <div style="padding-left: 5px;">
+                    <button class="btn btn-info" type="button" onclick="addMRSect();"><i class="fa fa-plus"></i> 新增</button>
+                    <button class="btn btn-info" type="button" onclick="deleteMRSect();"><i class="fa fa-trash"></i> 删除</button>
+                    <!--<button class="btn btn-primary" type="button" onclick="setMReaders();"><i class="fa fa-gear"></i> 指定抄表员</button>-->
+                    <button class="btn btn-info" type="button" onclick="showMRSectCons();"><i class="fa fa-gear"></i> 分配抄表用户</button>
+                </div>
+            </div>
+            <table id="mrSectTable">
+                <thead style="background: #C7E8F5;">
+                <tr>
+                    <th data-field="state" data-checkbox="true"></th>
+                    <th data-field="mrSectId" data-visible="false">ID</th>
+                    <th data-field="name">抄表段名称</th>
+                    <th data-field="mrEmpName">抄表责任人</th>
+                    <th data-field="sectTypeName">抄表段类型</th>
+                    <th data-field="creator">创建人</th>
+                    <th data-field="createTime">创建时间</th>
+                    <th data-field="lastChanger">变更人</th>
+                    <th data-field="lastChangeTime">变更时间</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <!-- End Example Events -->
+
+    <!--<div class="modal inmodal" id="editMRSectModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                    </button>
+                    <h3>抄表段</h3>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal m-t" id="mrSectForm" modelAttribute="mrSect">
+                        <input id="mrSectId" name="mrSectId" type="hidden">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">抄表段名称：</label>
+                            <div class="col-sm-8">
+                                <input id="name" name="name" class="form-control" type="text" aria-required="true" aria-describedby="name-error">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">抄表段类型：</label>
+                            <div class="col-sm-8">
+                                <select class="form-control m-b" id="sectType" name="sectType">
+                                    &lt;!&ndash;<option value="01">电</option>&ndash;&gt;
+                                    &lt;!&ndash;<option value="02">水</option>&ndash;&gt;
+                                    &lt;!&ndash;<option value="03">水电</option>&ndash;&gt;
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">抄表员：</label>
+                            <div class="col-sm-8">
+                                <select class="chosen-select" multiple style="width:100%;" tabindex="4" id="mrEmpNo" name="mrEmpNo">
+                                    &lt;!&ndash;<option value="110000" hassubinfo="true">A大厦</option>
+                                    <option value="120000" hassubinfo="true">B大厦</option>
+                                    <option value="210000" hassubinfo="true">C大厦</option>
+                                    <option value="220000" hassubinfo="true">D大厦</option>&ndash;&gt;
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer" style="text-align: center;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary" onclick="javascript: $('#mrSectForm').submit()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+    <!-- 抄表员Dialog -->
+    <div class="modal inmodal" id="mReaderModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" style="min-width: 480px; min-height: 480px;">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                    </button>
+                    <h3>抄表员</h3>
+                </div>
+                <div class="modal-body" style="padding: 5px;">
+                    <table id="mReaderTable" data-height="400px" data-mobile-responsive="true">
+                        <thead style="background: #C7E8F5;">
+                        <tr>
+                            <th data-field="state" data-checkbox="true"></th>
+                            <th data-field="empNo" data-visible="false">ID</th>
+                            <th data-field="userName">姓名</th>
+                            <th data-field="tel">联系电话</th>
+                            <th data-field="email">邮箱</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="modal-footer" style="text-align: center;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary" onclick="">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 抄表段用户 -->
+    <div class="modal inmodal" id="mrSectConsModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" style="min-width: 800px; min-height: 540px;">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                    </button>
+                    <h3>抄表段用户</h3>
+                </div>
+                <div class="modal-body" style="padding: 5px;">
+                    <div class="row">
+                        <div class="col-md-5" style="width: 49%;">
+                            <div class="ibox float-e-margins">
+                                <table id="noCheckedConsTable" data-height="400px" data-mobile-responsive="true">
+                                    <thead style="background: #C7E8F5;">
+                                    <tr>
+                                        <th data-field="state" data-checkbox="true"></th>
+                                        <th data-field="consId" data-visible="false">ID</th>
+                                        <th data-field="consName">用户名称</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-md-1" style="width: 3%; padding: 1px;">
+                            <div style="margin:0 auto;padding-top: 80px;">
+                                <div style="padding-bottom: 5px;">
+                                    <button onclick="saveMRSectCons()">&gt;</button>
+                                </div>
+                                <div>
+                                    <button onclick="deleteMRSectCons()">&lt;</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5" style="width: 48%;">
+                            <div class="ibox float-e-margins">
+                                <table id="checkedConsTable" data-height="400px" data-mobile-responsive="true">
+                                    <thead style="background: #C7E8F5;">
+                                    <tr>
+                                        <th data-field="state" data-checkbox="true"></th>
+                                        <th data-field="sectConsRefId" data-visible="false">ID</th>
+                                        <th data-field="consName">用户名称</th>
+                                    </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div class="modal-footer" style="height: 0px;">
+                </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="../../../js/common/plugins/bootstrap-table/bootstrap-table-zh-CN.min.js"></script>
+<script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<!--<script src="../../../js/measure/mrSectManage.js"></script>-->
+<script src="../../../js/common/common.js"></script>
+
+<script>
+
+    $(function() {
+        //alert(12);
+        $.ajax({
+            type: 'POST',
+            url: '../../../measure/mrSect/queryNoSelectedConsCount',
+            data: {},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    //alert(data.data);
+                    BModal.alert("您好，还有" + data.data + "个抄表用户没有分配，请及时分配。");
+                } else{
+                    //alert("失败");
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '../../../system/code/querySysCodes',
+            data: {codeSortName: 'SECT_TYPE'},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#param_sectType").empty();
+                    $("#param_sectType").append('<option value="">--请选择--</option>');
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].name).val(items[i].value);
+                        $("#param_sectType").append(option);
+                    }
+                } else{
+                    //alert("失败");
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '../../../measure/mrSect/queryMReaders',
+            data: {},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#param_mrEmpNo").empty();
+                    $("#param_mrEmpNo").append('<option value="">--请选择--</option>');
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].userName).val(items[i].empNo);
+                        $("#param_mrEmpNo").append(option);
+                    }
+                } else{
+                    //alert("失败");
+                }
+            }
+        });
+
+        $("#mrSectTable").bootstrapTable({
+            height: $(window).height(),
+            method: 'get',
+            url: "../../../measure/mrSect/queryMRSects",
+            pagination: !0,
+//            search: !0,
+//            showRefresh: !0,
+//            showToggle: !0,
+//            showColumns: !0,
+            iconSize: "outline",
+            toolbar: "#mrSectTableToolbar",
+            sidePagination:'server',//设置为服务器端分页
+            icons: {
+                refresh: "glyphicon-repeat",
+                toggle: "glyphicon-list-alt",
+                columns: "glyphicon-list"
+            },
+            onDblClickRow: editMRSect
+        });
+
+        /*$("#mrSectTable").bootstrapTable("onDblClickRow",
+            function (row) {
+                //alert(JSON.stringify(row));
+                alert(1);
+            }
+        );*/
+        /*$('#mrSectTable').bootstrapTable({
+         url: 'data.json',
+         columns: [{
+         field: 'id',
+         title: 'Item ID'
+         }, {
+         field: 'name',
+         title: 'Item Name'
+         }, {
+         field: 'price',
+         title: 'Item Price'
+         }, ]
+         });*/
+        /*var e = "<i class='fa fa-times-circle'></i> ";
+        $('#mrSectForm').validate({
+            rules: {
+                name: {
+                    required: !0
+                }
+            },
+            messages: {
+                name: e + "请输入抄表段名称"
+            },
+            submitHandler:function(form){
+                saveMRSect();
+            }
+        });*/
+    });
+
+    function getHeight() {
+        return $(window).height() - $('#mrSectTableToolbar').outerHeight(true);
+    }
+
+    function queryMRSects() {
+        //var params = $('#queryForm').serializeArray();
+        //return;
+        //params[0].offset = '0';
+        var params = {sectType: $("#queryForm #param_sectType").val(),
+                      name: $("#queryForm #param_name").val(),
+                      mrEmpNo: $("#queryForm #param_mrEmpNo").val(),
+                      offset: '0'
+                    };
+        //alert(JSON.stringify(params));
+        $("#mrSectTable").bootstrapTable('refresh', {silent: true, query: params});
+    }
+
+    function addMRSect() {
+        //$('#editMRSectModal .modal-body').load('mrSectEdit.html');
+        /*$('#mrSectForm')[0].reset();
+        $('#mrSectForm #mrSectId').val("");
+
+        $.ajax({
+            type: 'POST',
+            url: '../../../system/code/querySysCodes',
+            data: {codeSortName: 'SECT_TYPE'},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#sectType").empty();
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].name).val(items[i].value);
+                        $("#sectType").append(option);
+                    }
+                } else{
+                    alert("失败");
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '../../../measure/mrSect/queryMReaders',
+            data: {},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#mrEmpNo").empty();
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].userName).val(items[i].empNo);
+                        $("#mrEmpNo").append(option);
+                    }
+                } else{
+                    alert("失败");
+                }
+            }
+        });
+
+        $('#editMRSectModal').modal({keyboard:false,show:true});*/
+        BModal.open('抄表段', '780px', '368px', '../../../html/measure/mr/mrSectEdit.html');
+    }
+
+    function editMRSect(row) {
+        /*$('#mrSectForm')[0].reset();
+
+        $('#mrSectForm #mrSectId').val(row.mrSectId);
+        $('#mrSectForm #name').val(row.name);
+        $.ajax({
+            type: 'POST',
+            url: '../../../system/code/querySysCodes',
+            data: {codeSortName: 'SECT_TYPE'},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#sectType").empty();
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].name).val(items[i].value);
+                        $("#sectType").append(option);
+                    }
+                    $('#mrSectForm #sectType').val(row.sectType);
+                } else{
+                    alert("失败");
+                }
+            }
+        });
+
+        $.ajax({
+            type: 'POST',
+            url: '../../../measure/mrSect/queryMReaders',
+            data: {},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#mrEmpNo").empty();
+                    var items = data.data;
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].userName).val(items[i].empNo);
+                        $("#mrEmpNo").append(option);
+                    }
+                    $('#mrSectForm #mrEmpNo').val(row.mrEmpNo);
+                } else{
+                    alert("失败");
+                }
+            }
+        });*/
+        //$('#mrSectForm #mrSectId').val(row.mrSectId);
+        //$('#mrSectForm #name').val(row.name);
+        var index = BModal.open('抄表段', '780px', '368px', '../../../html/measure/mr/mrSectEdit.html?mrSectId=' + row.mrSectId);
+        //alert(index);
+        //var childFrame = layer.getChildFrame('body', index);
+        //alert(childFrame.html());
+        //alert(childFrame.find("#mrSectId").val());
+        //$('#editMRSectModal').modal({keyboard:false,show:true});
+    }
+
+//    function saveMRSect() {
+//        //alert($('#mrSectForm').serialize());
+//        //return;
+//        $.ajax({
+//            type: 'POST',
+//            url: '../../../measure/mrSect/saveMRSect',
+//            data: $('#mrSectForm').serialize(),
+//            dataType: 'json',
+//            success: function(data){
+//                //alert(JSON.stringify(data));
+//                if('0' == data.status){
+//                    $('#editMRSectModal').modal("hide");
+//                    $("#mrSectTable").bootstrapTable('refresh', {silent: true});
+//                } else{
+//                    alert("失败");
+//                }
+//            }
+//        });
+//    }
+
+    function deleteMRSect() {
+        var rows = $("#mrSectTable").bootstrapTable('getSelections');
+        //alert(JSON.stringify(rows));
+        if(rows.length == 0){
+            BModal.alert("请选择要删除的记录");
+            return;
+        }
+        var mrSectIds = '';
+        $.each(rows, function(index,item){
+            mrSectIds += mrSectIds.length == 0 ? '' : ',';
+            mrSectIds += item.mrSectId;
+        });
+        BModal.confirm("确认删除吗？", function (data) {
+            $.ajax({
+                type: 'POST',
+                url: '../../../measure/mrSect/deleteMRSects',
+                data: {mrSectIds: mrSectIds},
+                dataType: 'json',
+                success: function(data){
+                    if('0' == data.status) {
+                        BModal.msg("删除抄表段成功");
+                        $("#mrSectTable").bootstrapTable('refresh', {silent: true, query: {offset: '0'}});
+                    } else {
+                        BModal.msg("删除抄表段失败");
+                    }
+                }
+            });
+        });
+    }
+
+    function showMRSectCons() {
+        var rows = $("#mrSectTable").bootstrapTable('getSelections');
+        if(rows.length == 0){
+            BModal.alert("请选择一条抄表段");
+            return;
+        }
+        if(rows.length > 1){
+            BModal.alert("不能选择多个抄表段，请重新选择");
+            return;
+        }
+        //alert(rows[0].mrSectId);
+        $("#noCheckedConsTable").bootstrapTable({
+            height: 400,
+            method: 'get',
+            url: "../../../measure/mrSect/queryMRSectCons?excludeMrSectId=" + rows[0].mrSectId,
+            pagination: !0,
+            cache: false,
+            sidePagination:'server'//设置为服务器端分页
+        });
+        $("#checkedConsTable").bootstrapTable({
+            height: 400,
+            method: 'get',
+            url: "../../../measure/mrSect/queryMRSectCons?includeMrSectId=" + rows[0].mrSectId,
+            pagination: !0,
+            cache: false,
+            sidePagination:'server'//设置为服务器端分页
+        });
+//        $("#noCheckedConsTable").bootstrapTable('removeAll');
+//        $("#noCheckedConsTable").bootstrapTable('refresh', {silent: true, query: {excludeMrSectId: rows[0].mrSectId, offset: '0'}});
+//        $("#checkedConsTable").bootstrapTable('removeAll');
+//        $("#checkedConsTable").bootstrapTable('refresh', {silent: true, query: {includeMrSectId: rows[0].mrSectId, offset: '0'}});
+        $('#mrSectConsModal').modal({keyboard:false, show:true});
+    }
+
+    function saveMRSectCons() {
+        var mrSectId = $("#mrSectTable").bootstrapTable('getSelections')[0].mrSectId;
+        var consIds = "";
+        var rows = $("#noCheckedConsTable").bootstrapTable("getSelections");
+        if(rows.length > 0){
+            for (var i = 0; i < rows.length; i++) {
+                consIds += consIds.length==0?"":",";
+                consIds += rows[i].consId;
+            }
+        } else {
+            BModal.alert("请选择需要分配的用户");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "../../../measure/mrSect/saveMRSectCons",
+            data: {mrSectId: mrSectId,consIds: consIds},
+            dataType: "json",
+            success: function(data){
+                if('0' == data.status) {
+                    $("#noCheckedConsTable").bootstrapTable('refresh', {silent: true, query: {offset: '0'}});
+                    $("#checkedConsTable").bootstrapTable('refresh', {silent: true, query: {offset: '0'}});
+                } else {
+                    alert("保存失败");
+                }
+            }
+        });
+    }
+
+    function deleteMRSectCons() {
+        var mrSectId = $("#mrSectTable").bootstrapTable('getSelections')[0].mrSectId;
+        var sectConsRefIds = "";
+        var rows = $("#checkedConsTable").bootstrapTable("getSelections");
+        if(rows.length > 0){
+            for (var i = 0; i < rows.length; i++) {
+                sectConsRefIds += sectConsRefIds.length==0?"":",";
+                sectConsRefIds += rows[i].sectConsRefId;
+            }
+        } else {
+            BModal.alert("请选择需要删除的用户");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: "../../../measure/mrSect/deleteMRSectCons",
+            data: {mrSectId: mrSectId, sectConsRefIds: sectConsRefIds},
+            dataType: "json",
+            success: function(data){
+                if('0' == data.status) {
+                    $("#noCheckedConsTable").bootstrapTable('refresh', {silent: true, query: {offset: '0'}});
+                    $("#checkedConsTable").bootstrapTable('refresh', {silent: true, query: {offset: '0'}});
+                } else {
+                    alert("删除失败");
+                }
+            }
+        });
+    }
+
+</script>
+</html>

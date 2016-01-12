@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+</head>
+<!-- 抄表计划生成 -->
+<body class="gray-bg">
+<div class="wrapper wrapper-content p-xl">
+    <div class="ibox-content p-xl">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="m-b-md">
+                    <h2 id="planName">抄表计划0205</h2>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <p>
+                    <span><strong>　　　抄表员：</strong> <span id="mrEmpName"></span></span>
+                </p>
+                <p>
+                    <span><strong>　　抄表年月：</strong> <span id="mrYM"></span></span>
+                </p>
+                <p>
+                    <span><strong>抄表事件类型：</strong> <span id="eventTypeName"></span></span>
+                </p>
+                <p>
+                    <span><strong>抄表计划类型：</strong> <span id="planTypeName"></span></span>
+                </p>
+                <p>
+                    <span><strong>上次抄表日期：</strong> <span id="lastReadDate"></span>&nbsp;</span>
+                </p>
+                <p>
+                    <span><strong>计划抄表日期：</strong> <span id="planReadDate"></span></span>
+                </p>
+            </div>
+        </div>
+
+        <div class="table-responsive m-t">
+            <table class="table invoice-table">
+                <thead>
+                <tr>
+                    <th width="20%">用户名称</th>
+                    <th width="20%">用户地址</th>
+                    <th width="20%">表计资产编号</th>
+                    <th width="20%">表计类型</th>
+                    <th width="20%">表计自身倍率</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--<tr>
+                    <td>
+                        <div><strong>尚都比拉2013冬装新款女装 韩版修身呢子大衣 秋冬气质羊毛呢外套</strong>
+                        </div>
+                    </td>
+                    <td>1</td>
+                    <td>&yen;26.00</td>
+                    <td>&yen;1.20</td>
+                    <td>&yen;31,98</td>
+                </tr>-->
+                </tbody>
+            </table>
+        </div>
+        <!-- /table-responsive -->
+    </div>
+</div>
+<div class="wrapper wrapper-content p-xl">
+    <div class="ibox-content p-xl" style="padding:10px;">
+        <div class="jqGrid_wrapper">
+            <table id="mrDataTable">
+            </table>
+            <div id="mrDataPager"></div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.js"></script>
+
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+<script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+
+<script>
+
+    var params = getQueryString();
+    params.appNo = "100000";
+    $(function() {
+        $.ajax({
+            type: 'GET',
+            url: '../../../measure/mrInput/queryMRPlan',
+            data: {appNo: params.appNo},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    if(data.data.length > 0) {
+                        var planObj = data.data[0];
+                        //alert(JSON.stringify(planObj));
+                        $("#mrEmpName").text(planObj.mrSect.mrEmpName);
+                        $("#mrYM").text(planObj.mrYM);
+                        $("#eventTypeName").text(planObj.eventTypeName);
+                        $("#planTypeName").text(planObj.planTypeName);
+                        $("#lastReadDate").text(planObj.lastReadDate);
+                        $("#planReadDate").text(planObj.planReadDate);
+
+                        initConsMeterTable(planObj.mrSect.mrSectId, planObj.mrSect.sectType);
+                    }
+                } else{
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+    });
+
+    function initConsMeterTable(mrSectId, sectType) {
+        $.ajax({
+            type: 'GET',
+            url: '../../../measure/mrInput/queryMRConsMeters',
+            data: {mrSectId: mrSectId, sectType: sectType},
+            dataType: 'json',
+            success: function(data){
+                //alert(JSON.stringify(data));
+                if('0' == data.status){
+                    if(data.data.length > 0) {
+                        var tbodyHtml = '';
+                        var dataArr = data.data;
+                        for(var i = 0; i < dataArr.length; i++) {
+                            var dataObj = dataArr[i];
+                            tbodyHtml += '<tr>';
+                            tbodyHtml += '<td>' + dataObj.cons.consName + '</td>';
+                            tbodyHtml += '<td>' + dataObj.cons.consAddr + '</td>';
+                            tbodyHtml += '<td>' + dataObj.assetNo + '</td>';
+                            tbodyHtml += '<td>' + dataObj.meterTypeName + '</td>';
+                            tbodyHtml += '<td>' + dataObj.tFactor + '</td>';
+                            tbodyHtml += '</tr>';
+                        }
+                        $(".table tbody").empty();
+                        $(".table tbody").append(tbodyHtml);
+                        $(".table tbody").trigger('create');
+                        window.print();
+                    }
+                } else{
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+    }
+
+</script>
+</html>
