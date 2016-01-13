@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.suypower.cloudx.module.system.dao.RoleMapper">
+    <resultMap type="com.suypower.cloudx.module.system.entity.Role" id="roleMap">
+        <id property="roleID" column="ROLE_ID" javaType="java.lang.String"/>
+        <result property="orgNo" column="ORG_NO" javaType="java.lang.String"/>
+        <result property="roleName" column="ROLE_NAME" javaType="java.lang.String"/>
+        <result property="roleDesc" column="ROLE_DESC" javaType="java.lang.String"/>
+        <result property="superRole" column="SUPER_FLAG" javaType="java.lang.String"/>
+        <result property="order" column="DISP_SN" javaType="java.lang.Integer"/>
+        <result property="createTime" column="CREATE_TIME" javaType="java.util.Date"/>
+    </resultMap>
+    <select id="queryRoles" resultMap="roleMap">
+        SELECT * FROM P_ACCOUNT_ROLE_REF ref,P_ROLE r,P_ACCOUNT a
+        WHERE ref.ACCOUNT_ID=a.ACCOUNT_ID
+        AND ref.ROLE_ID=r.ROLE_ID
+        AND r.ORG_NO=#{orgNo}
+        AND a.ACCOUNT_ID=#{userID}
+    </select>
+    <select id="queryRoleByID" resultMap="roleMap">
+        SELECT * FROM P_ROLE R WHERE R.ROLE_ID=#{roleID}
+    </select>
+</mapper>

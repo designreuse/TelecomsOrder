@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <!--grid-->
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+    <style type="text/css">
+    </style>
+
+
+</head>
+
+<body class="gray-bg">
+<div id="applyDiv" class="ibox-content wrapper wrapper-content">
+    <div class="ibox  float-e-margins">
+        <form id="form" action="#" class="form-horizontal">
+            <div class="ibox float-e-margins" style="margin-bottom: 0px;">
+                <div class="ibox-title">
+                    <h5>
+                        用户信息
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            用户编号
+                        </label>
+                        <div class="col-sm-9">
+                            <div class="col-sm-11" style="float: left;margin-left:-17px;">
+                                <input id="cons_id"  disabled type="hidden" class="form-control">
+                                <input id="cons_no"  disabled type="text" class="form-control">
+                            </div>
+                            <i class="fa fa-user-plus" onclick="showConsChooseWin();" style="font-size: 25px;float: right;padding-right: 5px;"></i>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            用户名称
+                        </label>
+                        <div class="col-sm-9">
+                            <input id="cons_name" name="cons_name" type="text" disabled class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            租赁地址
+                        </label>
+                        <div class="col-sm-9">
+                            <input id="cons_addr" name="cons_addr" type="text" disabled class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            租赁面积
+                        </label>
+                        <div class="col-sm-9">
+                            <input id="house_area" name="house_area" type="text" disabled class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        续租及结算方式
+                    </h5>
+                    <div class="ibox-tools" style="position:relative;top:-5px;">
+                        <button class="btn btn-info " onclick="editHandler();" type="button"><i
+                                class="fa fa-pencil-square-o"></i> 编辑
+                        </button>
+                        <button class="btn btn-success " type="button" onclick="delHandler();"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;
+                            刪除<span class="bold"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="jqGrid_wrapper">
+                        <table id="reletHourseTable">
+                        </table>
+                        <div id="reletHoursePager" style="display: none"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        续租信息
+                    </h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            业务办理人
+                            <font style="color:red;">*</font>
+                        </label>
+
+                        <div class="col-sm-9">
+                            <input id="consNameId" disabled="disabled" type="hidden"
+                                   class="form-control"/>
+                            <input id="biz_transactor" name="biz_transactor" type="text" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            联系电话
+                            <font style="color:red;">*</font>
+                        </label>
+
+                        <div class="col-sm-9">
+                            <input id="contact_tel" name="contact_tel"  maxlength="13" type="text" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            通讯地址
+                        </label>
+
+                        <div class="col-sm-9">
+                            <input id="contact_add" name="contact_add" type="text" class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="chooseConsDiv" style="display: none;">
+    <!--<div id="chooseConsTableToolbar" style="margin-bottom: 5px;">
+        <label style="float: left;padding-left: 50px;padding-top: 10px;" class="control-label"> 用户名称：</label>
+        <input id="consTable_ConsName" type="text" style="float: left;margin-left: 5px;margin-top: 6px;">
+        <button class="btn btn-sm btn-primary" style="margin-top:5px;margin-left: 30px;height: 25px;" type="button" onclick="queryForConsTable();">查询</button>
+        <button class="btn btn-sm btn-primary" style="margin-top:5px;margin-left: 10px;height: 25px;" type="button" onclick="chooseOneCons();">选择</button>
+    </div>
+    <div class="jqGrid_wrapper">
+        <table id="chooseConsTable">
+        </table>
+        <div id="chooseConsPager"></div>
+    </div>-->
+    <div class="ibox">
+        <div class="ibox-content">
+            <div class="input-group">
+                <input type="text" id="consTable_ConsName" placeholder="查找用户" class="input form-control">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn btn-primary" onclick="queryConsByName(1);"> <i class="fa fa-search"></i> 搜索</button>
+                    </span>
+            </div>
+            <div class="clients-list">
+                <div class="table-responsive">
+                    <table id="consTable" class="table table-striped table-hover">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="pagination"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="reletBulidingDiv" class="wrapper wrapper-content" style="display: none;">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"  style="border-bottom:1px solid #f3f3f4;">
+            <h5>
+                续租信息
+            </h5>
+            <div class="ibox-tools">
+                <button class="btn btn-primary btn-xs" style="width:60px;height:25px;" onclick="backToApplyDiv();">返回</button>
+                <button class="btn btn-primary btn-xs" style="width:60px;height:25px;" onclick="checkReletBuildingForm();">保存</button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="background-color: #fff;">
+            <form class="form-horizontal m-t" id="reletForm">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        房屋地址
+                    </label>
+                    <div class="col-sm-9">
+                        <input id="appRentId" style="display: none;" disabled type="text" class="form-control">
+                        <input id="houseAddr" disabled type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="hr-line-dashed">
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        房屋面积
+                    </label>
+                    <div class="col-sm-9">
+                        <input id="totalArea" disabled type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="hr-line-dashed">
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        房屋用途
+                    </label>
+                    <div class="col-sm-9">
+                        <input id="houseUses" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="hr-line-dashed">
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        租赁日期：
+                        <font style="color:red;">*</font>
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="col-sm-6" style="float: left;">
+                            <input class="laydate-icon form-control layer-date" disabled name="startDate" id="start" style="height:34px;margin-left:-15px;"
+                                   placeholder="YYYY-MM-DD" />
+                        </div>
+                        <label style="color:#BEBEBE;padding-top: 8px;margin-left: -5px;">
+                            —
+                        </label>
+                        <div class="col-sm-6" style="float: right;margin-right: -14px;">
+                            <input class="laydate-icon form-control layer-date" name="endDate" id="end" style="height:34px;"
+                                   placeholder="YYYY-MM-DD" />
+                        </div>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        租金计算类型
+                        <font style="color:red;">*</font>
+                    </label>
+                    <div class="col-sm-9">
+                        <select id="baCalcMode" class="form-control">
+                        </select>
+                    </div>
+                </div>
+                <div class="hr-line-dashed">
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        单价
+                        <font style="color:red;">*</font>
+                    </label>
+                    <div class="col-sm-9">
+                        <input id="unitPrice" name = "unitPrice" type="number" class="form-control">
+                            <span class="help-block m-b-none">
+                                <i class="fa fa-info-circle">
+                                </i>
+                                    单位：平方/天*元
+                            </span>
+                    </div>
+                </div>
+                <div class="hr-line-dashed">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/rental/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/bootstrap.min.js"></script>
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<!-- Custom and plugin javascript -->
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+<!-- Jquery Validate -->
+<script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../../js/common/additional-methods.js"></script>
+<script src="../../../js/rental/laydate-master/laydate.js"></script>
+<script src="../../../js/common/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+<script src="../../../js/rental/layer/layer.js"></script>
+
+<!--grid-->
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+
+<script src="../../../js/common/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+
+
+<script>
+
+    var appStr = "";
+
+    function init(params) {
+        appStr = params.bizKey;
+
+        $.jgrid.defaults.styleUI = "Bootstrap";
+        $("#reletHourseTable").jqGrid({
+            url: "../../../relet/apply/queryReletHourseAndPayInfo",
+            postData:{
+                appNo:appStr
+            },
+            datatype : "json",
+            height: '150px',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '序号', '租赁地址', '租赁面积(㎡)', '房屋用途','租赁开始日期', '租赁结束日期','租金计算类型','租金计算类型(code)','单价(平方/天*元)' ],
+            colModel : [
+                {name : 'appRentId',index : 'appRentId',width : 55, hidden: true},
+                {name : 'houseAddr',  index : 'houseAddr',width : 100, align : "left"},
+                {name : 'totalArea',index : 'totalArea',width : 80, align : "center"},
+                {name : 'houseUses',index : 'houseUses',width : 55, hidden: true},
+                {name : 'bgnDate',index : 'bgnDate',  width : 80,  align : "center"},
+                {name : 'endDate',index : 'endDate',width : 80,align : "center"},
+                {name : 'baCalcModeCodeName',index : 'baCalcModeCodeName',width : 80,align : "center", hidden:true},
+                {name : 'baCalcMode',index : 'baCalcMode',width : 55, hidden: true},
+                {name : 'unitPrice',index : 'unitPrice',width : 120, align : "center"}
+
+            ],
+            rowNum : 10000,
+            rowList : [ 10, 20, 30 ],
+            pager : '#reletHoursePager',
+            viewrecords: true,
+            multiselect : true,
+            caption : "",
+            hidegrid: false,
+            loadComplete:function(e)
+            {
+                var rowsArr = e.rows;
+                //grid 列表加载完数据后将 租赁地址和租赁面积重新拼接
+                // （目的是 如果进行了删除操作，可以不用后台访问，直接获取最新的地址和面积）
+                var consAddr = "";
+                var houseArea = 0;
+                for(var i=0;i<rowsArr.length;i++)
+                {
+                    var item = rowsArr[i];
+                    if("" == consAddr)
+                    {
+                        consAddr = item.houseAddr;
+                    }else
+                    {
+                        consAddr+= ","+item.houseAddr;
+                    }
+                    houseArea+= item.totalArea;
+                }
+                $("#cons_addr").val(consAddr);
+                if(houseArea != 0)
+                {
+                    $("#house_area").val(houseArea);
+                }
+            }
+        });
+        $("#reletHourseTable").jqGrid("navGrid", "#reletHoursePager", {
+                    add: false,
+                    edit: false,
+                    del: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+
+        queryAllComboxData();
+
+        return function (){
+            judgeIsCanSend();
+        };
+    }
+
+    $.validator.setDefaults({
+        highlight: function (e) {
+            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
+        },
+        success: function (e) {
+            e.closest(".form-group").removeClass("has-error").addClass("has-success")
+        },
+        errorElement: "span",
+        errorPlacement: function (e, r) {
+            e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
+        },
+        errorClass: "help-block m-b-none",
+        validClass: "help-block m-b-none"
+    }, {
+        debug: true
+    }),$(function() {
+
+        var e = "<i class='fa fa-times-circle'></i> ";
+        $("#reletForm").validate({
+            rules: {
+                endDate: "required",
+                unitPrice:{
+                    required:true,
+                    digits : true,
+                    min : 0
+                }
+            },
+            messages: {
+                endDate: e + "请输入截止日期",
+                unitPrice:{
+                    required: e + "请输入单价",
+                    digits:e + "请输入整数"
+                }
+            }
+        });
+
+        $("#form").validate({
+            rules: {
+                contact_tel:{
+                    required:true,
+                    isMobileOrTel:true
+                },
+                biz_transactor:{
+                    required:true
+                }
+            },
+            messages: {
+                contact_tel:{
+                    required:e+"请输入联系电话",
+                    isMobileOrTel:e+"请输入正确格式的联系电话"
+                },
+                biz_transactor:{
+                    required:e+"请输入业务办理人"
+                }
+            }
+        });
+
+        $(window).bind("resize",
+                function() {
+                    var width = $(".jqGrid_wrapper").width();
+                    $("#reletHourseTable").setGridWidth(width);
+                });
+    });
+
+    var start = {
+        elem: '#start',
+        format: 'YYYY/MM/DD',
+        min: '1900-01-01 00:00:00', //设定最小日期为当前日期
+        max: '2099-06-16 23:59:59', //最大日期
+        istime: false,
+        istoday: false,
+        choose: function (datas) {
+            end.min = datas; //开始日选好后，重置结束日的最小日期
+            end.start = datas;//将结束日的初始值设定为开始日
+        }
+    };
+    var end = {
+        elem: '#end',
+        format: 'YYYY/MM/DD',
+        min: '1900-01-01 00:00:00',
+        max: '2099-06-16 23:59:59',
+        istime: false,
+        istoday: false,
+        choose: function (datas) {
+            start.max = datas; //结束日选好后，重置开始日的最大日期
+            $("#reletForm").validate().element(document.getElementsByName("endDate"));
+        }
+    };
+    laydate(start);
+    laydate(end);
+
+    function judgeIsCanSend()
+    {
+        var flag = $("#form").validate().element(document.getElementsByName("biz_transactor"))&&
+         $("#form").validate().element(document.getElementsByName("contact_tel"));
+        if(flag)
+        {
+            $.ajax( {
+                url:'/relet/apply/judgeIsCanSend',
+                data:{
+                    appNo:appStr
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data) {
+                    var num = data.data;
+                    if(num>0)
+                    {
+                        BModal.alert("有房屋未续租，如需续租请完善信息，如不续租请删除。");
+                    }
+                    else
+                    {
+                        sendFlow();
+                    }
+                },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+        }
+
+
+    }
+
+
+    function sendFlow()
+    {
+        $.ajax({
+            url:'/relet/apply/updateAppConsInfo',
+            data:{
+                appNo:appStr,
+                consAddr:$("#cons_addr").val(),
+                houseArea:$("#house_area").val(),
+                bizTransactor:$("#biz_transactor").val(),
+                contactTel:$("#contact_tel").val(),
+                contactAdd:$("#contact_add").val()
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                alert("走起 ！");
+
+                parent.$.workflow.completeTask();
+            },
+            error : function() {
+                alert("异常1！");
+            }
+        });
+    }
+
+    function queryAllComboxData()
+    {
+        //baCalcMode 基本计算方式(01按面积、02按营业额)
+        $.ajax({
+            url:'/rental/apply/queryAllComboxData',
+            data:{
+                types:'BA_CALC_MODE'
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var baCalcModeArr = data.data.BA_CALC_MODE;
+                setComboxData($("#baCalcMode"),baCalcModeArr);
+                initPageInfo();
+            },
+            error : function() {
+                alert("异常1！");
+            }
+        });
+    }
+
+    function setComboxData(comboxObj,dataArr)
+    {
+        for(var i=0;i<dataArr.length;i++)
+        {
+            var data = dataArr[i];
+            var codeName = data.CODE_NAME;
+            var codeValue = data.CODE_VALUE;
+            comboxObj.append('<option value="'+codeValue+'">'+codeName+'</option>');
+        }
+    }
+
+    function initPageInfo()
+    {
+        //初始化页面信息
+        $.ajax( {
+            url:'/relet/apply/initPageInfo',
+            data:{
+                appNo : appStr
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var consArr = data.data;
+                if(null != consArr && consArr.length>0)
+                {
+                    $("#cons_id").val(consArr[0].consId);
+                    $("#cons_no").val(consArr[0].consNo);
+                    $("#cons_name").val(consArr[0].consName);
+                    $("#biz_transactor").val(consArr[0].bizTransactor);
+                    $("#contact_tel").val(consArr[0].contactTel);
+                    $("#contact_add").val(consArr[0].contactAdd);
+                    queryReletHourseAndPayInfo();
+                }
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+
+    var chooseConsIndex = null;
+    function showConsChooseWin()
+    {
+        chooseConsIndex = layer.open({
+            type: 1,
+            title: "用户选择",
+            // skin: 'layui-layer-rim', //加上边框
+            area: ['627px','360px'], //宽高
+            content: $('#chooseConsDiv')
+        });
+        $("#consTable_ConsName").val("");
+        queryConsByName(1);
+    }
+
+/*    function queryForConsTable()
+    {
+        //更新grid列表信息
+        var params = {
+            consName: $("#consTable_ConsName").val()
+        };
+        $("#chooseConsTable").jqGrid('setGridParam',{
+            datatype: 'json',
+            postData: params,
+            page: 1
+        }).trigger("reloadGrid");
+    }*/
+
+    function moveDataAndBackConsInfo(consId)
+    {
+        $.ajax( {
+            url:'/relet/apply/moveDataAndBackConsInfoForReletApply',
+            data:{
+                appNo:appStr,
+                consId : consId
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data)
+            {
+                var consArr = data.data;
+                if(null != consArr && consArr.length>0)
+                {
+                    $("#cons_no").val(consArr[0].consNo);
+                    $("#cons_name").val(consArr[0].consName);
+                    $("#biz_transactor").val(consArr[0].bizTransactor);
+                    $("#contact_tel").val(consArr[0].contactTel);
+                    $("#contact_add").val(consArr[0].contactAdd);
+                    queryReletHourseAndPayInfo();
+                    if(chooseConsIndex != null)
+                    {
+                        layer.close(chooseConsIndex);
+                    }
+                }
+
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    function editHandler()
+    {
+        var selIds = $("#reletHourseTable").jqGrid('getGridParam', 'selarrrow');
+        if(selIds.length == 0){
+            BModal.alert("请选择一条待编辑项。");
+            return;
+        }
+        if(selIds.length > 1){
+            BModal.alert("不能选择多个，请重新选择");
+            return;
+        }
+        var rowData = $("#reletHourseTable").jqGrid('getRowData', selIds[0]);
+        showEditDiv(rowData);
+    }
+
+    function showEditDiv(data)
+    {
+        $("#appRentId").val(data.appRentId);
+        $("#houseAddr").val(data.houseAddr);
+        $("#totalArea").val(data.totalArea);
+        $("#houseUses").val(data.houseUses);
+        $("#start").val(data.bgnDate);
+        end.min = data.bgnDate;
+        $("#end").val(data.endDate);
+        $("#baCalcMode").val(data.baCalcMode);
+        $("#unitPrice").val(data.unitPrice);
+
+        $("#reletBulidingDiv").show();
+        $("#applyDiv").hide();
+    }
+
+    function backToApplyDiv()
+    {
+        $("#reletBulidingDiv").hide();
+        $("#applyDiv").show();
+    }
+
+    function checkReletBuildingForm()
+    {
+        var flag = $("#reletForm").validate().element(document.getElementsByName("endDate"))&&
+                $("#reletForm").validate().element(document.getElementsByName("unitPrice"));
+        if(flag)
+        {
+            //执行编辑操作
+            updateReletInfo();
+        }
+
+    }
+
+    function updateReletInfo()
+    {
+        $.ajax( {
+            url:'/relet/apply/updateReletInfo',
+            data:{
+                appRentId : $("#appRentId").val(),
+                houseUses : $("#houseUses").val(),
+                endDate : $("#end").val(),
+                baCalcMode : $("#baCalcMode").val(),
+                unitPrice : $("#unitPrice").val()
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                queryReletHourseAndPayInfo();
+                $("#reletBulidingDiv").hide();
+                $("#applyDiv").show();
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    function delHandler()
+    {
+        var selIds = $("#reletHourseTable").jqGrid('getGridParam', 'selarrrow');
+        if(selIds.length == 0){
+            BModal.alert("请至少选择一条待删除项。");
+            return;
+        }
+        var appRentIds ="";
+        for(var i=0;i<selIds.length;i++)
+        {
+            var rowData = $("#reletHourseTable").jqGrid('getRowData', selIds[i]);
+            if(appRentIds == "")
+            {
+                appRentIds += rowData.appRentId;
+            }else
+            {
+                appRentIds += ","+rowData.appRentId;
+            }
+        }
+
+        BModal.confirm("确定删除选择的租房及结算方式", function (data) {
+            $.ajax( {
+                url:'/rental/apply/delRentHourse',
+                data:{
+                    appRentIds:appRentIds,
+                    type:"reletApply"
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data) {
+                    //更新grid列表信息
+                    var params = {
+                        appNo: appStr
+                    };
+                    $("#reletHourseTable").jqGrid('setGridParam',{
+                        datatype: 'json',
+                        postData: params,
+                        page: 1
+                    }).trigger("reloadGrid");
+                    //删除完 重置租赁地址和租赁面积字段内容
+                },
+                error : function() {
+                }
+            });
+
+        },function(){});
+    }
+
+
+    function queryReletHourseAndPayInfo()
+    {
+        //更新grid列表信息
+        var params = {
+            appNo: appStr
+        };
+        $("#reletHourseTable").jqGrid('setGridParam',{
+            datatype: 'json',
+            postData: params,
+            page: 1
+        }).trigger("reloadGrid");
+    }
+
+    function queryConsByName(page)
+    {
+        $.post('../../../relet/apply/queryConsByNameForPage',
+                {
+                    page: page,
+                    rows: 10,
+                    consName: $("#consTable_ConsName").val()
+                }, function (res) {
+                    if(res.data.totalPage > 1){
+                        $('#pagination').bootstrapPaginator({
+                            currentPage: res.data.pageNo,//当前页
+                            totalPages: res.data.totalPage,//总页数
+                            numberofPages: res.data.pageSize,//显示的页数
+                            alignment:'right',
+                            showFirst:false,
+                            showLast:false,
+                            itemTexts: function (type, page, current) { //修改显示文字
+                                switch (type) {
+                                    case 'first':
+                                        return '首页';
+                                    case 'prev':
+                                        return '上一页';
+                                    case 'next':
+                                        return '下一页';
+                                    case 'last':
+                                        return '末页';
+                                    case 'page':
+                                        return page;
+                                }
+                            }, onPageClicked: function (event, originalEvent, type, page) { //异步换页
+                                queryConsByName(page);
+                            }
+                        });
+                    }
+                    var trs = '';
+                    trs += '<thead>'+
+                    '<tr>'+
+                    '<th>用户编号</th>'+
+                    '<th>用户名称</th>'+
+                    '<th>用户地址</th>'+
+                    '<th>操作</th>'+
+                    '</tr>'+
+                    '</thead>';
+                    $.each(res.data.results, function (index, item) {
+                        trs +=
+                                '<tr>' +
+                                '<td>' + item.CONS_NO + '</td>' +
+                                '<td>' + item.CONS_NAME + '</td>' +
+                                '<td>' + item.CONS_ADDR + '</td>' +
+                                '<td class="client-status" onclick="moveDataAndBackConsInfo(\''+item.CONS_ID+'\')"><span class="label label-primary">选择</span></td>' +
+                                '</tr>';
+
+                    });
+                    $('#consTable').empty();
+                    $('#consTable').append(trs);
+                }, 'json');
+    }
+
+/*
+    function chooseOneCons()
+    {
+        var selIds = $("#chooseConsTable").jqGrid('getGridParam', 'selarrrow');
+        if(selIds.length == 0){
+            BModal.alert("请选择一位用户。");
+            return;
+        }
+        if(selIds.length > 1){
+            BModal.alert("不能选择多个，请重新选择");
+            return;
+        }
+        if(chooseConsIndex != null)
+        {
+            layer.close(chooseConsIndex);
+        }
+        var rowData = $("#chooseConsTable").jqGrid('getRowData', selIds[0]);
+        //查询该用户是否有正在办理的其他流程。
+        queryIsHandlerOthers(rowData);
+    }*/
+
+//    function queryIsHandlerOthers(consId)
+//    {
+//        $.ajax( {
+//            url:'/relet/apply/queryIsHandlerOthers',
+//            data:{
+//                appNo:appStr,
+//                consId : consId
+//            },
+//            type:'post',
+//            dataType:'json',
+//            success:function(data) {
+//                if(data.data>0)
+//                {
+//                    BModal.alert("该用户正在执行其他流程，请确认。");
+//                }else
+//                {
+//                    if(chooseConsIndex != null)
+//                    {
+//                        layer.close(chooseConsIndex);
+//                    }
+//                    //将正式表数据迁移到在途表  查询选中用户信息并返回
+//                    moveDataAndBackConsInfo(consId);
+//                }
+//            },
+//            error : function() {
+//                alert("异常！");
+//            }
+//        });
+//    }
+
+
+</script>
+</body>
+
+</html>

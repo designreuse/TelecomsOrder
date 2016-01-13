@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+	<link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+
+    <link href="../../../css/common/plugins/datapicker/datepicker3.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/webuploader/webuploader.css" rel="stylesheet">
+    <link href="../../../css/rental/tran/uploader.css" rel="stylesheet">
+    <link href="../../../css/common/filebox.css" rel="stylesheet">
+    <link href="../../../css/rental/tran/tran.css" rel="stylesheet">
+
+    <!-- Mainly scripts -->
+    <script src="../../../js/common/jquery-2.1.1.js"></script>
+    <script src="../../../js/common/bootstrap.min.js"></script>
+    <script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../../js/common/plugins/pace/pace.min.js"></script>
+    <script src="../../../js/common/plugins/blueimp/jquery.blueimp-gallery.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <script src="../../../js/common/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../../../js/common/plugins/webuploader/webuploader.js"></script>
+    <script src="../../../js/common/inspinia.js"></script>
+    <script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+    <script src="../../../js/common/plugins/layer/layer.js"></script>
+    <script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+    <script src="../../../js/common/plugins/datapicker/bootstrap-datepicker.js"></script>
+    <script src="../../../js/asset/building/util.js"></script>
+    <script src="../../../js/rental/tran/tran.js"></script>
+    <script src="../../../js/common/filebox.js"></script>
+    <script src="../../../js/rental/tran/uploader.js"></script>
+</head>
+<body class="gray-bg">
+    <div class="wrapper-content animated fadeInRight full-width full-height">
+        <div class="col-sm-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>用户租赁信息</h5>
+                </div>
+                <div>
+                    <div id="roomImgBox" class="ibox-content no-padding border-left-right">
+
+                    </div>
+                    <div class="ibox-content profile-content">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h4><strong><span id="consNameSp"></span></strong></h4>
+                                <p><i class="fa fa-map-marker"></i> 租赁地址：<span id="houseAddrSp"></span></p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h5>
+                                    联系人信息
+                                </h5>
+                                <dl class="dl-horizontal no-margins">
+                                    <dt><i class="fa fa-user"></i> 业务办理人：</dt>
+                                    <dd><span id="bizTransactorSp"></span></dd>
+                                    <dt><i class="fa fa-phone"></i> 联系电话：</dt>
+                                    <dd><span id="contactTelSp"></span></dd>
+                                    <dt><i class="fa fa-map-marker"></i> 联系地址：</dt>
+                                    <dd><span id="contactAddSp"></span></dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>房屋交接信息</h5>
+                </div>
+                <div id="tranContentBox" class="ibox-content">
+                    <form id="tranForm" class="form-horizontal m-t" novalidate="novalidate">
+                        <div class="form-group">
+                            <label for="partyAPersonIn" class="col-sm-3 control-label">出租方交验人<span style="color:red">*</span></label>
+                            <div class="col-sm-3">
+                                <input type="hidden" id="tranIdIn" value="">
+                                <input type="hidden" id="contractIdIn" value="">
+                                <input type="hidden" id="tranTypeIn" value="">
+                                <input type="hidden" id="attachIdsIn" name="attachIds" value="">
+                                <input id="partyAPersonIn" name="partyAPerson" type="text" class="form-control">
+                            </div>
+                            <label for="partyBPersonIn" class="col-sm-3 control-label">承租方交验人<span style="color:red">*</span></label>
+                            <div class="col-sm-3">
+                                <input id="partyBPersonIn" name="partyBPerson" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label for="tranDateIn" class="col-sm-3 control-label">交接日期<span style="color:red">*</span></label>
+                            <div class="col-sm-9">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input id="tranDateIn" name="tranDate" class="white-bg form-control" style="background-color: #FFFFFF" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="panel blank-panel">
+                            <div class="panel-heading" style="padding: 0px 0px;">
+                                <div class="panel-options">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a href="#tab-1" data-toggle="tab" aria-expanded="true">交接项目</a></li>
+                                        <li class=""><a href="#tab-2" data-toggle="tab" aria-expanded="false">表计装置</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="panel-body" style="padding: 15px 0 15px 0;">
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="tab-1">
+                                        <a class="btn btn-primary" href="javascript:void(0)" onclick="addTranDetail()">
+                                            <i class="fa fa-plus"></i> 新增交接项
+                                        </a>
+                                        <table id="tranDetailTable"></table>
+                                    </div>
+                                    <div class="tab-pane" id="tab-2">
+                                        <table id="meterTable"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <a class="btn btn-primary btn-block" href="javascript:void(0)" onclick="makeIR()"><i class="fa fa-file-text"></i> 交付并生成房屋交接单</a>
+                        <div id="img-group">
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">交接单扫描件</label>
+                                <div class="col-sm-10">
+                                    <div id="filebox">
+                                        <ul class="filelist lightBoxGallery">
+
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div id="uploader" class="wu-example">
+                            <div class="queueList">
+                                <div id="dndArea" class="placeholder">
+                                    <div id="filePicker"></div>
+                                    <p>或将扫描件拖到这里，最多可选5张</p>
+                                </div>
+                            </div>
+                            <div class="statusBar" style="display:none;">
+                                <div class="progress">
+                                    <span class="text">0%</span>
+                                    <span class="percentage"></span>
+                                </div><div class="info"></div>
+                                <div class="btns">
+                                    <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+                                </div>
+                            </div>
+                            <div id="mask_uploader"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

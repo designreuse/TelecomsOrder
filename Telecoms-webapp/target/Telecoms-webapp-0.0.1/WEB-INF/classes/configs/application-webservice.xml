@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://cxf.apache.org/core"
+       xsi:schemaLocation="http://cxf.apache.org/core
+	http://cxf.apache.org/schemas/core.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.1.xsd
+    http://cxf.apache.org/jaxws
+    http://cxf.apache.org/schemas/jaxws.xsd
+    http://cxf.apache.org/jaxrs
+    http://cxf.apache.org/schemas/jaxrs.xsd">
+    <!-- Import Apache CXF Bean Definition -->
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+    <context:component-scan base-package="com.suypower.cloudx.ws" />
+    <!-- 全局Bus(输入拦截器) -->
+    <cxf:bus>
+        <cxf:inInterceptors>
+            <bean class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+            <bean class="org.apache.cxf.binding.soap.saaj.SAAJInInterceptor"/>
+            <ref bean="wss4jInConfiguration"/>
+        </cxf:inInterceptors>
+        <cxf:outInterceptors>
+            <!-- 输出日志 -->
+            <bean class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+            <bean class="org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor"/>
+            <ref bean="wss4jOutConfiguration"/>
+        </cxf:outInterceptors>
+    </cxf:bus>
+    <bean id="wss4jInConfiguration" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+        <property name="properties">
+            <map>
+                <entry key="action" value="UsernameToken"/>
+                <entry key="passwordType" value="PasswordText" />
+                <entry key="user" value="CloudxWsUser" />
+                <entry key="passwordCallbackRef">
+                    <ref bean="passwordCallback" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    <bean id="wss4jOutConfiguration" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+        <property name="properties">
+            <map>
+                <entry key="action" value="UsernameToken"/>
+                <entry key="passwordType" value="PasswordText" />
+                <entry key="user" value="CloudxWsUser" />
+                <entry key="passwordCallbackRef">
+                    <ref bean="passwordCallback" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    <bean id="webServicesAgent" class="com.suypower.cloudx.ws.support.JsrHandlerMapping">
+        <property name="urlPrefix">
+            <value>/</value>
+        </property>
+    </bean>
+    <bean id="passwordCallback" class="com.suypower.cloudx.ws.security.PasswordHandler"/>
+</beans>

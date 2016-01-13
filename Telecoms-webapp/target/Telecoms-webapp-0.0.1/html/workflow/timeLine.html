@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/common/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../css/common/animate.css" rel="stylesheet">
+    <link href="../../css/common/style.css" rel="stylesheet">
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content">
+    <div class="row animated fadeInLeft">
+        <div class="col-sm-12">
+            <div id="vertical-timeline" class="vertical-container dark-timeline center-orientation">
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Mainly scripts -->
+<script src="../../js/common/jquery-2.1.1.js"></script>
+<script src="../../js/common/bootstrap.min.js"></script>
+<script src="../../js/common/plugins/layer/layer.js"></script>
+<script src="../../js/common/common.js"></script>
+<script>
+    var nodePointCls = ['navy-bg','blue-bg','lazur-bg','yellow-bg'];
+    $(function(){
+        $.post('../../workflow/getHistoryTask', {processInstanceId:getQueryString().appid},function(res){
+            if(res.status == '0'){
+                var nodeDom = '';
+                $.each(res.data.dataList,function(index,item){
+                    nodeDom += '<div class="vertical-timeline-block">                                                               '+
+                            '	<div class="vertical-timeline-icon '+nodePointCls[index%4]+'">                                                        '+
+                            '		<i>'+(index+1)+'</i>                                                                            '+
+                            '	</div>                                                                                              '+
+                            '	<div class="vertical-timeline-content">                                                             '+
+                            '		<h2>'+item.nodeName+'</h2>                                                                      '+
+                            '		<p>'+(item.taskComment?item.taskComment:'')+'</p>                                                                     '+
+                            '		<span class="vertical-date"><small>                                                                     ';
+                    if(item.assgneeUserName){
+                        nodeDom += '<i class="fa fa-user"></i> '+item.assgneeUserName;
+                    }
+                    nodeDom +='<i class="fa fa-clock-o"></i> '+item.endTime+'</small> '+
+                            '		</span>                                                                                         '+
+                            '	</div>                                                                                              '+
+                            '</div>                                                                                                 ';
+                });
+                $('#vertical-timeline').append(nodeDom);
+            }else{
+                BModal.alert(res.msg);
+            }
+        },'json');
+    });
+</script>
+</body>
+</html>

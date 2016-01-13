@@ -1,0 +1,2731 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/steps/jquery.steps.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <!--grid-->
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+    <!-- 上传图片 -->
+    <link href="../../../css/common/plugins/webuploader/webuploader.css" rel="stylesheet">
+    <link href="../../../css/asset/building/uploader.css" rel="stylesheet">
+    <link href="../../../css/common/filebox.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+
+    <!--房屋选择-->
+    <link href="../../../css/rental/selectator/fm.selectator.jquery.css" rel="stylesheet">
+
+    <style type="text/css">
+        .wizard-big.wizard > .content {
+            min-height: 1120px;
+        }
+
+        .wizard > .content > .body label {
+            padding-top: 7px;
+            margin-bottom: 0px;
+            text-align: right;
+        }
+
+        .wizard > .content {
+            background: #FFF;
+            border: 1px solid #f3f3f4;
+        }
+
+        .wizard > .content > .body {
+            width: 100%;
+        }
+
+        textarea.form-control {
+            height: 75px;
+        }
+
+        .carousel-control.right {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 1) 0, rgba(0, 0, 0, .0001) 100%);
+            width: 0px;
+        }
+
+        .carousel-control.left {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 1) 0, rgba(0, 0, 0, .0001) 100%);
+            width: 0px;
+        }
+
+        .carousel-control .glyphicon-chevron-left, .carousel-control .icon-prev {
+            background-color: rgb(136, 133, 133);
+        }
+
+        .carousel-control .glyphicon-chevron-right, .carousel-control .icon-next {
+            background-color: rgb(136, 133, 133);
+        }
+
+        .carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right, .carousel-control .icon-next, .carousel-control .icon-prev {
+            margin-top: -35px;
+        }
+
+        .wizard > .steps > ul > li {
+            width: 33.3%;
+        }
+
+        .carousel-indicators .active
+        {
+            background-color:#1AB394;
+            border:1px solid #1AB394;
+        }
+
+        .carousel-indicators li
+        {
+            border:1px solid #1AB394;
+        }
+
+        .wizard > .content > .body label.error
+        {
+            position:absolute;
+            bottom:-22px;
+        }
+
+        .selectator_option_title
+        {
+            margin-left: 10px;
+        }
+
+        #selectator_buildingSelcetId,#selectator_floorSelcetId,#selectator_roomSelcetId
+        {
+            width: 100%;
+        }
+
+        .checkbox, .radio
+        {
+            margin-top:-5px;
+        }
+
+        .titleTruncaCss
+        {
+            width:70px;
+            height:30px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+
+        .contactCommonTruncaCss
+        {
+            width:150px;
+            height:20px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+
+        .acctCommonTruncaCss
+        {
+            width:250px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+    </style>
+
+</head>
+
+<body class="gray-bg">
+<div id="applyDiv" class="ibox-content wrapper wrapper-content">
+    <div class="ibox  float-e-margins">
+        <div class="ibox-content">
+            <form id="form" action="#" class="form-horizontal m-t wizard-big">
+                <h1>客户自然信息</h1>
+                <fieldset>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            客户编号
+                        </label>
+                        <div class="col-sm-9">
+                            <div class="col-sm-11" style="float: left;margin-left:-17px;">
+                                <input type="hidden" id="attachIdsIn" name="attachIds" value="">
+                                <input type="text" style="display: none;" id="custId">
+                                <input type="text" style="display: none;" id="generateCustNoId">
+                                <input id="custNoId"  disabled type="text" class="form-control">
+                            </div>
+                            <i title="重置客户" class="fa fa-user-times" onclick="resetNaturalInfo();"   style="font-size: 25px;float: right;"></i>
+                            <i title="选择客户" class="fa fa-user-plus" onclick="showNaturalChooseWin();" style="font-size: 25px;float: right;padding-right: 5px;"></i>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            客户名称
+                            <font style="color:red;">
+                                *
+                            </font>
+                        </label>
+                        <div class="col-sm-9">
+                            <input id="custNameId" name="custName" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            企业规模
+                            <font style="color:red;">
+                                *
+                            </font>
+                        </label>
+                        <div class="col-sm-9">
+                            <select id="entepriseScaleId" class="form-control">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            企业性质
+                            <font style="color:red;">
+                                *
+                            </font>
+                        </label>
+                        <div class="col-sm-9">
+                            <select id="economyTypeCodeId" class="form-control">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            行业
+                            <font style="color:red;">
+                                *
+                            </font>
+                        </label>
+                        <div class="col-sm-9">
+                            <select id="custProId" class="form-control">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            法人代表
+                        </label>
+                        <div class="col-sm-9">
+                            <input id="legalPersonId" type="text" class="form-control">
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            注册资金
+                            <font style="color:red;">
+                                *
+                            </font>
+                        </label>
+                        <div class="col-sm-9">
+                            <input id="regCapitalId" type="text" name="regCapital" class="form-control" >
+                            <span class="help-block m-b-none"><i class="fa fa-info-circle"></i> 单位：万元</span>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">经营范围</label>
+                        <div class="col-sm-9">
+                            <textarea id="operScopeId" class="form-control" ></textarea>
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">
+                            企业简介
+                        </label>
+                        <div class="col-sm-9">
+                            <textarea id="briefId" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div id="imgTopHr" class="hr-line-dashed"></div>
+
+                    <div id="img-group">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">企业证件照</label>
+                            <div class="col-sm-10">
+                                <div id="filebox">
+                                    <ul class="filelist lightBoxGallery">
+
+                                    </ul>
+                                    <div id="blueimp-gallery" class="blueimp-gallery">
+                                        <div class="slides"></div>
+                                        <h3 class="title"></h3>
+                                        <a class="prev">‹</a>
+                                        <a class="next">›</a>
+                                        <a class="close">×</a>
+                                        <a class="play-pause"></a>
+                                        <ol class="indicator"></ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="uploader" class="wu-example">
+                        <div class="queueList">
+                            <div id="dndArea" class="placeholder">
+                                <div id="filePicker"></div>
+                                <p>或将照片拖到这里，最多可选5张</p>
+                            </div>
+                        </div>
+                        <div class="statusBar" style="display:none;">
+                            <div class="progress">
+                                <span class="text">0%</span>
+                                <span class="percentage"></span>
+                            </div><div class="info"></div>
+                            <div class="btns">
+                                <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </fieldset>
+                <h1>联系人及账户</h1>
+                <fieldset>
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>
+                                联系人信息
+                            </h5>
+                        </div>
+                        <div class="ibox-content wrapper wrapper-content animated fadeInRight"
+                             style="padding-bottom:0px;padding-top:30px;">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="carousel slide" id="carousel2">
+                                        <div id="contactsItemsDiv" class="carousel-inner">
+                                            <div class="item active">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <div class="contact-box" style="height:205px;cursor:pointer;" onclick="showContactsInfoDiv(this);">
+                                                            <div class="col-sm-8">
+                                                                <input class="acIdClass" type="text" value="" style="display:none;">
+                                                                <div class="text-center">
+                                                                    <img alt="image"
+                                                                         style="width:95px;height:100px;margin-top: 30px;margin-left: 65px;"
+                                                                         class="img-circle m-t-xs img-responsive"
+                                                                         src="../../../images/rental/buildingRent/add.png"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a data-slide="prev" href="#carousel2"  class="left carousel-control">
+                                            <span class="icon-prev"></span>
+                                        </a>
+                                        <a data-slide="next" href="#carousel2"  class="right carousel-control">
+                                            <span class="icon-next"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>
+                                银行账号信息
+                            </h5>
+                        </div>
+                        <div class="ibox-content wrapper wrapper-content animated fadeInRight"
+                             style="padding-bottom:0px;padding-top:30px;">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="carousel slide" id="carousel3">
+                                        <div  id="accountItemsDiv" class="carousel-inner">
+                                            <div class="item active">
+                                                <div class="row">
+                                                    <div class="col-sm-4">
+                                                        <div class="contact-box" style="height:154px;cursor:pointer;"  onclick="showAccountInfoDiv(this);">
+                                                            <div class="col-sm-8">
+                                                                <input class="abankAcctIdClass" type="text" value="" style="display:none;">
+                                                                <div class="text-center">
+                                                                    <img alt="image"
+                                                                         style="width:95px;height:100px;margin-left: 65px;"
+                                                                         class="img-circle m-t-xs img-responsive"
+                                                                         src="../../../images/rental/buildingRent/add.png"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a data-slide="prev" href="#carousel3"
+                                           class="left carousel-control">
+                                            <span class="icon-prev"></span>
+                                        </a>
+                                        <a data-slide="next" href="#carousel3"
+                                           class="right carousel-control">
+                                            <span class="icon-next"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <h1>租赁信息</h1>
+                <fieldset>
+                    <div class="ibox float-e-margins" style="margin-bottom: 0px;">
+                        <div class="ibox-title">
+                            <h5>
+                                基本信息
+                            </h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    业务办理人
+                                    <font style="color:red;">*</font>
+                                </label>
+                                <div class="col-sm-9">
+                                    <input id="appId" type="text" style="display: none;" />
+                                    <input id="bizTransactor" name="bizTransactor" type="text" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    联系电话
+                                    <font style="color:red;">*</font>
+                                </label>
+                                <div class="col-sm-9">
+                                    <input id="contactTel" name="contactTel" maxlength="13"  type="text" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    通讯地址
+                                </label>
+                                <div class="col-sm-9">
+                                    <input id="contactAdd" type="text" class="form-control"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    房屋地址
+                                </label>
+                                <div class="col-sm-9">
+                                    <textarea id="consAddr" name="consAddr" disabled class="form-control" ></textarea>
+                                           <span class="help-block m-b-none">
+                                                <i class="fa fa-info-circle">
+                                                </i>
+                                                    由选择的房屋地址自动拼接。
+                                            </span>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                      <!--      <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    房屋总面积
+                                </label>
+                                <div class="col-sm-9">
+                                    <input id="houseArea" disabled type="text" class="form-control"/>
+                                          <span class="help-block m-b-none">
+                                                <i class="fa fa-info-circle">
+                                                </i>
+                                                    单位：平方米
+                                            </span>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>-->
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    备注
+                                </label>
+                                <div class="col-sm-9">
+                                    <textarea id="remark" name="remark" class="form-control" ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox float-e-margins" style="margin-bottom:5px;">
+                        <div class="ibox-title">
+                            <h5>
+                                购房信息
+                            </h5>
+                            <div class="ibox-tools" style="position:relative;top:-5px;">
+                                <button class="btn btn-primary " onclick="showBuildingChooseDiv('add');" type="button"><i
+                                        class="fa fa-plus-square-o"></i>&nbsp;新增
+                                </button>
+                                <button class="btn btn-info " onclick="showBuildingChooseDiv('edit');" type="button"><i
+                                        class="fa fa-pencil-square-o"></i> 编辑
+                                </button>
+                                <button class="btn btn-success " type="button" onclick="delRentHourse();"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;
+                                    刪除<span class="bold"></span>
+                                </button>
+                                <button class="btn btn-success " type="button" onclick="sendFlow();"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;
+                                传递流程<span class="bold"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="jqGrid_wrapper">
+                                <table id="rentHourseTable">
+                                </table>
+                                <div id="rentHoursePager" style="display: none;"></div>
+                            </div>
+                            <br>
+                            <div>
+                                 <span class="help-block m-b-none">
+                                     <label style="float: right;">
+                                         <i class="fa fa-info-circle">
+                                         </i>
+                                         房屋总面积：
+                                         <font  id="houseArea" style="font-size: 18px;color: red;"> </font>
+                                         &nbsp;平方米&nbsp;,总金额：
+                                         <font id="totalPriceFont" style="font-size: 18px;color: red;"></font>&nbsp;元
+                                     </label>
+                                 </span>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="contactsDiv" style="display: none;" class="ibox-content wrapper wrapper-content">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title" style="border-bottom:1px solid #f3f3f4;">
+            <h5>联系人</h5>
+            <div class="ibox-tools">
+                <button class="btn btn-primary btn-xs" style="width:60px;height:25px;" onclick="backToApplyDiv('contactsDiv');">返回</button>
+                <button class="btn btn-primary btn-xs" style="width:60px;height:25px;" onclick="checkContactsForm();">保存</button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="background-color: #fff;">
+            <form class="form-horizontal m-t" id="contactsForm">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">姓名<font style="color:red;">*</font></label>
+                    <div class="col-sm-9">
+                        <input id="acId" type="text" value="" style="display: none;" class="form-control"/>
+                        <input id="contactId" type="text" value="" style="display: none;" class="form-control"/>
+                        <input id="contactNameId" maxlength="64" name="contactName" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">性别<font style="color:red;">*</font></label>
+                    <div class="col-sm-9">
+                        <select id="genderId" class="form-control" name="account">
+                        </select>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">移动电话<font style="color:red;">*</font></label>
+                    <div class="col-sm-9">
+                        <input id="mobileId" maxlength="11"  name="mobile" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">所在部门</label>
+                    <div class="col-sm-9">
+                        <input id="deptNameId" maxlength="256"  name="deptName" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">职务/职称</label>
+                    <div class="col-sm-9">
+                        <input id="titleId" maxlength="64"  name="title" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">办公电话</label>
+                    <div class="col-sm-9">
+                        <input id="officeTelId" maxlength="64"  name="officeTel" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">住宅电话</label>
+                    <div class="col-sm-9">
+                        <input id="homePhoneId" maxlength="64"  name="homePhone" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">传真号码</label>
+                    <div class="col-sm-9">
+                        <input id="faxNoId" maxlength="13"  name="faxNo" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">联系地址</label>
+                    <div class="col-sm-9">
+                        <input id="addrId" maxlength="256"  name="addr" type="text" class="form-control"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">电子邮箱</label>
+                    <div class="col-sm-9">
+                        <input id="emailId" maxlength="32"  name="email" type="email" class="form-control"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">联系备注</label>
+                    <div class="col-sm-9">
+                        <textarea id="contactRemarkId" maxlength="256"  name="contactRemark" class="form-control" style="height:75px;"></textarea>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="padding-top:0px;">默认联系人</label>
+                    <div class="col-sm-9">
+                        <input id="isDefaultContactId" name="isDefaultContact" type="checkbox"> <i></i>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="accountDiv" class="ibox-content wrapper wrapper-content" style="display: none;">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"  style="border-bottom:1px solid #f3f3f4;">
+            <h5>银行账号</h5>
+            <div class="ibox-tools">
+                <button class="btn btn-primary btn-xs" style="width:60px;height:25px;" onclick="backToApplyDiv('accountDiv');">返回</button>
+                <button class="btn btn-primary btn-xs" style="width:60px;height:25px;" onclick="checkAccountForm();">保存</button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="background-color: #fff;">
+            <form class="form-horizontal m-t" id="accountForm">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">所属银行<font style="color:red;">*</font></label>
+                    <input type="text" style="display:none;" id="abankAcctId">
+                    <input type="text" style="display:none;" id="bankId">
+                    <div class="col-sm-9">
+                        <select id="bankCode" class="form-control" name="account">
+                        </select>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">银行账号<font style="color:red;">*</font></label>
+
+                    <div class="col-sm-9">
+                        <input id="bankAcct" name="bankAcct" maxlength="19" type="text" class="form-control" required="" aria-required="true"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">账户名称<font style="color:red;">*</font></label>
+                    <div class="col-sm-9">
+                        <input id="acctName" name="acctName" maxlength="256"  type="text" class="form-control" required="" aria-required="true"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="bulidingChooseDiv" class="ibox-content wrapper wrapper-content  col-sm-12" style="display: none;">
+    <div class="ibox float-e-margins">
+        <div id="box-top-id" class="ibox-title"  style="border-bottom:1px solid #f3f3f4;">
+            <h5>
+                房屋选择器
+            </h5>
+            <div class="ibox-tools">
+                <button class="btn btn-primary btn-xs" style="width:60px;height:25px;" onclick="backToApplyDiv('bulidingChooseDiv');">返回</button>
+                <button class="btn btn-primary btn-xs" style="width:60px;height:25px;" onclick="checkBuildingForm();">保存</button>
+            </div>
+        </div>
+        <div class="col-sm-12" style="background-color: #fff;">
+            <form class="form-horizontal m-t" id="bulidingForm">
+                <input id="appRentId" type="text" style="display:none;">
+                <!-- //新增时展示的楼宇选择-->
+                <div  class="myhideCl form-group">
+                    <label class="col-sm-2 control-label">
+                        所属楼宇
+                        <font style="color:red;">*</font>
+                    </label>
+                    <div class="col-sm-9">
+                        <select id="buildingSelcetId" name="building" class="form-control" onchange="buildingSelcetChange(this);">
+                        </select>
+
+                    </div>
+                </div>
+                <!--//编辑时展示的楼宇字段-->
+                <div class="myhideCl hr-line-dashed"></div>
+                <div class="myhideCl form-group">
+                    <label class="col-sm-2 control-label">
+                        所属层
+                    </label>
+                    <div class="col-sm-9">
+                        <select onchange="floorSelcetChange(this);" id="floorSelcetId"  style="height: 36px;overflow: hidden;"  class="col-sm-12 chosen-select selectator" multiple >
+                        </select>
+                    </div>
+                </div>
+                <div class="myhideCl hr-line-dashed"></div>
+                <div class="myhideCl form-group">
+                    <label class="col-sm-2 control-label">
+                        房间
+                    </label>
+                    <div class="col-sm-9">
+                        <select onchange="roomSelectChange(this);" id="roomSelcetId" style="height: 36px;overflow: hidden;" class="col-sm-12 chosen-select selectator" multiple >
+                        </select>
+                    </div>
+                </div>
+                <div class="myhideCl hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        房屋地址
+                    </label>
+                    <div class="col-sm-9">
+                        <input id="houseAddrId" disabled type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="hr-line-dashed">
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        房屋面积
+                    </label>
+                    <div class="col-sm-9">
+                        <input id="totalAreaId" disabled type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="hr-line-dashed">
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        房屋用途
+                    </label>
+                    <div class="col-sm-9">
+                        <input id="houseUsesId" type="text" class="form-control">
+                    </div>
+                </div>
+                <div class="hr-line-dashed">
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        单价
+                        <font style="color:red;">*</font>
+                    </label>
+                    <div class="col-sm-9">
+                        <input id="unitPriceId"  onchange="calculateTotalPrice();" name = "unitPrice" type="text" class="form-control">
+                            <span class="help-block m-b-none">
+                                <i class="fa fa-info-circle">
+                                </i>
+                                    单位：元/每平方米
+                            </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">
+                        总价
+                    </label>
+                    <div class="col-sm-9">
+                        <input id="totalPriceId" onchange="calculateUnitPrice();" name = "totalPrice" type="text" class="form-control">
+                            <span class="help-block m-b-none">
+                                <i class="fa fa-info-circle">
+                                </i>
+                                    单位：元
+                            </span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="chooseCustDiv" style="display: none;">
+    <div class="ibox">
+        <div class="ibox-content">
+            <div class="input-group">
+                <input type="text" id="custTable_CustName" placeholder="查找客户" class="input form-control">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn btn-primary" onclick="queryCustsByName(1);"> <i class="fa fa-search"></i> 搜索</button>
+                    </span>
+            </div>
+            <div class="clients-list">
+                <div class="table-responsive">
+                    <table id="custTable" class="table table-striped table-hover">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="pagination"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<!--<script src="../../../js/rental/bootstrap-suggest.min.js"></script>-->
+<script src="../../../js/common/bootstrap.min.js"></script>
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<!-- Custom and plugin javascript -->
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+<!-- Steps -->
+<script src="../../../js/common/plugins/staps/jquery.steps.min.js"></script>
+<!-- Jquery Validate -->
+<script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../../js/common/additional-methods.js"></script>
+<!-- 房屋选择页面-->
+<!--<script src="../../../js/rental/laydate-master/laydate.js"></script>
+<script src="../../../js/common/plugins/datapicker/bootstrap-datepicker.js"></script>-->
+<script src="../../../js/common/plugins/prettyfile/bootstrap-prettyfile.js"></script>
+<script src="../../../js/common/plugins/switchery/switchery.js"></script>
+<script src="../../../js/common/plugins/iCheck/icheck.min.js"></script>
+<script src="../../../js/common/plugins/colorpicker/bootstrap-colorpicker.min.js"></script>
+<script src="../../../js/common/plugins/clockpicker/clockpicker.js"></script>
+<script src="../../../js/rental/selectator/fm.selectator.jquery.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+<script src="../../../js/rental/layer/layer.js"></script>
+
+<!--grid-->
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+
+<script src="../../../js/common/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+
+
+
+<script>
+
+    var appStr="98465198416632330";
+    var uploaderParam = {
+        uploadServer: '/rental/apply/upload',
+        fileNumLimit: 5
+    };
+
+    $.validator.setDefaults({
+        highlight: function(e) {
+            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
+        },
+        success: function(e) {
+            e.closest(".form-group").removeClass("has-error").addClass("has-success")
+        },
+        errorElement: "span",
+        errorPlacement: function(e, r) {
+            e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
+        },
+        errorClass: "help-block m-b-none",
+        validClass: "help-block m-b-none"
+    },{
+        debug:true
+    }),$(document).ready(function () {
+        $("#wizard").steps();
+        $("#form").steps({
+            bodyTag: "fieldset",
+            enableFinishButton: false,
+            enableCancelButton: false,
+            onStepChanging: function (event, currentIndex, newIndex)
+            {
+                if (currentIndex > newIndex) {
+                    return true;
+                }
+                var form = $(this);
+                if (currentIndex < newIndex) {
+                    $(".body:eq(" + newIndex + ") label.error", form).remove();
+                    $(".body:eq(" + newIndex + ") .error", form).removeClass("error");
+                }
+                var flag = form.validate().element(document.getElementsByName("custName"))&&
+                        form.validate().element(document.getElementsByName("regCapital"));
+                if(!flag && document.getElementsByClassName("has-error").length>0)
+                {
+                    document.getElementsByClassName("has-error")[0].scrollIntoView();
+                }
+                return flag;
+            },
+            onStepChanged: function (event, currentIndex, priorIndex) {
+                if (currentIndex == 0) {
+                    $($("#form>.content")[0]).css("min-height", "1120px");
+                } else if (currentIndex == 1) {
+                    $($("#form>.content")[0]).css("min-height", "650px");
+                    updateNaturalAndshowContactsAndBankAccts();
+                } else if (currentIndex == 2) {
+                    $($("#form>.content")[0]).css("min-height", "1000px");
+                    queryThirdPageInfoByAppNo();
+                }
+                if (currentIndex === 2 && priorIndex === 3) {
+                    $(this).steps("previous");
+                }
+            }
+        });
+        var e = "<i class='fa fa-times-circle'></i> ";
+        $("#accountForm").validate({
+            rules: {
+                bankAcct: {
+                    required : true,
+                    isCard:true
+                },
+                acctName: "required"
+            },
+            messages: {
+                bankAcct: {
+                    required: e +"请输入银行账号",
+                    isCard: e +"请输入正确的银行账号"
+                },
+                acctName: e + "请输入账户名称"
+            }
+        });
+        $("#contactsForm").validate({
+            rules: {
+                email:{
+                    email: true
+                },
+                contactName:{
+                    required : true
+                },
+                mobile: {
+                    required : true,
+                    isMobile:true
+                },
+                officeTel:{
+                    isTel:true
+                },
+                homePhone:{
+                    isTel:true
+                },
+                faxNo:{
+                    isTel:true
+                }
+            },
+            messages: {
+                contactName:{
+                    required:e + "请输入联系人姓名"
+                },
+                mobile:{
+                    required:e + "请输入移动电话",
+                    isMobile:e+"请输入正确格式的移动电话"
+                },
+                email:{
+                    email:e + "请输入正确格式的电子邮箱"
+                },
+                officeTel:{
+                    isTel:e + "请输入正确格式的办公电话"
+                },
+                homePhone:{
+                    isTel:e + "请输入正确格式的住宅电话"
+                },
+                faxNo:{
+                    isTel:e + "请输入正确格式的传真号码"
+                }
+            }
+        });
+
+        $("#bulidingForm").validate({
+            rules: {
+                building: "required",
+                startDate: "required",
+                endDate: "required",
+                unitPrice:{
+                    required:true,
+                    number:true,
+                    min : 0
+                },
+                totalPrice:{
+                    number:true,
+                    min : 0
+                }
+            },
+            messages: {
+                building: e + "请选择楼宇",
+                startDate: e + "请选择租赁开始日期",
+                endDate:e + "请选择租赁结束日期",
+                unitPrice:{
+                    required:e+"请输入单价"
+                }
+            }
+        });
+
+        $("#form").validate({
+            rules: {
+                custName: {
+                    required:true
+                },
+                regCapital:{
+                    required : true,
+                    digits : true,
+                    min : 0
+
+                },
+                bizTransactor:"required",
+                contactTel:{
+                    required : true,
+                    isMobileOrTel:true
+                }
+            },
+            messages: {
+                custName: {
+                    required:e+"请输入客户名称"
+                },
+                regCapital: {
+                    required: e +"请输入注册资金"
+                },
+                bizTransactor:e + "请输入业务办理人",
+                contactTel:{
+                    required:e + "请输入联系电话",
+                    isMobileOrTel:e+"请输入正确格式的联系电话"
+                }
+            }
+        });
+        $(window).bind("resize",
+                function() {
+                    var width = $(".jqGrid_wrapper").width();
+                    $("#rentHourseTable").setGridWidth(width);
+                });
+
+        queryAllComboxData();
+    });
+
+    var bankCodeDataArr =[];
+    function queryAllComboxData()
+    {
+        //economyTypeCode 企业性质// gender 性别 //bankCode 银行代码
+        //baCalcMode 基本计算方式(01按面积、02按营业额)
+        //payMode 缴费方式 (01 坐收02 特约委托)
+        //BILL_CYCLE 付款周期
+        //ENTEPRISE_SCALE企业规模
+        //CUST_PRO 行业
+        $.ajax({
+            url:'/rental/apply/queryAllComboxData',
+            data:{
+                types:'ECONOMY_TYPE_CODE,GENDER,BANK_CODE,BA_CALC_MODE,ENTEPRISE_SCALE,CUST_PRO'
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                bankCodeDataArr = data.data.BANK_CODE;
+                setComboxData($("#bankCode"),bankCodeDataArr);
+
+                var genderDataArr = data.data.GENDER;
+                setComboxData($("#genderId"),genderDataArr);
+
+                var economyTypeCodeArr = data.data.ECONOMY_TYPE_CODE;
+                setComboxData($("#economyTypeCodeId"),economyTypeCodeArr);
+
+                var entepriseScaleArr = data.data.ENTEPRISE_SCALE;
+                setComboxData($("#entepriseScaleId"),entepriseScaleArr);
+
+                var custProArr = data.data.CUST_PRO;
+                setComboxData($("#custProId"),custProArr);
+
+                //根据申请编号查询基本信息
+                queryFirstPageInfoByAppNo();
+            },
+            error : function() {
+                alert("异常1！");
+            }
+        });
+    }
+
+    function setComboxData(comboxObj,dataArr)
+    {
+        for(var i=0;i<dataArr.length;i++)
+        {
+            var data = dataArr[i];
+            var codeName = data.CODE_NAME;
+            var codeValue = data.CODE_VALUE;
+            comboxObj.append('<option value="'+codeValue+'">'+codeName+'</option>');
+        }
+    }
+
+    //初始化时根据申请编号查询第一页信息
+    function queryFirstPageInfoByAppNo()
+    {
+        $.ajax( {
+            url:'/buy/buyHouse/queryFirstPageInfoByAppNo',
+            data:{
+                appNo : appStr,//申请编号标识
+                groupCode : '0201'
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var custNoList = data.data.custNoList;
+                var appNaturalInfoList = data.data.appNaturalInfoList;
+                var custNo = custNoList[0].NEW_CUST_NO;
+                $("#generateCustNoId").val(custNo);
+
+                if(appNaturalInfoList.length>0)
+                {
+                    var custObj = appNaturalInfoList[0];
+                    if(null == custObj.entepriseScale)
+                    {
+                        custObj.entepriseScale ="01";
+                    }
+                    if(null == custObj.economyTypeCode)
+                    {
+                        custObj.economyTypeCode ="01";
+                    }
+                    if(null == custObj.custPro)
+                    {
+                        custObj.custPro = "01";
+                    }
+                    $("#custNoId").val(custObj.custNo);
+                    $("#custNameId").val(custObj.custName);
+                    $("#custId").val(custObj.custId);
+                    $("#entepriseScaleId").val(custObj.entepriseScale);
+                    $("#economyTypeCodeId").val(custObj.economyTypeCode);
+                    $("#custProId").val(custObj.custPro);
+                    $("#briefId").val(custObj.brief);
+                    $("#regCapitalId").val(custObj.regCapital);
+                    $("#legalPersonId").val(custObj.legalPerson);
+                    $("#operScopeId").val(custObj.operScope);
+                    var attachRefList = custObj.attachRefList;
+                    if (attachRefList.length > 0)
+                    {
+                        //初始化文件盒子
+                        FileBox.init(attachRefList, deleteAttachRef);
+                    }
+                }else
+                {
+                    $("#custNoId").val(custNo);
+                }
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    function deleteAttachRef(data)
+    {
+        var layerIndex = layer.confirm('确定要删除该图片？', {
+            btn: ['是','否'], //按钮
+            icon: 3
+        }, function(){
+            //删除与图片关联关系
+            $.ajax({
+                type: "POST",
+                url: "/system/attachRef/deleteAttachRefsById",
+                data: data,
+                success: function(json){
+                    if ('0' == json.status)
+                    {
+                        //删除文件
+                        FileBox.deleteFile(data.attachRefId);
+                    }
+                    else
+                    {
+                        layer.alert(json.msg, {icon: 0});
+                    }
+                    layer.close(layerIndex);
+                }
+            });
+        }, function(){
+
+        });
+    }
+
+    //判断字符串是否为空、undefined、''
+    function isEmpty(obj)
+    {
+        if (undefined == obj || null == obj
+                || 'null' == obj || '' == obj)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    //图上传成功
+    function uploadImgSuccess(json)
+    {
+        if ("0" == json.status)
+        {
+            var attachId = json.data;
+            var attachIds = $("#attachIdsIn").val();
+            if (isEmpty($("#attachIdsIn").val()))
+            {
+                $("#attachIdsIn").val(attachId);
+            }
+            else
+            {
+                $("#attachIdsIn").val(attachIds + "," + attachId);
+            }
+        }
+    }
+
+    function queryThirdPageInfoByAppNo()
+    {
+        $.ajax( {
+            url:'/buy/buyHouse/queryThirdPageInfoByAppNo',
+            data:{
+                appNo : appStr//申请编号标识
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                //初始化基本信息
+                var appConsObj = null;
+                if(data.data.appConsList.length>0)
+                {
+                    appConsObj = data.data.appConsList[0];
+                    $("#appId").val(appConsObj.appId);
+                    $("#bizTransactor").val(appConsObj.bizTransactor);
+                    $("#consAddr").val(appConsObj.consAddr);
+                    $("#houseArea").html(appConsObj.houseArea);
+                    $("#remark").val(appConsObj.remark);
+                    $("#contactTel").val(appConsObj.contactTel);
+                    $("#contactAdd").val(appConsObj.contactAdd);
+                }
+                if(null != appConsObj)
+                {
+                    //租房及结算方式
+                    queryRentHourseAndPayInfo(appConsObj.appId);
+                }else
+                {
+                    queryRentHourseAndPayInfo("");
+                }
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    function queryRentHourseAndPayInfo(appId)
+    {
+        $.jgrid.defaults.styleUI = "Bootstrap";
+        $("#rentHourseTable").jqGrid({
+            url: "../../../buy/buyHouse/queryRentHourseAndPayInfo",
+            postData:{
+                appId:appId
+            },
+            datatype : "json",
+            height: '150px',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '序号', '购房地址', '房屋面积(㎡)', '单价(元/每平方米)', '总价(元)' ],
+            colModel : [
+                {name : 'appRentId',index : 'appRentId',width : 55, hidden: true},
+                {name : 'houseAddr',  index : 'houseAddr',width : 120, align : "left"},
+                {name : 'totalArea',index : 'totalArea',width : 80, align : "center"},
+                {name : 'unitPrice',index : 'endDate',width : 80,align : "center"},
+                {name : 'totalPrice',index : 'totalPrice',width : 80, align : "center"}
+
+            ],
+            rowNum : 1000,
+            rowList : [ 10, 20, 30 ],
+            pager : '#rentHoursePager',
+            viewrecords: true,
+            multiselect : true,
+            caption : "",
+            hidegrid: false,
+            loadComplete:function(e)
+            {
+                //获取最新基本信息里的租赁地址、租赁面积信息
+                queryNewestRentInfo();
+            }
+        });
+        $("#rentHourseTable").jqGrid("navGrid", "#rentHoursePager", {
+                    add: false,
+                    edit: false,
+                    del: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+    }
+
+    function queryNewestRentInfo()
+    {
+        $.ajax( {
+            url:'/buy/buyHouse/queryNewestRentInfo',
+            data:{
+                appId : $("#appId").val()
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                debugger;
+                $("#houseArea").html(data.data.totalArea_total);
+                $("#consAddr").val(data.data.backAddr);
+                $("#totalPriceFont").html(data.data.totalPrice_total);
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    //联系人编辑页面 返回
+    function backToApplyDiv(type)
+    {
+        if(type =='contactsDiv')
+        {
+            $("#contactsDiv").hide();
+        }else if(type =='accountDiv')
+        {
+            $("#accountDiv").hide();
+        }else if(type =='bulidingChooseDiv')
+        {
+            $("#bulidingChooseDiv").hide();
+        }
+        $("#applyDiv").show();
+    }
+
+    function checkAccountForm()
+    {
+        var isPass = $("#accountForm").valid();
+        if(isPass)
+        {
+            $("#accountDiv").hide();
+            saveOrUpdateBankAccount();
+            $("#applyDiv").show();
+        }
+    }
+
+    function checkContactsForm()
+    {
+        var isPass = $("#contactsForm").valid();
+        if(isPass)
+        {
+            $("#contactsDiv").hide();
+            saveOrUpdateAppContact();
+            $("#applyDiv").show();
+        }
+    }
+
+    function queryCustById(custId)
+    {
+        BModal.confirm("选择该客户将重置已填信息，是否继续？", function (data) {
+            if(chooseCustIndex != null)
+            {
+                layer.close(chooseCustIndex);
+            }
+            $.ajax( {
+                url:'/rental/apply/queryCustById',
+                data:{
+                    custId:custId
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data) {
+                    var custObj = data.data[0];
+                    $("#custNoId").val(custObj.custNo);
+                    $("#custNameId").val(custObj.custName);
+                    $("#custId").val(custObj.custId);
+                    $("#entepriseScaleId").val(custObj.entepriseScale);
+                    $("#economyTypeCodeId").val(custObj.economyTypeCode);
+                    $("#custProId").val(custObj.custPro);
+                    $("#briefId").val(custObj.brief);
+                    $("#regCapitalId").val(custObj.regCapital);
+                    $("#legalPersonId").val(custObj.legalPerson);
+                    $("#operScopeId").val(custObj.operScope);
+
+                    $("#img-group").remove();
+                    $("#uploader").remove();
+                    //重新初始化图片上传控件
+                    var  html = getImgHtml();
+                    $("#imgTopHr").after(html);
+                    $.getScript("../../../js/rental/buildingRent/uploader.js");
+
+                    var attachRefList = custObj.attachRefList;
+                    if (attachRefList.length > 0)
+                    {
+                        //初始化文件盒子
+                        FileBox.init(attachRefList, deleteAttachRef);
+                    }
+
+                    saveFirstPageNaturalInfoAndDelOldDataAndCopyNewData();
+                },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+        },function(){});
+    }
+
+    function getImgHtml()
+    {
+        var  html =
+                '<div id="img-group">'+
+                '<div class="form-group">'+
+                '<label class="col-sm-2 control-label">企业证件照</label>'+
+                '<div class="col-sm-10">'+
+                '<div id="filebox">'+
+                '<ul class="filelist lightBoxGallery">'+
+                '</ul>'+
+                '<div id="blueimp-gallery" class="blueimp-gallery">'+
+                '<div class="slides"></div>'+
+                '<h3 class="title"></h3>'+
+                '<a class="prev">‹</a>'+
+                '<a class="next">›</a>'+
+                '<a class="close">×</a>'+
+                '<a class="play-pause"></a>'+
+                '<ol class="indicator"></ol>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '<div id="uploader" class="wu-example">'+
+                '<div class="queueList">'+
+                '<div id="dndArea" class="placeholder">'+
+                '<div id="filePicker"></div>'+
+                '<p>或将照片拖到这里，最多可选5张</p>'+
+                '</div>'+
+                '</div>'+
+                '<div class="statusBar" style="display:none;">'+
+                '<div class="progress">'+
+                '<span class="text">0%</span>'+
+                '<span class="percentage"></span>'+
+                '</div><div class="info"></div>'+
+                '<div class="btns">'+
+                '<div id="filePicker2"></div><div class="uploadBtn">开始上传</div>'+
+                '</div>'+
+                '</div>'+
+                '</div>';
+        return html;
+    }
+
+    //这是选中某个客户之后的操作  custid一定是存在的
+    function saveFirstPageNaturalInfoAndDelOldDataAndCopyNewData()
+    {
+        $.ajax({
+            url:'/buy/buyHouse/saveFirstPageNaturalInfoAndDelOldDataAndCopyNewData',
+            data:{
+                appNo:appStr,//申请编号标识
+                custNo:$("#custNoId").val(),
+                custId : $("#custId").val(),
+                custName : $("#custNameId").val(),
+                economyTypeCode : $("#economyTypeCodeId").val(),
+                entepriseScale : $("#entepriseScaleId").val(),
+                custPro:$("#custProId").val(),
+                brief : $("#briefId").val(),
+                regCapital : $("#regCapitalId").val(),
+                legalPerson : $("#legalPersonId").val(),
+                operScope : $("#operScopeId").val()
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+            },
+            error : function() {
+                alert("失败！");
+            }
+        });
+    }
+
+    function updateNaturalAndshowContactsAndBankAccts()
+    {
+        $.ajax({
+            url:'/buy/buyHouse/updateNaturalAndshowContactsAndBankAccts',
+            data:{
+                appNo:appStr,//申请编号标识
+                custNo:$("#custNoId").val(),
+                custId : $("#custId").val(),
+                custName : $("#custNameId").val(),
+                economyTypeCode : $("#economyTypeCodeId").val(),
+                entepriseScale : $("#entepriseScaleId").val(),
+                custPro:$("#custProId").val(),
+                brief : $("#briefId").val(),
+                regCapital : $("#regCapitalId").val(),
+                legalPerson : $("#legalPersonId").val(),
+                operScope : $("#operScopeId").val(),
+                attachIds:$("#attachIdsIn").val(),
+                groupCode : '0201'
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var flag = data.status;
+                if(flag =="0")
+                {
+                    $("#attachIdsIn").val("");
+                    var contactsArr = data.data.appContacts;
+                    var appBankAcctsArr = data.data.appBankAccts;
+
+                    showContacts(contactsArr);
+                    showAppBankAccts(appBankAcctsArr);
+                }else
+                {
+                    alert("失败");
+                }
+            },
+            error : function() {
+                alert("失败！");
+            }
+        });
+    }
+
+    //切换至联系人页面
+    var selectedContactItem ;
+    function showContactsInfoDiv(me)
+    {
+        resetContactsDiv();
+        document.getElementById("contactNameId").scrollIntoView();
+        selectedContactItem = me;
+        var selectedAcId = $(me).find(".acIdClass")[0].value;
+        $("#acId").val(selectedAcId);
+        $("#applyDiv").hide();
+        $("#contactsDiv").show();
+        if("" != $("#acId").val())
+        {
+            //根据acId 查询该联系人信息
+            $.ajax( {
+                url:'/buy/buyHouse/queryContactInfoByAcId',
+                data:{
+                    acId:$("#acId").val()
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data) {
+                    var contactObj = data.data[0];
+                    //逐一回填
+                    if(contactObj.gender == null)
+                    {
+                        contactObj.gender ="01";
+                    }
+                    $("#acId").val(contactObj.acId);
+                    $("#contactId").val(contactObj.contactId);
+                    $("#contactNameId").val(contactObj.contactName);
+                    $("#genderId").val(contactObj.gender);
+                    $("#deptNameId").val(contactObj.deptName);
+                    $("#titleId").val(contactObj.title);
+                    $("#officeTelId").val(contactObj.officeTel);
+                    $("#homePhoneId").val(contactObj.homePhone);
+                    $("#mobileId").val(contactObj.mobile);
+                    $("#faxNoId").val(contactObj.faxNo);
+                    $("#addrId").val(contactObj.addr);
+                    $("#emailId").val(contactObj.email);
+                    $("#contactRemarkId").val(contactObj.contactRemark);
+                    if(contactObj.isDefaultContact =="01")
+                    {
+                        $("#isDefaultContactId").prop("checked",'true');
+                    }else
+                    {
+                        $("#isDefaultContactId").removeAttr("checked");
+                    }
+                },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+        }
+    }
+
+    //新增或更新联系人信息
+    function saveOrUpdateAppContact()
+    {
+        //是否默认联系人 01是、02否   系统默认非默认联系人   选中01  不选中02
+        var isDefaultContact = $("#isDefaultContactId").is(":checked");
+        if(isDefaultContact)
+        {
+            isDefaultContact ="01";
+        }else
+        {
+            isDefaultContact ="02";
+        }
+        var handlerType = "insert";
+        if("" ==$("#acId").val())
+        {
+            handlerType = "insert";
+        }else
+        {
+            handlerType = "update";
+        }
+        $.ajax( {
+            url:'/buy/buyHouse/saveOrUpdateAppContact',
+            data:{
+                appNo:appStr,
+                acId:$("#acId").val(),
+                /*  appnId:$("#appnId").val(),*/
+                contactId:$("#contactId").val(),
+                contactName:$("#contactNameId").val(),
+                gender:$("#genderId").val(),
+                deptName:$("#deptNameId").val(),
+                title:$("#titleId").val(),
+                officeTel:$("#officeTelId").val(),
+                homePhone:$("#homePhoneId").val(),
+                mobile:$("#mobileId").val(),
+                faxNo:$("#faxNoId").val(),
+                addr:$("#addrId").val(),
+                email:$("#emailId").val(),
+                isDefaultContact:isDefaultContact,
+                contactRemark:$("#contactRemarkId").val()
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                if(handlerType == "insert")
+                {
+                    var html2 = getHtml1(data.data);
+
+                    var html = "";
+                    html+='<div class="col-sm-4">';
+                    html+= html2;
+                    html+='</div>';
+
+                    var html3= "";
+                    html3+='<div class="item active">';
+                    html3+='<div class="row">';
+                    var html4 = getHtml2();
+                    html3+=html4;
+                    html3+='</div>';
+                    html3+='</div>';
+                    var lastDivItemNum = $("#contactsItemsDiv .item:last .row > div").length;
+                    if(lastDivItemNum < 3 )
+                    {
+                        //说明当前切换页面内的item数目小于3 可直接添加item
+                        //添加的item在“+”item前
+                        $("#contactsItemsDiv .item:last .row > div:last").before(html);
+                    }else if(lastDivItemNum == 3)
+                    {
+                        //说明当前切换页面内可添加最后一个item替换 “+”的item   并需重新生成一个item块，渲染上“+”号item
+                        //1.将“+”item 清除
+                        $("#contactsItemsDiv .item:last .row > div:last").empty();
+                        //2.添加新的item 注意：此处不需要  col-sm-4 DIV了  只要内部内容
+                        $("#contactsItemsDiv .item:last .row > div:last").append(html2);
+                        //3.移除当前页面的active属性
+                        $("#contactsItemsDiv .item:last").removeClass("active");
+                        //4.添加新的active页面
+                        $("#contactsItemsDiv .item:last").after(html3);
+                    }
+                }else
+                {
+                    var addr = data.data.addr;
+                    var mobile = data.data.mobile;
+                    var homePhone = data.data.homePhone;
+                    var email = data.data.email;
+                    var title = data.data.title;
+                    if(addr =="" ||addr ==null) { addr ="暂无";  }
+                    if(mobile ==""||mobile ==null) { mobile ="暂无";  }
+                    if(homePhone ==""||homePhone ==null) { homePhone ="暂无";  }
+                    if(email ==""||email ==null) { email ="暂无";  }
+                    if(title ==""||title ==null) { title ="暂无";  }
+
+                    $(selectedContactItem).parent().find(".title").html(title);
+                    $(selectedContactItem).parent().find(".contactName").html(data.data.contactName+'&nbsp;&nbsp;');
+                    $(selectedContactItem).parent().find(".addr").html('<i class="fa fa-map-marker"></i>&nbsp;&nbsp;'+addr);
+                    $(selectedContactItem).parent().find(".mobile").html('<i class="fa fa-mobile"></i>&nbsp;'+mobile);
+                    $(selectedContactItem).parent().find(".homePhone").html('<i class="fa fa-phone-square"></i>&nbsp;'+homePhone);
+                    $(selectedContactItem).parent().find(".email").html('<i class="fa fa-envelope"></i>&nbsp;'+email);
+                }
+            },
+            error : function() {
+            }
+        });
+    }
+
+
+    //删除联系人
+    function delContactAndBackOthers(me)
+    {
+        var acId = $(me).parent().find(".acIdClass")[0].value;
+        //查询该联系人是否为默认联系人
+        $.ajax({
+            url:'/buy/buyHouse/queryIsDefault',
+            data:{
+                acId:acId
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var isDefaultContactVal = data.data[0].isDefaultContact;
+
+                if(isDefaultContactVal =='01')
+                {
+                    //该联系人为默认联系人提示用户先设定别人为默认联系人
+                    BModal.alert("该联系人为默认联系人，不可删除！请先修改默认联系人。");
+
+                }else
+                {
+
+                    BModal.confirm("确定要删除联系人？", function (data) {
+                        //1.删除操作 2.查询
+                        $.ajax({
+                            url: '/buy/buyHouse/delContactAndBackOthers',
+                            data: {
+                                acId: acId,
+                                appNo:appStr
+                            },
+                            type: 'post',
+                            dataType: 'json',
+                            success: function (data) {
+                                var contactsArr = data.data;
+                                showContacts(contactsArr);
+                            },
+                            error: function () {
+                                alert("异常！");
+                            }
+                        });
+                    },function(){});
+                }
+            },
+            error : function() {
+                alert("失败！");
+            }
+        });
+    }
+
+    function showContacts(contactsArr)
+    {
+        var contactsNo = 0;
+        var pageNum = Math.ceil(contactsArr.length/3);
+        if(pageNum ==0)
+        {
+            pageNum = 1;
+        }
+        $("#contactsItemsDiv").empty();
+        for(var i=0;i<pageNum;i++)
+        {
+            var html4 = "";
+            html4 += '<div class="item">';
+            html4 += '<div class="row">';
+            for (var j = 0; j < 3; j++)
+            {
+                if(contactsNo<contactsArr.length)
+                {
+                    var contactObj = contactsArr[contactsNo];
+                    var html5 = "";
+                    html5 += '<div class="col-sm-4">';
+                    var backHtml = getHtml1(contactObj);
+                    html5 += backHtml;
+                    html5 += '</div>';
+                    html4 += html5;
+                }
+                contactsNo++;
+            }
+            html4 += '</div>';
+            html4 += '</div>';
+            $("#contactsItemsDiv").append(html4);
+        }
+        //获取最后一个页面的item数目  如果小于3 则在当前页面加“+”item  如果等于3 则加一个新页面 再添加一个“+”item
+        var lastDivItemNum = $("#contactsItemsDiv .item:last .row > div").length;
+        var html5 =getHtml2();
+        var html6= "";
+        html6+='<div class="item active">';
+        html6+='<div class="row">';
+        html6+= html5;
+        html6+='</div>';
+        html6+='</div>';
+        if(lastDivItemNum < 3 )
+        {
+            if($("#contactsItemsDiv .item:last .row > div:last").length ==0)
+            {
+                $("#contactsItemsDiv .item:last .row").append(html5);
+            }else
+            {
+                $("#contactsItemsDiv .item:last .row > div:last").after(html5);
+            }
+        }else if(lastDivItemNum == 3)
+        {
+            $("#contactsItemsDiv .item:last").after(html6);
+        }
+        $("#contactsItemsDiv .item:last").addClass("active");
+        if(contactsArr.length != 0)
+        {
+            $("#contactsItemsDiv .item .row:empty").parent().remove();
+        }
+    }
+
+    function resetContactsDiv()
+    {
+        $("#acId").val("");
+        $("#contactId").val("");
+        $("#contactNameId").val("");
+        $("#deptNameId").val("");
+        $("#titleId").val("");
+        $("#officeTelId").val("");
+        $("#homePhoneId").val("");
+        $("#mobileId").val("");
+        $("#faxNoId").val("");
+        $("#addrId").val("");
+        $("#emailId").val("");
+        $("#contactRemarkId").val("");
+        $("#isDefaultContactId").removeAttr("checked");
+    }
+
+    function getHtml1(data)
+    {
+        var addr = data.addr;
+        var mobile = data.mobile;
+        var homePhone = data.homePhone;
+        var email = data.email;
+        var title = data.title;
+        if(addr =="" ||addr ==null) { addr ="暂无";  }
+        if(mobile ==""||mobile ==null) { mobile ="暂无";  }
+        if(homePhone ==""||homePhone ==null) { homePhone ="暂无";  }
+        if(email ==""||email ==null) { email ="暂无";  }
+        if(title ==""||title ==null) { title ="暂无";  }
+
+        var html = "";
+        html+='<div class="contact-box" style="height:205px;">';
+        html+='<div class="col-sm-4">';
+        html+='<div class="text-center">';
+        html+='<img alt="image" class="img-circle m-t-xs img-responsive"  src="../../../images/rental/buildingRent/a2.jpg"/>';
+        html+='<div title="'+title+'" class="m-t-xs font-bold title titleTruncaCss">'+title+'</div>';
+        html+='</div>';
+        html+='</div>';
+        html+='<div class="col-sm-8" style="cursor:pointer;"  onclick="showContactsInfoDiv(this);">';
+        html+='<input class="acIdClass" type="text" value="'+data.acId+'" style="display:none;">';
+        html+='<h3 class="contactCommonTruncaCss" title="'+data.contactName+'"><strong class="contactName">'+data.contactName+'&nbsp;&nbsp;</strong> </h3>';
+        html+='<p class="addr contactCommonTruncaCss" title="'+addr+'"><i class="fa fa-map-marker"></i>&nbsp;&nbsp;'+addr+'</p>';
+        html+='<p class="mobile contactCommonTruncaCss" title="'+mobile+'"><i class="fa fa-mobile"></i>&nbsp;'+mobile+' </p>';
+        html+='<p class="homePhone contactCommonTruncaCss" title="'+homePhone+'"> <i class="fa fa-phone-square"></i>&nbsp;'+homePhone+'</p>';
+        html+='<p class="email contactCommonTruncaCss" title="'+email+'"><i class="fa fa-envelope"></i>&nbsp;'+email+' </p>';
+        html+='</div>';
+        html+='<div class="clearfix"></div>';
+        html+='<div onclick="delContactAndBackOthers(this)" class="fa fa-trash-o "  style="float:right;cursor:pointer;"></div>';
+        html+='</div>';
+        return html;
+    }
+
+    function getHtml2()
+    {
+        var html= "";
+        html+='<div class="col-sm-4">';
+        html+='<div class="contact-box" style="height:205px;cursor:pointer;" onclick="showContactsInfoDiv(this);">';
+        html+='<div class="col-sm-8">';
+        html+='<input class="acIdClass" type="text" value="" style="display:none;">';
+        html+='<div class="text-center">';
+        html+='<img alt="image" style="width:95px;height:100px;margin-top: 30px;margin-left: 65px;"';
+        html+='class="img-circle m-t-xs img-responsive" src="../../../images/rental/buildingRent/add.png"/>';
+        html+='</div>';
+        html+='</div>';
+        html+='</div>';
+        html+='</div>';
+        return html;
+    }
+
+
+    function getHtml3(data)
+    {
+        var bankName ="";
+        for(var i=0;i<bankCodeDataArr.length;i++)
+        {
+            if(bankCodeDataArr[i].CODE_VALUE == data.bankCode)
+            {
+                bankName = bankCodeDataArr[i].CODE_NAME;
+            }
+        }
+
+        var html = "";
+        html+=' <div class="contact-box">';
+        html+='   <div class="col-sm-12" style="cursor:pointer;"  onclick="showAccountInfoDiv(this);">';
+        html+='<input class="abankAcctIdClass" type="text" value="'+data.abankAcctId+'" style="display:none;">';
+        html+='       <h3 class="acctCommonTruncaCss" title="'+data.acctName+'"><strong class="acctName"> <i class="fa fa-building"> </i> &nbsp;'+data.acctName+'</strong></h3>';
+        html+='       <div style="margin-top:25px;display: none;">';
+        html+='           <h4 class="bankCode"> <i class="fa fa-bank"> </i> &nbsp;&nbsp;'+data.bankCode+'</h4>';
+        html+='       </div>';
+        html+='       <div style="margin-top:25px;">';
+        html+='           <h4 class="bankName acctCommonTruncaCss" title="'+bankName+'"> <i class="fa fa-bank"> </i> &nbsp;&nbsp;'+bankName+'</h4>';
+        html+='       </div>';
+        html+='       <div style="margin-top:25px;">';
+        html+='            <h4 class="bankAcct acctCommonTruncaCss" title="'+data.bankAcct+'"> <i class="fa fa-credit-card">  </i> &nbsp;'+data.bankAcct+'</h4>';
+        html+='       </div>';
+        html+='   </div>';
+        html+='   <div class="clearfix"></div>';
+        html+='<div onclick="delAccountAndBackOthers(this)" class="fa fa-trash-o "  style="float:right;cursor:pointer;"></div>';
+        html+='</div>';
+        return html;
+    }
+
+    function getHtml4()
+    {
+        var html= "";
+        html+='<div class="col-sm-4">';
+        html+='<div class="contact-box" style="height:154px;cursor:pointer;"  onclick="showAccountInfoDiv(this);">';
+        html+='<input class="abankAcctIdClass" type="text" value="" style="display:none;">';
+        html+='<div class="col-sm-8">';
+        html+='<input class="acIdClass" type="text" value="" style="display:none;">';
+        html+='<div class="text-center">';
+        html+='<img alt="image" style="width:95px;height:100px;margin-left: 65px;" class="img-circle m-t-xs img-responsive"';
+        html+='src="../../../images/rental/buildingRent/add.png"/>';
+        html+='</div>';
+        html+='</div>';
+        html+='</div>';
+        html+='</div>';
+        return html;
+    }
+
+
+    function showAppBankAccts(appBankAcctsArr)
+    {
+        var appBankAcctsNo = 0;
+        var pageNum = Math.ceil(appBankAcctsArr.length/3);
+        if(pageNum ==0)
+        {
+            pageNum = 1;
+        }
+        $("#accountItemsDiv").empty();
+        for(var i=0;i<pageNum;i++)
+        {
+            var html4 = "";
+            html4 += '<div class="item">';
+            html4 += '<div class="row">';
+            for (var j = 0; j < 3; j++)
+            {
+                if(appBankAcctsNo<appBankAcctsArr.length)
+                {
+                    var appBankAcctObj = appBankAcctsArr[appBankAcctsNo];
+                    var html5 = "";
+                    html5 += '<div class="col-sm-4">';
+                    var backHtml = getHtml3(appBankAcctObj);
+                    html5 += backHtml;
+                    html5 += '</div>';
+                    html4 += html5;
+                }
+                appBankAcctsNo++;
+            }
+            html4 += '</div>';
+            html4 += '</div>';
+            $("#accountItemsDiv").append(html4);
+        }
+        //获取最后一个页面的item数目  如果小于3 则在当前页面加“+”item  如果等于3 则加一个新页面 再添加一个“+”item
+        var lastDivItemNum = $("#accountItemsDiv .item:last .row > div").length;
+        var html5 =getHtml4();
+        var html6= "";
+        html6+='<div class="item active">';
+        html6+='<div class="row">';
+        html6+= html5;
+        html6+='</div>';
+        html6+='</div>';
+        if(lastDivItemNum < 3 )
+        {
+            if($("#accountItemsDiv .item:last .row > div:last").length ==0)
+            {
+                $("#accountItemsDiv .item:last .row").append(html5);
+            }else
+            {
+                $("#accountItemsDiv .item:last .row > div:last").after(html5);
+            }
+        }else if(lastDivItemNum == 3)
+        {
+            $("#accountItemsDiv .item:last").after(html6);
+        }
+        $("#accountItemsDiv .item:last").addClass("active");
+        //删除产生的空行
+        if(appBankAcctsArr.length != 0)
+        {
+            $("#accountItemsDiv .item .row:empty").parent().remove();
+        }
+    }
+
+    //切换至银行账号页面
+    var selectedAccountItem ;
+    function showAccountInfoDiv(me)
+    {
+        resetAccountDiv();
+        selectedAccountItem = me;
+        var abankAcctId = $(me).find(".abankAcctIdClass")[0].value;
+        $("#abankAcctId").val(abankAcctId);
+        $("#applyDiv").hide();
+        $("#accountDiv").show();
+        if("" != $("#abankAcctId").val())
+        {
+            $.ajax( {
+                url:'/rental/apply/queryBackAccountInfoById',
+                data:{
+                    abankAcctId:$("#abankAcctId").val()
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data) {
+                    var abankAcctObj = data.data[0];
+                    //逐一回填
+                    $("#abankAcctId").val(abankAcctObj.abankAcctId);
+                    $("#bankId").val(abankAcctObj.bankId);
+                    $("#bankCode").val(abankAcctObj.bankCode);
+                    $("#bankAcct").val(abankAcctObj.bankAcct);
+                    $("#acctName").val(abankAcctObj.acctName);
+                },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+        }
+    }
+
+    function saveOrUpdateBankAccount()
+    {
+        var handlerType = "insert";
+        if("" ==$("#abankAcctId").val())
+        {
+            handlerType = "insert";
+        }else
+        {
+            handlerType = "update";
+        }
+        $.ajax( {
+            url:'/buy/buyHouse/saveOrUpdateBankAccount',
+            data:{
+                appNo:appStr,
+                abankAcctId: $("#abankAcctId").val(),
+                bankId:$("#bankId").val(),
+                bankCode: $("#bankCode").val(),
+                bankAcct: $("#bankAcct").val(),
+                acctName: $("#acctName").val()
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                if(handlerType == "insert")
+                {
+                    var html2 = getHtml3(data.data);
+
+                    var html = "";
+                    html+='<div class="col-sm-4">';
+                    html+= html2;
+                    html+='</div>';
+
+                    var html3= "";
+                    html3+='<div class="item active">';
+                    html3+='<div class="row">';
+                    var html4 = getHtml4();
+                    html3+=html4;
+                    html3+='</div>';
+                    html3+='</div>';
+
+                    var lastDivItemNum = $("#accountItemsDiv .item:last .row > div").length;
+                    if(lastDivItemNum < 3 )
+                    {
+                        //说明当前切换页面内的item数目小于3 可直接添加item
+                        //添加的item在“+”item前
+                        $("#accountItemsDiv .item:last .row > div:last").before(html);
+                    }else if(lastDivItemNum == 3)
+                    {
+                        //说明当前切换页面内可添加最后一个item替换 “+”的item   并需重新生成一个item块，渲染上“+”号item
+                        //1.将“+”item 清除
+                        $("#accountItemsDiv .item:last .row > div:last").empty();
+                        //2.添加新的item 注意：此处不需要  col-sm-4 DIV了  只要内部内容
+                        $("#accountItemsDiv .item:last .row > div:last").append(html2);
+                        //3.移除当前页面的active属性
+                        $("#accountItemsDiv .item:last").removeClass("active");
+                        //4.添加新的active页面
+                        $("#accountItemsDiv .item:last").after(html3);
+                    }
+                }else
+                {
+                    var bankName ="";
+                    for(var i=0;i<bankCodeDataArr.length;i++)
+                    {
+                        if(bankCodeDataArr[i].CODE_VALUE == data.data.bankCode)
+                        {
+                            bankName = bankCodeDataArr[i].CODE_NAME;
+                        }
+                    }
+                    $(selectedAccountItem).find(".acctName").html( '<i class="fa fa-building"> </i> &nbsp;'+data.data.acctName);
+                    $(selectedAccountItem).find(".bankCode").html('<i class="fa fa-bank"> </i> &nbsp;&nbsp;'+data.data.bankCode);
+                    $(selectedAccountItem).find(".bankName").html('<i class="fa fa-bank"> </i> &nbsp;&nbsp;'+bankName);
+                    $(selectedAccountItem).find(".bankAcct").html('<i class="fa fa-credit-card">  </i> &nbsp;'+data.data.bankAcct);
+                }
+            },
+            error : function() {
+            }
+        });
+    }
+
+    //删除银行账号
+    function delAccountAndBackOthers(me)
+    {
+        BModal.confirm("确定要删除银行账号？", function (data) {
+            var abankAcctId = $(me).parent().find(".abankAcctIdClass")[0].value;
+            //1.删除操作 2.查询
+            $.ajax({
+                url: '/buy/buyHouse/delAccountAndBackOthers',
+                data: {
+                    abankAcctId: abankAcctId,
+                    appNo:appStr
+                },
+                type: 'post',
+                dataType: 'json',
+                success: function (data) {
+                    if(data.status == "0")
+                    {
+                        var appBankAcctsArr = data.data;
+                        showAppBankAccts(appBankAcctsArr);
+                    }else
+                    {
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function () {
+                    alert("异常！");
+                }
+            });
+
+        },function(){});
+    }
+
+    function resetAccountDiv()
+    {
+        $("#abankAcctId").val("");
+        $("#bankId").val("");
+        $("#bankCode").val("01");
+        $("#bankAcct").val("");
+        $("#acctName").val("");
+    }
+
+    function resetBuildingChooseDiv()
+    {
+        $("#appRentId").val("");
+        $("#floorSelcetId").empty();
+        $("#roomSelcetId").empty();
+        $("#houseUsesId").val("");
+        $("#totalAreaId").val("");
+        $("#unitPriceId").val("");
+        $(".selectator_chosen_item").remove();
+
+        $("#houseAddrId").val("");
+
+
+        $("#totalPriceId").val("");
+    }
+
+
+    function showBuildingChooseDiv(type)
+    {
+        resetBuildingChooseDiv();
+        $("#box-top-id").scrollTop();
+        if('add' == type)
+        {
+            $("#bulidingChooseDiv").find(".myhideCl").css("display","block");
+            $("#applyDiv").hide();
+            $("#bulidingChooseDiv").show();
+            initBuildingComboxData();
+        }else{
+            var selIds = $("#rentHourseTable").jqGrid('getGridParam', 'selarrrow');
+            if(selIds.length == 0){
+                BModal.alert("请选择一条待编辑项。");
+                return;
+            }
+            if(selIds.length > 1){
+                BModal.alert("不能选择多个，请重新选择");
+                return;
+            }
+            var rowData = $("#rentHourseTable").jqGrid('getRowData', selIds[0]);
+            $("#bulidingChooseDiv").find(".myhideCl").css("display","none");
+            initBulidingChooseDivInfoByAppRentId(rowData.appRentId);
+        }
+
+    }
+
+    function delRentHourse()
+    {
+        var selIds = $("#rentHourseTable").jqGrid('getGridParam', 'selarrrow');
+        if(selIds.length == 0){
+            BModal.alert("请至少选择一条待删除项。");
+            return;
+        }
+        var appRentIds ="";
+        for(var i=0;i<selIds.length;i++)
+        {
+            var rowData = $("#rentHourseTable").jqGrid('getRowData', selIds[i]);
+            if(appRentIds == "")
+            {
+                appRentIds += rowData.appRentId;
+            }else
+            {
+                appRentIds += ","+rowData.appRentId;
+            }
+        }
+
+        BModal.confirm("确定删除选择的租房及结算方式", function (data) {
+            $.ajax( {
+                url:'/buy/buyHouse/delRentHourse',
+                data:{
+                    appRentIds:appRentIds
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data) {
+                    //更新grid列表信息
+                    var params = {
+                        appId: $("#appId").val()
+                    };
+                    $("#rentHourseTable").jqGrid('setGridParam',{
+                        datatype: 'json',
+                        postData: params,
+                        page: 1
+                    }).trigger("reloadGrid");
+                },
+                error : function() {
+                }
+            });
+
+        },function(){});
+    }
+
+    function initBulidingChooseDivInfoByAppRentId(appRentId)
+    {
+        $.ajax( {
+            url:'/buy/buyHouse/initBulidingChooseDivInfoByAppRentId',
+            data:{
+                appRentId:appRentId
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var rentHourseObj = data.data[0];
+
+                $("#appRentId").val(appRentId);
+                $("#houseUsesId").val(rentHourseObj.houseUses);
+                $("#totalAreaId").val(rentHourseObj.totalArea);
+                $("#houseAddrId").val(rentHourseObj.houseAddr);
+                $("#unitPriceId").val(rentHourseObj.unitPrice);
+
+                $("#applyDiv").hide();
+                $("#bulidingChooseDiv").show();
+
+                if(null != rentHourseObj.totalArea && null != rentHourseObj.unitPrice
+                && "" != rentHourseObj.totalArea && "" != rentHourseObj.unitPrice)
+                {
+                    calculateTotalPrice();
+                }
+            },
+            error : function() {
+            }
+        });
+    }
+
+    //初始化 楼宇选择下列框数据
+    function initBuildingComboxData()
+    {
+        $.ajax( {
+            url:'/buy/buyHouse/initBuildingComboxData',
+            data:{
+                appNo:appStr
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var buildingArr = data.data;
+                $("#buildingSelcetId").empty();
+
+                if(buildingArr.length>0)
+                {
+                    $("#buildingSelcetId").append('<option value="">--请选择--</option>');
+                }
+                for(var i=0;i<buildingArr.length;i++)
+                {
+                    var buildingObj = buildingArr[i];
+                    var buildingName = buildingObj.buildingName;
+                    var buildingId = buildingObj.buildingId;
+                    $("#buildingSelcetId").append('<option value="'+buildingId+'">'+buildingName+'</option>');
+                }
+
+                var $buildingSelcetId = $('#buildingSelcetId');
+                if ($buildingSelcetId.data('selectator') === undefined) {
+                    $buildingSelcetId.selectator({
+                        useSearch: false
+                    });
+                }
+            },
+            error : function() {
+            }
+        });
+    }
+
+    function buildingSelcetChange(a)
+    {
+        $(".selectator_chosen_item").remove();
+        var buildingIds = '';
+        for (var i=0;i<a.length;i++){
+            if (a.options[i].selected){
+                if(buildingIds == "")
+                {
+                    buildingIds += a.options[i].value;
+                }else
+                {
+                    buildingIds += ','+a.options[i].value;
+                }
+            }
+        }
+        $("#bulidingForm").validate().element(document.getElementsByName("building"));
+        //后调整为楼宇一次只能选择一个 buildingIds实际只有一个ID
+        queryHourseArea('buildingChange',buildingIds);
+    }
+
+    function roomSelectChange(a)
+    {
+        queryHourseArea('roomChange');
+    }
+
+    function queryHourseArea(type,ids)
+    {
+        var floorIdArr = $("#floorSelcetId").val();
+        var roomIdArr = $("#roomSelcetId").val();
+        var floorIds = "";
+        var roomIds = "";
+        if(null != floorIdArr && "" != floorIdArr)
+        {
+            for(var k=0;k<floorIdArr.length;k++)
+            {
+                if("" == floorIds)
+                {
+                    floorIds += floorIdArr[k];
+                }else
+                {
+                    floorIds += ','+floorIdArr[k];
+                }
+            }
+        }
+
+        ///////////楼层变化时，目前的处理是清空了房间,后期进行优化
+        if(type == 'floorChange')
+        {
+            roomIds = "";
+        }else if(type == 'buildingChange'){
+            floorIds ="";
+            roomIds = "";
+        }else
+        {
+            if(null != roomIdArr && "" != roomIdArr)
+            {
+                for(var j=0;j<roomIdArr.length;j++)
+                {
+                    if("" == roomIds)
+                    {
+                        roomIds += roomIdArr[j];
+                    }else
+                    {
+                        roomIds += ','+roomIdArr[j];
+                    }
+                }
+            }
+        }
+
+        $.ajax( {
+            url:'/buy/buyHouse/queryHourseArea',
+            data:{
+                buildingSelcet: $("#buildingSelcetId").val(),
+                floorSelcet: floorIds,
+                roomSelcet: roomIds
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                if(null != data.data)
+                {
+                    $("#totalAreaId").val(data.data.totalArea);
+                    $("#houseAddrId").val(data.data.totalName);
+
+                    if(null !=  $("#totalAreaId").val() && null != $("#unitPriceId").val()
+                            && "" != $("#totalAreaId").val() && "" != $("#unitPriceId").val())
+                    {
+                        calculateTotalPrice();
+                    }
+
+
+                }
+
+                if(type=='buildingChange')
+                {
+                    //通过buildingId 查询这些楼宇下的楼层信息
+                    queryFloorComboxData(ids);
+                }else if(type=='floorChange')
+                {
+                    queryRoomComboxData(ids);
+                }
+            },
+            error : function() {
+            }
+        });
+
+    }
+
+    function queryFloorComboxData(buildingIds)
+    {
+        $.ajax( {
+            url:'/buy/buyHouse/queryFloorComboxData',
+            data:{
+                buildingIds:buildingIds,
+                appId:$("#appId").val()
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var floorArr = data.data;
+                $("#floorSelcetId").empty();
+                for(var i=0;i<floorArr.length;i++)
+                {
+                    var floorObj = floorArr[i];
+                    var floorNumber = floorObj.floorNumber;
+                    var floorId = floorObj.floorId;
+                    $("#floorSelcetId").append('<option value="'+floorId+'"  hassubinfo="true">'+floorNumber+'</option>');
+                }
+
+                var $floorSelcetId = $('#floorSelcetId');
+                if ($floorSelcetId.data('selectator') === undefined) {
+                    $floorSelcetId.selectator({
+                        useSearch: false
+                    });
+                }
+            },
+            error : function() {
+            }
+        });
+    }
+
+    function floorSelcetChange(a)
+    {
+        $("#selectator_roomSelcetId .selectator_chosen_item").remove();
+        var floorIds = '';
+        for (var i=0;i<a.length;i++){
+            if (a.options[i].selected){
+                if(floorIds == "")
+                {
+                    floorIds += a.options[i].value;
+                }else
+                {
+                    floorIds += ','+a.options[i].value;
+                }
+            }
+        }
+        queryHourseArea('floorChange',floorIds);
+    }
+
+    function queryRoomComboxData(floorIds)
+    {
+        $.ajax( {
+            url:'/buy/buyHouse/queryRoomComboxData',
+            data:{
+                floorIds:floorIds,
+                buildingId:$("#buildingSelcetId").val()
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var floorArr = data.data;
+                $("#roomSelcetId").empty();
+                var html = "";
+                for(var i=0;i<floorArr.length;i++)
+                {
+                    var tempFloorObj = floorArr[i];
+                    var floorId = tempFloorObj.floorId;
+                    var floorNumber = tempFloorObj.floorNumber;
+                    var roomArr = tempFloorObj.roomList;
+                    html  += '<optgroup label="'+floorNumber+'" class="group_three">';
+                    for(var j=0;j<roomArr.length;j++)
+                    {
+                        var tempRoomObj = roomArr[j];
+                        var roomId = tempRoomObj.roomId;
+                        var roomNo = tempRoomObj.roomNo;
+                        html += '<option value="'+roomId+'"  hassubinfo="true">'+roomNo+'</option>';
+                    }
+                    html += '</optgroup>';
+                }
+
+                $("#roomSelcetId").append(html);
+                var $roomSelcetId = $('#roomSelcetId');
+                if ($roomSelcetId.data('selectator') === undefined) {
+                    $roomSelcetId.selectator({
+                        useSearch: false
+                    });
+                }
+            },
+            error : function() {
+            }
+        });
+    }
+
+    function checkBuildingForm()
+    {
+        var flag = $("#bulidingForm").validate().element(document.getElementsByName("building"))&&
+                $("#bulidingForm").validate().element(document.getElementsByName("unitPrice"));
+        if(!flag && document.getElementsByClassName("has-error").length>0)
+        {
+            document.getElementsByClassName("has-error")[0].scrollIntoView();
+
+        }
+        if(flag)
+        {
+            saveOrUpdateRentHourse();
+        }
+    }
+
+    function saveOrUpdateRentHourse()
+    {
+        var floorIdArr = $("#floorSelcetId").val();
+        var roomIdArr = $("#roomSelcetId").val();
+        var floorIds = "";
+        var roomIds = "";
+        if(null != floorIdArr && "" != floorIdArr)
+        {
+            for(var k=0;k<floorIdArr.length;k++)
+            {
+                if("" == floorIds)
+                {
+                    floorIds += floorIdArr[k];
+                }else
+                {
+                    floorIds += ','+floorIdArr[k];
+                }
+            }
+        }
+
+        if(null != roomIdArr && "" != roomIdArr)
+        {
+            for(var j=0;j<roomIdArr.length;j++)
+            {
+                if("" == roomIds)
+                {
+                    roomIds += roomIdArr[j];
+                }else
+                {
+                    roomIds += ','+roomIdArr[j];
+                }
+            }
+        }
+        $.ajax( {
+            url:'/buy/buyHouse/saveOrUpdateRentHourse',
+            data:{
+                appId:$("#appId").val(),
+                appRentId: $("#appRentId").val(),
+                buildingSelcet: $("#buildingSelcetId").val(),
+                floorSelcet: floorIds,
+                roomSelcet: roomIds,
+                houseAddr:$("#houseAddrId").val(),
+                totalArea: $("#totalAreaId").val(),
+                houseUses: $("#houseUsesId").val(),
+                unitPrice: $("#unitPriceId").val()
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+
+                var hasRentRoomArr = data.data;
+                if(null != hasRentRoomArr && hasRentRoomArr.length>0)
+                {
+                    var str = "";
+                    for(var i=0;i<hasRentRoomArr.length;i++)
+                    {
+                        if(str == "")
+                        {
+                            str = hasRentRoomArr[i].roomNo;
+                        }else
+                        {
+                            str += ","+hasRentRoomArr[i].roomNo;
+                        }
+                    }
+                    BModal.alert(str+"已经出租！");
+                }else
+                {
+                    $("#bulidingChooseDiv").hide();
+                    $("#applyDiv").show();
+                    //更新grid列表信息
+                    var params = {
+                        appId: $("#appId").val()
+                    };
+                    $("#rentHourseTable").jqGrid('setGridParam',{
+                        datatype: 'json',
+                        postData: params,
+                        page: 1
+                    }).trigger("reloadGrid");
+                }
+
+            },
+            error : function() {
+            }
+        });
+    }
+
+    function sendFlow()
+    {
+        var flag  = $("#form").validate().element(document.getElementsByName("bizTransactor"))&&
+            $("#form").validate().element(document.getElementsByName("contactTel"));
+        if(!flag && document.getElementsByClassName("has-error").length>0)
+        {
+            document.getElementsByClassName("has-error")[0].scrollIntoView();
+        }
+
+        if(flag)
+        {
+            $.ajax( {
+                url:'/buy/buyHouse/saveOrUpdateThirdPageInfo',
+                data:{
+                    //基本信息
+                    appId:$("#appId").val(),
+                    appNo:appStr,
+                    custId:$("#custId").val(),
+                    consName:$("#custNameId").val(),
+                    bizTransactor:$("#bizTransactor").val(),
+                    contactTel:$("#contactTel").val(),
+                    contactAdd:$("#contactAdd").val(),
+                    consAddr:$("#consAddr").val(),
+                    houseArea:$("#houseArea").html(),
+                    remark:$("#remark").val()
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data) {
+                    alert("成功传走");
+                },
+                error : function() {
+                }
+            });
+        }
+    }
+
+    var chooseCustIndex = null;
+    function showNaturalChooseWin()
+    {
+        chooseCustIndex = layer.open({
+            type: 1,
+//            page : {dom : '#floorCopylayer'},
+            title: "客户选择",
+            // skin: 'layui-layer-rim', //加上边框
+            area: ['627px','340px'], //宽高
+            content: $('#chooseCustDiv')
+        });
+        $("#custTable_CustName").val("");
+        queryCustsByName(1);
+    }
+
+    function resetNaturalInfo()
+    {
+        BModal.confirm("确定要重置客户信息？", function (data) {
+            $("#custNoId").val($("#generateCustNoId").val());
+            $("#custNameId").val("");
+            $("#custId").val("");
+            $("#entepriseScaleId").val("01");
+            $("#economyTypeCodeId").val("01");
+            $("#custProId").val("01");
+            $("#legalPersonId").val("");
+            $("#regCapitalId").val("");
+            $("#operScopeId").val("");
+            $("#briefId").val("");
+            $("#img-group").remove();
+            $("#uploader").remove();
+            //重新初始化图片上传控件
+            var  html = getImgHtml();
+            $("#imgTopHr").after(html);
+            $.getScript("../../../js/rental/buildingRent/uploader.js");
+
+            //重置删除相关联的所有信息
+            $.ajax( {
+                url:'/buy/buyHouse/delHandlerAndInsertNewCust',
+                data:{
+                    appNo:appStr,
+                    custNo:$("#generateCustNoId").val()
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data) {
+
+                },
+                error : function() {
+                }
+            });
+        },function(){});
+
+    }
+
+    function queryCustsByName(page)
+    {
+        $.post('../../../rental/apply/queryCustsByNameForPage',
+                {
+                    page: page,
+                    rows: 10,
+                    custName: $("#custTable_CustName").val()
+                }, function (res) {
+                    if(res.data.totalPage > 1){
+                        $('#pagination').bootstrapPaginator({
+                            currentPage: res.data.pageNo,//当前页
+                            totalPages: res.data.totalPage,//总页数
+                            numberofPages: res.data.pageSize,//显示的页数
+                            alignment:'right',
+                            showFirst:false,
+                            showLast:false,
+                            itemTexts: function (type, page, current) { //修改显示文字
+                                switch (type) {
+                                    case 'first':
+                                        return '首页';
+                                    case 'prev':
+                                        return '上一页';
+                                    case 'next':
+                                        return '下一页';
+                                    case 'last':
+                                        return '末页';
+                                    case 'page':
+                                        return page;
+                                }
+                            }, onPageClicked: function (event, originalEvent, type, page) { //异步换页
+                                queryCustsByName(page);
+                            }
+                        });
+                    }
+                    var trs = '';
+                    trs += '<thead>'+
+                    '<tr>'+
+                    '<th>客户编号</th>'+
+                    '<th>客户名称</th>'+
+                    '<th>法人代表</th>'+
+                    '<th>操作</th>'+
+                    '</tr>'+
+                    '</thead>';
+                    $.each(res.data.results, function (index, item) {
+                        trs +=
+                                '<tr>' +
+                                '<td>' + item.custNo + '</td>' +
+                                '<td>' + item.custName + '</td>' +
+                                '<td>' + item.legalPerson + '</td>' +
+                                '<td class="client-status" onclick="queryCustById(\''+item.custId+'\')"><span class="label label-primary">选择</span></td>' +
+                                '</tr>';
+
+                    });
+                    $('#custTable').empty();
+                    $('#custTable').append(trs);
+                }, 'json');
+    }
+
+    function calculateTotalPrice()
+    {
+        var totalArea = $("#totalAreaId").val();
+        var unitPrice = $("#unitPriceId").val();
+        if("" != totalArea && "" != unitPrice)
+        {
+            $("#totalPriceId").val(totalArea*unitPrice);
+        }
+    }
+
+    function calculateUnitPrice()
+    {
+        var totalArea = $("#totalAreaId").val();
+        var totalPriceId =  $("#totalPriceId").val();
+        if("" != totalArea && "" != totalPriceId)
+        {
+            $("#unitPriceId").val(totalPriceId/totalArea);
+        }
+    }
+</script>
+<!-- 上传图片-->
+<script src="../../../js/common/plugins/webuploader/webuploader.js"></script>
+<script src="../../../js/common/filebox.js"></script>
+<script src="../../../js/rental/buildingRent/uploader.js"></script>
+<script src="../../../js/common/plugins/blueimp/jquery.blueimp-gallery.min.js"></script>
+</body>
+
+</html>

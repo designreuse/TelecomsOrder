@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="../../js/common/jquery-2.1.1.js"></script>
+    <script src="../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="../../js/common/common.js"></script>
+    <script>
+        $('body').slimScroll({
+            height: '100%',
+            railOpacity: 0.4,
+            wheelStep: 10,
+            width: '100%'
+        });
+        $(function () {
+            var params = getQueryString();
+            var processDefinitionKey = params.processDefinitionKey ? params.processDefinitionKey : '';
+            var processInstanceId = params.processInstanceId ? params.processInstanceId : '';
+            $('img').attr('src', '../../workflow/getFlowGraph?processDefinitionKey=' + processDefinitionKey + '&processInstanceId=' + processInstanceId);
+        });
+    </script>
+</head>
+<body>
+<img>
+</body>
+</html>

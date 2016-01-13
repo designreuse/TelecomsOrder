@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.suypower.cloudx.module.system.dao.PageTemplateMapper">
+    <resultMap type="com.suypower.cloudx.module.system.entity.PageTemplate" id="tplMap">
+        <id property="tplID" column="TPL_ID" javaType="java.lang.String"/>
+        <result property="path" column="PATH" javaType="java.lang.String"/>
+        <result property="status" column="STATUS" javaType="java.lang.String"/>
+        <result property="scope" column="SCOPE" javaType="java.lang.String"/>
+        <result property="order" column="DISP_SN" javaType="java.lang.Integer"/>
+        <result property="createTime" column="CREATE_TIME" javaType="java.util.Date"/>
+        <result property="priority" column="PRIORITY" javaType="java.lang.Integer"/>
+        <association property="role" column="ROLE_ID"
+                     select="com.suypower.cloudx.module.system.dao.RoleMapper.queryRoleByID"/>
+    </resultMap>
+    <select id="queryUserPageTpl" resultMap="tplMap">
+     SELECT T.* FROM P_ACCOUNT A,P_ACCOUNT_ROLE_REF R,P_INDEX_TPL T
+      WHERE A.ACCOUNT_ID=R.ACCOUNT_ID
+      AND R.ROLE_ID=T.ROLE_ID
+      AND A.ACCOUNT_ID=#{userID}
+      ORDER BY T.PRIORITY DESC
+      LIMIT 1
+    </select>
+</mapper>

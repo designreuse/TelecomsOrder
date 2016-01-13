@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title></title>
+	<link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <link href="../../../css/rental/tran/tranList.css" rel="stylesheet">
+
+    <!-- Mainly scripts -->
+    <script src="../../../js/common/jquery-2.1.1.js"></script>
+    <script src="../../../js/common/bootstrap.min.js"></script>
+    <script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+    <script src="../../../js/common/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../../../js/common/inspinia.js"></script>
+    <script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+    <script src="../../../js/common/plugins/layer/layer.js"></script>
+    <script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+    <script src="../../../js/asset/building/util.js"></script>
+    <script src="../../../js/rental/tran/tranList.js"></script>
+</head>
+<body class="gray-bg">
+    <div class="wrapper-content animated fadeInRight" style="padding: 20px 20px 40px;">
+        <div class="ibox-title">
+            <h5>交接情况</h5>
+        </div>
+        <div class="ibox-content" style="min-height: 420px;">
+
+            <div class="input-group">
+                <div class="input-group-btn">
+                    <select class="tran-state-select form-control input" id="tranStateIn" name="tranType">
+                        <option value="01" selected>全部</option>
+                        <option value="02">待交付</option>
+                        <option value="03">已交付</option>
+                        <option value="04">已收回</option>
+                    </select>
+                </div>
+                <input id="c_consName" type="text" class="form-control input" placeholder="请输入用户名称">
+                <div class="input-group-btn" style="width:0px;">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                    </ul>
+                </div>
+                <div class="input-group-btn">
+                    <button class="btn btn-primary" type="button" onclick="queryTrans(1)">
+                        <i class="fa fa-search"></i>搜索
+                    </button>
+                </div>
+            </div>
+            <div class="contract-list">
+                <table id="contractTable" class="table table-hover">
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="wrapper">
+                    <p id="recordP"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

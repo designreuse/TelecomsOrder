@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>延时停电审批</title>
+
+    <link href="../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../css/common/animate.css" rel="stylesheet">
+    <link href="../../css/common/style.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins  border-tottom">
+                <div class="ibox-title">
+                    <h5>延时停电申请信息 </h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-down"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" style="display:none;padding: 23px 20px 8px 20px;">
+                    <form method="get" class="form-horizontal" style="width:105%">
+                        <input type="hidden" id="offPlanId">
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">用户名称</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="consName" disabled="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">租赁地址</label>
+
+                            <div class="col-sm-9">
+                                <textarea name="comment1" id="consAddr" disabled="" class="form-control" required=""
+                                          aria-required="true" style="height:75px;"></textarea>
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系人</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="contactName" disabled="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">联系电话</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="mobile" disabled="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">原计划停电时间</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="orgnPowerOffTime" disabled="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">停电原因</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="powerOffType" disabled="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">延时截止时间</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" id="delay_time" disabled="" class="form-control">
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">延时停电说明</label>
+
+                            <div class="col-sm-9">
+                                <textarea disabled="" id="delay_desc" name="comment" class="form-control" required=""
+                                          aria-required="true" style="height:75px;"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../js/common/jquery-2.1.1.js"></script>
+<script src="../../js/common/bootstrap.min.js"></script>
+<script src="../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+
+<script src="../../js/common/inspinia.js"></script>
+<script src="../../js/common/plugins/pace/pace.min.js"></script>
+<script src="../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../js/common/common.js"></script>
+<script src="../../js/power/power.js"></script>
+
+<script src="../../js/common/demo/flot-demo.js"></script>
+<script src="../../js/common/plugins/dataTables/jquery.dataTables.js"></script>
+
+<script src="../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+
+<script src="../../js/common/workflow.js"></script>
+
+<script>
+    var appNo = '';              //流程申请编号
+
+    function init(params) {
+        $.workflow.initWorkflowContext(params,function(){
+            $.workflow.addEventListener('onSubmit', function(e) {
+                //验证表单
+                //保存业务数据
+                //传递流程
+                saveAppPowerOffDelayApprove(e.data);
+
+            });
+        });
+        appNo = params.bizKey;
+        //初始化延时停电申请信息
+        initAppPowerOffDelay();
+
+        //获取审批Panel
+        /*var panel = getApprovePanel("appPowerOffDelayApproveIbox", "延时停电审批", "approveTabId", "apprRslt", "apprOpinion",
+                "historyApproveDivId", "historyApproveTable", "historyApprovePager");*/
+    }
+
+    /*function init() {
+        //初始化延时停电申请信息
+        initAppPowerOffDelay();
+
+        //获取审批Panel
+        var panel = getApprovePanel("appPowerOffDelayApproveIbox", "延时停电审批", "approveTabId", "apprRslt", "apprOpinion",
+                "historyApproveDivId", "historyApproveTable", "historyApprovePager");
+    }*/
+
+    //初始化延时停电申请信息
+    function initAppPowerOffDelay(){
+        $.ajax({
+            url: '../../power/appPowerOffDelay/queryAppPowerOffDelay',
+            data: {
+                appNo: appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    if (data.data.results.length > 0) {
+                        var appPowerOffDelay = data.data.results[0];
+                        //BModal.alert(JSON.stringify(appPowerOffDelay));
+                        $("#offPlanId").val(appPowerOffDelay["offPlanId"]);
+                        $("#consName").val(appPowerOffDelay["consName"]);
+                        $("#consAddr").val(appPowerOffDelay["consAddr"]);
+                        $("#contactName").val(appPowerOffDelay["contactName"]);
+                        $("#mobile").val(appPowerOffDelay["mobile"]);
+                        $("#powerOffType").val(appPowerOffDelay["powerOffTypeName"]);
+                        $("#orgnPowerOffTime").val(appPowerOffDelay["orgnPowerOffTime"]);
+                        $("#delay_time").val(appPowerOffDelay["delayTime"]);
+                        $("#delay_desc").val(appPowerOffDelay["delayDesc"]);
+                    } else {
+                        BModal.alert("根据流程编号查询延时停电信息为空！");
+                    }
+                }else{
+                    BModal.alert(data.msg);
+                }
+            },
+            error: function (e) {
+                BModal.alert("查询延时停电信息异常！");
+            }
+        });
+    }
+
+    //查询历史审批信息
+    function queryHistoryApprove(){
+
+        $("#historyApproveTable").jqGrid({
+            url: "../../power/appPowerOff/queryApproveInfo",
+            postData:{
+                appNo:appNo
+            },
+            datatype : "json",
+            height: '100px',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [  '审批人', '审批结果', '审批意见', '审批时间'],
+            colModel : [
+                {name : 'approveName',  index : 'approveName',width : 110,  align : "center"},
+                {name : 'apprRslt',     index : 'apprRslt',   width : 110,  align : "center"},
+                {name : 'apprOpinion',  index : 'apprOpinion',width : 300,  align : "left"},
+                {name : 'apprDate',     index : 'apprDate',   width : 160,  align : "center"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#historyApprovePager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            caption : "历史审批信息",
+            hidegrid: false
+        });
+        $("#historyApproveTable").jqGrid("navGrid", "#historyApprovePager", {
+            add: false,
+            edit: false,
+            del: false,
+            search: false
+        },
+        {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+
+    }
+
+    //保存审批信息
+    function saveAppPowerOffDelayApprove(params) {
+
+        var apprRslt = "";
+        if(params.commandType == 'general' || params.commandType == 'submit'){
+            apprRslt = "01";
+        }else{
+            apprRslt = "02";
+        }
+
+        alert(apprRslt);
+
+        /*var apprRslt = $("#apprRslt").val();
+        var apprOpinion = $("#apprOpinion").val();*/
+        var delay_time = $("#delay_time").val();
+        var offPlanId = $("#offPlanId").val();
+
+        $.ajax({
+            url: '../../power/appPowerOffDelay/saveAppPowerOffDelayApprove',
+            data: {
+                appNo: appNo,
+                apprRslt: apprRslt,
+                powerOffPlanTime: delay_time,
+                offPlanId: offPlanId
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    BModal.alert("审批数据保存成功,成功流转至下一节点。");
+                    //$.workflow.completeTask(params);
+                }else{
+                    BModal.alert(data.msg);
+                }
+            },
+            error: function (e) {
+                BModal.alert("审批数据保存异常！");
+            }
+        });
+    }
+</script>
+</body>
+</html>

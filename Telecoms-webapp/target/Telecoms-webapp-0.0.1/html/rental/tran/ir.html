@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+	<link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <link href="../../../css/rental/tran/ir.css" rel="stylesheet">
+
+    <!-- Mainly scripts -->
+    <script src="../../../js/common/jquery-2.1.1.js"></script>
+    <script src="../../../js/common/bootstrap.min.js"></script>
+    <script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+    <!-- jqGrid -->
+    <script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-en.js"></script>
+    <script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+
+    <script src="../../../js/common/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../../../js/common/inspinia.js"></script>
+    <script src="../../../js/common/plugins/layer/layer.js"></script>
+    <script src="../../../js/common/plugins/suggest/bootstrap-suggest.min.js"></script>
+    <script src="../../../js/common/jquery.jqprint-0.3.js"></script>
+    <script src="../../../js/common/jquery-migrate-1.1.0.js"></script>
+    <script src="../../../js/asset/building/util.js"></script>
+    <script src="../../../js/rental/tran/ir.js"></script>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content">
+        <div class="row no-margins text-right">
+            <a class="btn btn-white" href="javascript:void(0)" onclick="closeLayer()">
+                <i class="fa fa-close"></i> 关闭
+            </a>
+            <a class="btn btn-primary" href="javascript:void(0)" onclick="print()">
+                <i class="fa fa-print"></i> 打印
+            </a>
+        </div>
+        <div id="printArea">
+            <div class="row no-margins">
+                <div class="col-sm-12 text-center" style="padding-bottom: 5px;"><h3>房屋交接单</h3></div>
+            </div>
+            <div class="row no-margins">
+                <div class="col-sm-12">
+                    <h4 id="contractNoH4"></h4>
+                </div>
+            </div>
+            <div class="row no-margins">
+                <div class="col-sm-12">
+                    <h4 id="houseAddrH4"></h4>
+                </div>
+            </div>
+            <div class="row no-margins" style="padding: 10px 0">
+                <div class="col-sm-12">
+                    <table id="tranDetailTable"></table>
+                </div>
+            </div>
+            <div class="row no-margins" style="padding: 5px 0">
+                <div class="col-sm-12">
+                    <table id="meterTable"></table>
+                </div>
+            </div>
+            <div class="row no-margins" style="padding: 10px 0 5px 0">
+                <div class="col-sm-6">
+                    <p id="partyASp"></p>
+                    <p>日期：</p>
+                </div>
+                <div class="col-sm-6">
+                    <p id="partyBSp"></p>
+                    <p>日期：</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

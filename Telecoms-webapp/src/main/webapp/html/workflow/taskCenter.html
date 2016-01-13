@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/common/animate.css" rel="stylesheet">
+    <link href="../../css/common/plugins/codemirror/ambiance.css" rel="stylesheet">
+    <link href="../../css/common/style.css" rel="stylesheet">
+</head>
+<body class="white-bg" style="height: 100%;overflow-y: hidden;">
+<div>
+    <div class="fh-breadcrumb">
+        <div class="fh-column">
+            <div class="border-bottom task-search-bar">
+                <form>
+                    <div class="col-sm-4 no-padding">
+                        <select class="form-control">
+                            <option value="01">待办</option>
+                            <option value="02">已办</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-8 input-group no-padding">
+                        <input type="text" placeholder="搜索" class="input form-control">
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-primary">
+                                <i class="fa fa-search"></i>
+                            </button>
+                        </span>
+                    </div>
+                </form>
+            </div>
+            <div class="full-height-scroll">
+                <ul id="taskListView" class="list-group elements-list">
+                </ul>
+                <div id="pagination"></div>
+            </div>
+        </div>
+        <div class="fh-main-column">
+            <div id="workflowToolBar" class="border-bottom header-bar border-left">
+            </div>
+            <div class="full-height-scroll full-height border-left">
+                <iframe id="taskContentFrame" width="100%" height="100%" src=""
+                        frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Mainly scripts -->
+<script src="../../js/common/jquery-2.1.1.js"></script>
+<script src="../../js/common/bootstrap.min.js"></script>
+<script src="../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../js/common/plugins/layer/layer.js"></script>
+<script src="../../js/common/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+<script src="../../js/common/common.js"></script>
+<script src="../../js/common/workflow.js"></script>
+<script>
+    var _layerIdx;
+    var _showIdx = 0;
+    var _func;
+    $(function () {
+
+        $('.fh-column form').submit(function () {
+            loadTasks(1);
+            return false;
+        });
+
+        $('.fh-column form button').click(function () {
+            loadTasks(1);
+            return false;
+        });
+        $('.dropdown-toggle').dropdown();
+        $('.fh-breadcrumb').css('height', ($('body').height() - $('.page-heading').height() - 50) + 'px');
+        $('.full-height-scroll:eq(0)').slimscroll({
+            width: 'auto', //可滚动区域宽度
+            height: '100%', //可滚动区域高度
+            opacity: .4, //滚动条透明度
+            wheelStep: 10 //滚轮滚动量
+        });
+        $(window).resize(function () {
+            $('.fh-breadcrumb').css('height', ($('body').height() - $('.page-heading').height() - 50) + 'px');
+            $('.full-height-scroll:eq(0)').slimscroll({
+                width: 'auto', //可滚动区域宽度
+                height: '100%', //可滚动区域高度
+                opacity: .4, //滚动条透明度
+                wheelStep: 10 //滚轮滚动量
+            });
+        });
+        var params = getQueryString();
+        var _cntPage = params.page ? params.page : 1;
+        if (params.index) {
+            _showIdx = params.index;
+        }
+        loadTasks(_cntPage);
+        $('#taskContentFrame').load(function () {
+            layer.closeAll();
+            if ($('.list-group-item.active').attr('data-type') == 'todoTask') {
+                if ($('#taskContentFrame')[0].contentWindow.init) {
+                    _func = $('#taskContentFrame')[0].contentWindow.init({
+                        bizKey: $('.list-group-item.active').attr('data-bizkey')
+                    });
+                }
+            }
+        });
+        $('#approveFrom form').submit(function () {
+            layer.closeAll();
+            if (_func) {
+                _func();
+            }
+            return false;
+        });
+    });
+
+    function loadTasks(page, type) {
+        if (type) {
+            $(".fh-column form select option[value='" + type + "']").prop("selected", "selected");
+        }
+        _layerIdx = layer.load(0, {shade: false});
+        var _taskType = $('.fh-column form select').val();
+        $.post('../../workflow/getTodoTask',
+                {
+                    page: page,
+                    rows: 10,
+                    taskType: _taskType,
+                    keyword: $('.fh-column form input[type=text]').val()
+                },
+                function (res) {
+                    if (res.data.totalPage > 1) {
+                        $('#pagination').bootstrapPaginator({
+                            currentPage: res.data.pageNo,//当前页
+                            totalPages: res.data.totalPage,//总页数
+                            numberofPages: res.data.pageSize,//显示的页数
+                            alignment: 'right',
+                            showFirst: false,
+                            showLast: false,
+                            itemTexts: function (type, page, current) { //修改显示文字
+                                switch (type) {
+                                    case 'first':
+                                        return '首页';
+                                    case 'prev':
+                                        return '上一页';
+                                    case 'next':
+                                        return '下一页';
+                                    case 'last':
+                                        return '末页';
+                                    case 'page':
+                                        return page;
+                                }
+                            }, onPageClicked: function (event, originalEvent, type, page) { //异步分页
+                                loadTasks(page);
+                            },
+                        });
+                    } else if (res.data.totalPage == 0) {
+                        loadWorkflowbar(null);
+                    }
+                    var items = '';
+                    $.each(res.data.results, function (index, item) {
+                        if ('01' == _taskType) {
+                            items += '<li class="list-group-item" data-type="todoTask" data-processInstanceId="' + item.processInstanceId +
+                            '" data-processDefinitionName="' + item.processDefinitionName + '"' + ' data-nodeName="' + item.nodeName + '"' +
+                            '" data-taskId="' + item.taskInstanceId + '" data-bizKey="' + item.bizKey + '" data-formUri="' + item.formUri + '">' +
+                            '	<a>                                                                                       ' +
+                            '		<small class="pull-right text-muted"> <i class="fa fa-info-circle"></i> ' + item.bizKey + '</small>' +
+                            '		<strong><i class="fa fa-tasks"></i> ' + item.processDefinitionName + '</strong>           ' +
+                            '		<div class="small m-t-xs">                                                            ' +
+                            '			<p>' + item.description +
+                            '			</p>                                                                              ' +
+                            '			<p class="m-b-none text-right">                                                   ' +
+                            '				' + item.userName + ' / ' + item.createTime +
+                            '			</p>                                                                              ' +
+                            '		</div>                                                                                ' +
+                            '	</a>                                                                                      ' +
+                            '</li>                                                                                        ';
+                        } else {
+                            items += '<li class="list-group-item" data-type="doneTask" data-processInstanceId="' + item.processInstanceId +
+                            '" data-processDefinitionName="' + item.processDefinitionName + '" data-processDefinitionKey="' + item.processDefinitionKey + '"' +
+                            ' data-bizKey="' + item.bizKey + '">' +
+                            '	<a>                                                                                       ' +
+                            '		<small class="pull-right text-muted"> <i class="fa fa-info-circle"></i> ' + item.bizKey + '</small>' +
+                            '		<strong><i class="fa fa-tasks"></i> ' + item.processDefinitionName + '</strong>           ' +
+                            '		<div class="small m-t-xs">                                                            ';
+                            if (item.endTime) {
+                                if ('COMPLETE' == item.instanceStatus) {
+                                    items += '<p>完成时间：' + item.endTime + '</p>';
+                                } else {
+                                    items += '<p>终止时间：' + item.endTime + '</p>';
+                                }
+                            } else {
+                                items += '<p>当前环节:' + item.nowNodeInfo + '</p>';
+                            }
+                            items += '			<p class="m-b-none text-right">                                                   ' +
+                            '				' + item.startAuthorName + ' / ' + item.startTime +
+                            '			</p>                                                                              ' +
+                            '		</div>                                                                                ' +
+                            '	</a>                                                                                      ' +
+                            '</li>                                                                                        ';
+                        }
+
+                    });
+                    $('#taskListView').empty();
+                    $('#taskListView').addClass('animated fadeInUp');
+                    $('#taskListView').append(items);
+                    layer.close(_layerIdx);
+                    $('.list-group-item').click(function () {
+                        if (!$(this).hasClass('active')) {
+                            $('.list-group-item.active').removeClass('active');
+                            $(this).addClass('active');
+                            layer.load(0, {shade: false});
+                            loadWorkflowbar(_taskType);
+                            if ($(this).attr('data-type') == 'todoTask') {
+                                $('#taskContentFrame').attr('src', '../../' + $(this).attr('data-formUri'));
+                            }else{
+                                $('#taskContentFrame').attr('src', '../../html/workflow/timeLine.html?appid=' + $('.list-group-item.active').attr('data-processInstanceId'));
+                            }
+                        }
+                    });
+                    $('.list-group-item:eq(' + _showIdx + ')').click();
+                }, 'json');
+    }
+    function loadWorkflowbar(type) {
+        var item = $('.list-group-item.active');
+        $.post('../../workflow/getWorkflowbarView',
+                {
+                    taskId: $(item).attr('data-taskId'),
+                    processInstanceId: $(item).attr('data-processInstanceId'),
+                    bizKey: $(item).attr('data-bizKey'),
+                    todoType: type,
+                    processDefinitionKey: $(item).attr('data-processDefinitionKey')
+                }, function (res) {
+                    $('#workflowToolBar').empty();
+                    $('#workflowToolBar').append(res);
+                }, 'html');
+    }
+</script>
+<div id="approveFrom" class="white-bg form-group" style="display: none;">
+    <div class="ibox-content">
+        <div class="row">
+            <div class="col-sm-12">
+                <form role="form">
+                    <div class="form-group">
+                        <label>操作类型</label>
+                        <input type="text" class="form-control" disabled name="optType">
+                    </div>
+                    <div class="form-group">
+                        <label>操作说明</label>
+                        <textarea name="taskComment" class="form-control" placeholder="备注说明"></textarea>
+                        <input type="hidden" name="taskId">
+                        <input type="hidden" name="bizKey">
+                        <input type="hidden" name="processInstanceId">
+                        <input type="hidden" name="commandType">
+                        <input type="hidden" name="commandId">
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-primary pull-right m-t-n-xs" type="submit">确定</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

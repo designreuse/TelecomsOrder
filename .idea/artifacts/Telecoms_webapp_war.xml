@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Telecoms-webapp:war">
+    <output-path>$PROJECT_DIR$/Telecoms-webapp/target</output-path>
+    <root id="archive" name="cloudx.war">
+      <element id="artifact" artifact-name="Telecoms-webapp:war exploded" />
+    </root>
+  </artifact>
+</component>

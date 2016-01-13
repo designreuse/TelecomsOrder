@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.suypower.cloudx.storage.system.dao.DataConfigMapper">
+    <resultMap type="com.suypower.cloudx.storage.system.entity.DataConfig" id="dataConfigMap">
+        <id property="configID" column="CONFIG_ID" javaType="java.lang.String"/>
+        <result property="configName" column="CONFIG_NAME" javaType="java.lang.String"/>
+        <result property="configValue" column="CONFIG_VALUE" javaType="java.lang.String"/>
+        <result property="createTime" column="CREATE_TIME" javaType="java.util.Date"/>
+        <result property="status" column="STATUS" javaType="java.lang.String"/>
+    </resultMap>
+    <select id="queryDataConfig" resultMap="dataConfigMap">
+      SELECT * FROM DATA_CONFIG D WHERE D.CONFIG_NAME=#{configName}
+    </select>
+</mapper>

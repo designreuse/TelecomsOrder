@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/common/animate.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../css/common/style.css" rel="stylesheet">
+</head>
+
+<body class="white-bg animated fadeInLeft">
+<div class="wrapper-content">
+    <div class="row">
+        <div class="col-lg-12">
+            <form method="get" class="form-horizontal" id="appPowerOffDelayForm" style="width:105%">
+                <div class="form-group">
+                    <input type="hidden" id="apdId">
+                    <input type="hidden" id="offPlanId">
+                    <input type="hidden" id="contactId">
+                    <label class="col-sm-2 control-label">用户名称<span style="color:red;">*</span></label>
+                    <div class="col-sm-9">
+                        <select id="consName" name="consName" data-placeholder="选择用户名称..." class="form-control"
+                                style="width:100%;" tabindex="2" onchange="setFromOtherValue(this)">
+                        </select>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group"><label class="col-sm-2 control-label">租赁地址</label>
+                    <div class="col-sm-9">
+                                <textarea name="consAddr" id="consAddr" disabled="" class="form-control" required=""
+                                          aria-required="true" style="height:75px;"></textarea>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">联系人<span style="color:red;">*</span></label>
+                    <div class="col-sm-9">
+                        <select id="contactName" name="contactName"  class="form-control"
+                                style="width:100%;" tabindex="2" onchange="setMobileValue(this)">
+                        </select>
+                        <!--
+                        <input type="text" id="contactName" name="contactName" maxlength="20" class="form-control" >
+                        -->
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">联系电话<span style="color:red;">*</span></label>
+                    <div class="col-sm-9">
+                        <input type="text" id="mobile" name="mobile" maxlength="20" class="form-control" >
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">原计划停电时间</label>
+                    <div class="col-sm-9">
+                        <input type="text" id="orgnPowerOffTime" name="orgnPowerOffTime" disabled="" class="form-control" >
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">停电原因</label>
+                    <div class="col-sm-9">
+                        <input type="hidden" id="powerOffType" >
+                        <input type="text" id="powerOffTypeName" name="powerOffTypeName" disabled="" class="form-control">
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">延时截止时间<span style="color:red;">*</span></label>
+                    <div class="col-sm-9">
+                        <input class="laydate-icon form-control layer-date" id="delay_time"
+                               style="display:inline;width:100%;height:34px;padding-left:20px;margin-right: 2px;border-color:#E5E6E7;"
+                               placeholder="YYYY-MM-DD hh:mm:ss" name="delay_time"
+                               onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"/>
+                    </div>
+                </div>
+                <div class="hr-line-dashed"></div>
+                <div class="form-group"><label class="col-sm-2 control-label">延时停电说明<span
+                        style="color:red;">*</span></label>
+                    <div class="col-sm-9">
+                                <textarea name="delay_desc" id="delay_desc" class="form-control" required=""
+                                          maxlength="128" aria-required="true" style="height:75px;"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="../../js/common/jquery-2.1.1.js"></script>
+<script src="../../js/common/bootstrap.min.js"></script>
+<script src="../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<script src="../../js/rental/laydate-master/laydate.js"></script>
+<script src="../../js/common/common.js"></script>
+<script src="../../js/power/power.js"></script>
+<script>
+    function init(params) {
+        appNo = params.bizKey;
+        return function (data){
+//            saveAppPowerOffDelay(data);
+            parent.$.workflow.completeTask(data);
+        };
+        //根据appNO初始化表单信息
+        initAppPowerOffDelay();
+        formValidateMsg();
+    }
+    $(function(){
+    $('body').slimscroll({
+        width: 'auto', //可滚动区域宽度
+        height: '100%', //可滚动区域高度
+        opacity: .4, //滚动条透明度
+        wheelStep: 10 //滚轮滚动量
+    });
+    });
+    var appNo = '';        //流程申请编号
+    //var appNo = '111';        //流程申请编号
+    var powerOffPlanList = [];      //停电计划信息
+    var contactList = [];       //联系人信息
+    var updateContactName = "";         //修改时联系人
+    var start = {
+        elem: '#start',
+        format: 'YYYY/MM/DD',
+        min: '1900-01-01 00:00:00', //设定最小日期为当前日期
+        max: '2099-06-16 23:59:59', //最大日期
+        istime: false,
+        istoday: false,
+        choose: function (datas) {
+            end.min = datas; //开始日选好后，重置结束日的最小日期
+            end.start = datas //将结束日的初始值设定为开始日
+        }
+    };
+    var end = {
+        elem: '#end',
+        format: 'YYYY/MM/DD',
+        min: '1900-01-01 00:00:00',
+        max: '2099-06-16 23:59:59',
+        istime: false,
+        istoday: false,
+        choose: function (datas) {
+            start.max = datas; //结束日选好后，重置开始日的最大日期
+        }
+    };
+    laydate(start);
+    laydate(end);
+    validateInit();
+
+    function initAppPowerOffDelay() {
+
+        $.ajax({
+            url: '../../power/appPowerOffDelay/queryAppPowerOffDelay',
+            data: {
+                appNo: appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+
+                    if (data.data.results.length > 0) {
+                        var appPowerOffDelay = data.data.results[0];
+                        //alert(JSON.stringify(appPowerOffDelay));
+                        $("#apdId").val(appPowerOffDelay["apdId"]);
+                        $("#offPlanId").val(appPowerOffDelay["offPlanId"]);
+                        $("#contactId").val(appPowerOffDelay["contactId"]);
+                        $("#consAddr").val(appPowerOffDelay["consAddr"]);
+                        $("#contactName").val(appPowerOffDelay["contactName"]);
+                        $("#mobile").val(appPowerOffDelay["mobile"]);
+                        $("#orgnPowerOffTime").val(appPowerOffDelay["orgnPowerOffTime"]);
+                        $("#powerOffType").val(appPowerOffDelay["powerOffType"]);
+                        $("#powerOffTypeName").val(appPowerOffDelay["powerOffTypeName"]);
+                        $("#delay_time").val(appPowerOffDelay["delayTime"]);
+                        $("#delay_desc").val(appPowerOffDelay["delayDesc"]);
+
+                        $("#consName").append("<option value='" + appPowerOffDelay["offPlanId"] + "'>" + (appPowerOffDelay["consName"]) + "</option>");
+                        //$("#consName").options[1].selected = true;
+                        $("#consName").prop("disabled", true);
+
+                        updateContactName = appPowerOffDelay["contactName"];
+
+                        setContactNameAndMobile(appPowerOffDelay["consId"]);
+
+                        //获取历史审批信息
+                        //queryHistoryApprove();
+
+
+                    } else {
+                        //查询停电用户信息
+                        queryPowerOffPlan();
+                        //隐藏历史审批信息panel
+                        //document.getElementById("historyApproveId").style.display="none";
+                    }
+                }else{
+                    alert(data.msg);
+                }
+            },
+            error: function () {
+                alert("根据申请编号查询延时停电信息异常！");
+            }
+        });
+    }
+
+    //选择用户名称时，给表单其它字段赋值
+    function setFromOtherValue(obj) {
+        var objValue = obj.options[obj.selectedIndex].value;
+
+        //清空联系人、联系方式
+        $("#contactName").empty();
+        $("#mobile").val("");
+
+        if(objValue == ""){
+            $("#offPlanId").val("");
+            $("#contactId").val("");
+            $("#consAddr").val("");
+            $("#contactName").val("");
+            $("#mobile").val("");
+            $("#powerOffType").val("");
+            $("#powerOffTypeName").val("");
+            $("#orgnPowerOffTime").val("");
+            return;
+        }
+        for (var i = 0; i < powerOffPlanList.length; i++) {
+            if(powerOffPlanList[i]["offPlanId"] == objValue){
+                $("#offPlanId").val(powerOffPlanList[i]["offPlanId"]);
+                $("#consAddr").val(powerOffPlanList[i]["consAddr"]);
+                $("#contactId").val(powerOffPlanList[i]["contactId"]);
+                ///$("#contactName").val(powerOffPlanList[i]["contactName"]);
+                //$("#mobile").val(powerOffPlanList[i]["mobile"]);
+                $("#powerOffType").val(powerOffPlanList[i]["powerOffType"]);
+                $("#powerOffTypeName").val(powerOffPlanList[i]["powerOffTypeName"]);
+                $("#orgnPowerOffTime").val(powerOffPlanList[i]["powerOffPlanTime"]);
+
+                setContactNameAndMobile(powerOffPlanList[i]["consId"]);
+                break;
+            }
+        }
+
+    }
+
+    //选择联系人时，改变联系电话
+    function setMobileValue(obj){
+        var objValue = obj.options[obj.selectedIndex].value;
+
+        for (var i = 0; i < contactList.length; i++) {
+            if(contactList[i]["contactId"] == objValue){
+                $("#mobile").val(contactList[i]["mobile"]);
+                break;
+            }
+        }
+    }
+
+    //动态获取联系人和联系电话
+    function setContactNameAndMobile(consId){
+        //根据用户标识查询联系信息
+        $.ajax({
+            url: '../../power/powerOffPlan/queryContactByConsId',
+            data: {
+                consId: consId
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    if (data.data.results.length > 0) {
+                        contactList = data.data.results;
+                    }
+
+                    for (var i = 0; i < contactList.length; i++) {
+                        if(updateContactName == contactList[i]["contactName"]){
+                            $("#contactName").append("<option selected = 'selected' value='" + contactList[i]["contactId"] + "'>" + (contactList[i]["contactName"]) + "</option>");
+                        }else{
+                            $("#contactName").append("<option value='" + contactList[i]["contactId"] + "'>" + (contactList[i]["contactName"]) + "</option>");
+                        }
+                        if(updateContactName == "" && i == 0){
+                            $("#mobile").val(contactList[i]["mobile"]);
+                        }
+                    }
+
+                    //alert("获取停电计划信息["+JSON.stringify(data.data));
+                }else{
+                    alert(data.msg);
+                }
+            },
+            error: function (e) {
+                alert("根据用户标识查询联系信息异常!");
+            }
+        });
+    }
+
+    //查询停电用户信息
+    function queryPowerOffPlan(){
+        //获取停电计划用户信息
+        $.ajax({
+            url: '../../power/appPowerOffDelay/queryPowerOffPlan',
+            data: {
+                statusCode: "01"
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    if (data.data.results.length > 0) {
+                        powerOffPlanList = data.data.results;
+                    }
+                    $("#consName").append("<option value=''>请选择用户名称</option>");
+                    for (var i = 0; i < powerOffPlanList.length; i++) {
+                        $("#consName").append("<option value='" + powerOffPlanList[i]["offPlanId"] + "'>" + (powerOffPlanList[i]["consName"]) + "</option>");
+                    }
+                    //alert("获取停电计划信息["+JSON.stringify(data.data));
+                }else{
+                    alert(data.msg);
+                }
+            },
+            error: function (e) {
+                alert("查询停电用户信息异常!");
+            }
+        });
+    }
+
+    //查询历史审批信息
+    function queryHistoryApprove(){
+
+        initHistoryApproveJqGrid($("#historyApproveTable"), "#historyApprovePager", appNo, "100px");
+        $(window).bind("resize",
+            function() {
+                var width = $("#historyApproveDivId").width();
+                $("#historyApproveTable").setGridWidth(width);
+        })
+    }
+
+    //延时停电申请验证
+    function formValidateMsg(){
+        var e = "<i class='fa fa-times-circle'></i> ";
+        $("#appPowerOffDelayForm").validate({
+            rules: {
+                consName: {
+                    required:true
+                },
+                contactName: {
+                    required:true
+                },
+                mobile: {
+                    required:true
+                },
+                delayTime: {
+                    required:true
+                },
+                delayDesc: {
+                    required:true
+                }
+            },
+            messages: {
+                consName: {
+                    required:e+"请输入或选择用户名称"
+                },
+                contactName: {
+                    required:e+"请输入联系人"
+                },
+                mobile: {
+                    required:e+"请输入联系电话"
+                },
+                delay_time: {
+                    required:e+"请输入延时截止时间"
+                },
+                delay_desc: {
+                    required:e+"请输入延时停电说明"
+                }
+            }
+        });
+    }
+
+    //延时停电申请验证
+    function formValidate(){
+        var boolean1 = $("#appPowerOffDelayForm").validate().element(document.getElementsByName("consName"));
+        var boolean2 = $("#appPowerOffDelayForm").validate().element(document.getElementsByName("contactName"));
+        var boolean3 = $("#appPowerOffDelayForm").validate().element(document.getElementsByName("mobile"));
+        var boolean4 = $("#appPowerOffDelayForm").validate().element(document.getElementsByName("delay_time"));
+        var boolean5 = $("#appPowerOffDelayForm").validate().element(document.getElementsByName("delay_desc"));
+        return boolean1&&boolean2&&boolean3&&boolean4&&boolean5;
+    }
+
+    //保存延时停电申请
+    function saveAppPowerOffDelay(params) {
+
+        if (!formValidate()){
+            return false;
+        }
+
+        var apdId = $("#apdId").val();
+        var offPlanId = $("#offPlanId").val();
+        var contactId = $("#contactId").val();
+        var consName = $("#consName").val();
+        var contactName = $("#contactName").find("option:selected").text();
+        var mobile = $("#mobile").val();
+        var orgnPowerOffTime = $("#orgnPowerOffTime").val();
+        var delayTime = $("#delay_time").val();
+        var delayDesc = $("#delay_desc").val();
+
+        if(orgnPowerOffTime > delayTime){
+            alert("延时截止时间不能小于原计划停电时间");
+            return false;
+        }
+
+        $.ajax({
+            url: '../../power/appPowerOffDelay/saveAppPowerOffDelay',
+            data: {
+                apdId: apdId,
+                offPlanId: offPlanId,
+                contactId: contactId,
+                contactName: contactName,
+                mobile: mobile,
+                orgnPowerOffTime: orgnPowerOffTime,
+                delayTime: delayTime,
+                delayDesc: delayDesc,
+                appNo: appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    $.workflow.completeTask(params);
+                }else{
+                    alert(data.msg);
+                }
+            },
+            error: function () {
+                alert("保存数据异常！");
+            }
+        });
+    }
+</script>
+</body>
+</html>

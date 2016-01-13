@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title></title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <!--grid-->
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+
+    <!-- 上传图片 -->
+    <link href="../../../css/common/plugins/webuploader/webuploader.css" rel="stylesheet">
+    <link href="../../../css/asset/building/uploader.css" rel="stylesheet">
+    <link href="../../../css/common/filebox.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+
+
+</head>
+
+<body class="gray-bg">
+<div id="applyDiv" class="wrapper wrapper-content animated fadeIn">
+    <div  class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins  border-bottom">
+                <div class="ibox-title">
+                    <h5>
+                        历史审批信息
+                    </h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-down">
+                            </i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" style="display:none;">
+                    <div class="full-height-scroll">
+                        <div class="col-sm-12" style="padding: 5px; margin-botton:0px;">
+                            <div class="jqGrid_wrapper" id="approveTable_id">
+                                <table id="approveTable"></table>
+                                <div id="approvePager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox  float-e-margins">
+                    <div id="consDiv" class="ibox float-e-margins" style="margin-bottom: 0px;">
+                        <div class="ibox-title">
+                            <h5>
+                                用户信息
+                            </h5>
+                        </div>
+                        <div class="ibox-content">
+                            <form action="#" class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">
+                                        用户编号
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <div class="col-sm-11" style="float: left;margin-left:-17px;">
+                                            <input id="cons_id"  disabled type="hidden" class="form-control">
+                                            <input id="cons_no"  disabled type="text" class="form-control">
+                                        </div>
+                                        <i class="fa fa-user-plus" onclick="showConsChooseWin();" style="font-size: 25px;float: right;padding-right: 5px;"></i>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">
+                                        用户名称
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input id="cons_name" name="cons_name" type="text" disabled class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">
+                                        租赁地址
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input id="cons_addr" name="cons_addr" type="text" disabled class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">
+                                        租赁面积
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input id="house_area" name="house_area" type="text" disabled class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div id="draftDiv" class="ibox float-e-margins border-bottom" style="margin-bottom:0px;">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title"  style="border-bottom:1px solid #f3f3f4;">
+                                <h5>
+                                    合同信息
+                                </h5>
+                                <div class="ibox-tools">
+                                    <a id="aLinkId" class="collapse-link">
+                                        <i class="fa fa-chevron-down">
+                                        </i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div id="drafInfoContentId" class="ibox-content wrapper wrapper-content animated fadeInRight col-sm-12"
+                                 style="padding-bottom:0px;padding-top:30px;">
+                                <div class="col-sm-12" style="background-color: #fff;">
+                                    <form class="form-horizontal m-t" id="draftForm">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">
+                                                合同名称
+                                            </label>
+                                            <div class="col-sm-9">
+                                              <!--  <input type="hidden" id="contractId">-->
+                                                <input type="hidden" id="attachIdsIn" name="attachIds" value="">
+                                                <select id="contractName" onchange="queryContractInfo(this);" name="contractName" class="form-control">
+                                                </select>
+                                            </div>
+                                          <!--  <div class="col-sm-9">
+                                                <input type="hidden" id="contractId">
+                                                <input type="hidden" id="attachIdsIn" name="attachIds" value="">
+                                                <input id="contractName" name="contractName" disabled="disabled" maxlength="256" type="text" class="form-control">
+                                            </div>-->
+                                        </div>
+                                        <div class="hr-line-dashed">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">
+                                                出租方(甲方)
+                                            </label>
+
+                                            <div class="col-sm-9">
+                                                <input id="contractOwner" name="contractOwner" disabled="disabled" maxlength="64" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">
+                                                承租方(乙方)
+                                            </label>
+
+                                            <div class="col-sm-9">
+                                                <input id="contractGuest" name="contractGuest" disabled="disabled" maxlength="64" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div id="imgTopHr" class="hr-line-dashed"></div>
+                                        <div id="img-group">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label"></label>
+                                                <div class="col-sm-10">
+                                                    <div id="filebox">
+                                                        <ul class="filelist lightBoxGallery">
+
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>
+                                到期办理信息
+                            </h5>
+                            <div class="ibox-tools" style="position:relative;top:-9px;">
+                                <button class="btn btn-primary " style="margin-bottom: -5px;" onclick="judgeIsCanSend();" type="button"><i
+                                        class="fa fa-plus-square-o"></i>&nbsp;传递流程
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <form id="form" action="#" class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">
+                                        业务办理人
+                                        <font style="color:red;">*</font>
+                                    </label>
+
+                                    <div class="col-sm-9">
+                                        <input id="biz_transactor" name="biz_transactor" type="text" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">
+                                        联系电话
+                                        <font style="color:red;">*</font>
+                                    </label>
+
+                                    <div class="col-sm-9">
+                                        <input id="contact_tel" name="contact_tel"  maxlength="13" type="text" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">
+                                        通讯地址
+                                    </label>
+
+                                    <div class="col-sm-9">
+                                        <input id="contact_add" name="contact_add" type="text" class="form-control"/>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">
+                                        备注
+                                    </label>
+
+                                    <div class="col-sm-9">
+                                        <textarea id="remark" name="remark" class="form-control" ></textarea>
+                                    </div>
+                                </div>
+                                <div class="hr-line-dashed"></div>
+                            </form>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="chooseConsDiv" style="display: none;">
+    <div class="ibox">
+        <div class="ibox-content">
+            <div class="input-group">
+                <input type="text" id="consTable_ConsName" placeholder="查找用户" class="input form-control">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn btn-primary" onclick="queryConsByName(1);"> <i class="fa fa-search"></i> 搜索</button>
+                    </span>
+            </div>
+            <div class="clients-list">
+                <div class="table-responsive">
+                    <table id="consTable" class="table table-striped table-hover">
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <div id="pagination"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/rental/bootstrap-suggest.min.js"></script>
+<script src="../../../js/common/bootstrap.min.js"></script>
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<!-- Custom and plugin javascript -->
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+<!-- Jquery Validate -->
+<script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../../js/common/additional-methods.js"></script>
+<script src="../../../js/rental/laydate-master/laydate.js"></script>
+<script src="../../../js/common/plugins/datapicker/bootstrap-datepicker.js"></script>
+
+<script src="../../../js/common/common.js"></script>
+<script src="../../../js/rental/layer/layer.js"></script>
+
+<!--grid-->
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+
+<script src="../../../js/common/plugins/bootstrap-paginator/bootstrap-paginator.js"></script>
+
+
+<script>
+
+    var appStr = "";
+    var uploaderParam = {
+        uploadServer: '/rental/apply/upload',
+        fileNumLimit: 5
+    };
+
+    function init(params) {
+        appStr = params.bizKey;
+
+        initPageInfo();
+        //初始化历史审批信息
+        queryApproveInfo();
+
+        return function (){
+            judgeIsCanSend();
+        };
+    }
+
+    $.validator.setDefaults({
+        highlight: function(e) {
+            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
+        },
+        success: function(e) {
+            e.closest(".form-group").removeClass("has-error").addClass("has-success")
+        },
+        errorElement: "span",
+        errorPlacement: function(e, r) {
+            e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
+        },
+        errorClass: "help-block m-b-none",
+        validClass: "help-block m-b-none"
+    },{
+        debug:true
+    }),$(function() {
+
+        $(window).bind("resize",
+                function() {
+                    var width = $("#approveTable_id").width();
+                    $("#approveTable").setGridWidth(width);
+                });
+    });
+
+    function initPageInfo()
+    {
+        //初始化页面信息
+        $.ajax( {
+            url:'/rentexpire/apply/initPageInfo',
+            data:{
+                appNo : appStr
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var consArr = data.data.appConsList;
+                var sAppContractArr = data.data.sAppContractList;
+                if(null != consArr && consArr.length>0)
+                {
+                    $("#cons_id").val(consArr[0].consId);
+                    $("#cons_no").val(consArr[0].consNo);
+                    $("#cons_name").val(consArr[0].consName);
+                    $("#cons_addr").val(consArr[0].consAddr);
+                    $("#house_area").val(consArr[0].houseArea);
+                    $("#biz_transactor").val(consArr[0].bizTransactor);
+                    $("#contact_tel").val(consArr[0].contactTel);
+                    $("#contact_add").val(consArr[0].contactAdd);
+                    $("#remark").val(consArr[0].remark);
+                }
+                if("" != $("#cons_no").val() && sAppContractArr.length>0)
+                {
+                    //先查询正式表该用户下所有合同 赋值给下拉框
+                    queryAllContractsByConsId(consArr[0].consId,sAppContractArr);
+                }else
+                {
+                    //直接查询所有合同列表
+                    queryAllContracts(consArr[0].consId);
+                }
+
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    function queryAllContracts(consId)
+    {
+        $.ajax( {
+            url:'/rentexpire/apply/queryContractByConsId',
+            data:{
+                consId : consId,
+                appNo:appStr
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var contractArr = data.data;
+                $("#contractName").empty();
+                setComboxData($("#contractName"),contractArr);
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    function queryAllContractsByConsId(consId,sAppContractArr)
+    {
+        $.ajax( {
+            url:'/rentexpire/apply/queryContractByConsId',
+            data:{
+                consId : consId,
+                appNo:appStr
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var contractArr = data.data;
+                $("#contractName").empty();
+                setComboxData($("#contractName"),contractArr);
+
+                queryDraftInfoByContractId(sAppContractArr[0].orgnNo);
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    function queryDraftInfoByContractId(orgnNo)
+    {
+        resetDraftDiv();
+        if("" != orgnNo)
+        {
+            $.ajax( {
+                url:'/rentstop/apply/queryDraftInfoByOrgnNo',
+                data:{
+                    orgnNo:orgnNo,
+                    belongId:orgnNo+'_01',
+                    appNo:appStr
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data) {
+                    var attachRefArr = data.data.attachRefList;
+                    var sAppContractArr = data.data.sAppContractList;
+                    //逐一回填
+                    /*合同信息*/
+                    if(sAppContractArr.length>0)
+                    {
+                        var sAppContract = sAppContractArr[0];
+
+                        if (null != sAppContract) {
+                            //合同名称
+                            $('#contractName').val(sAppContract.orgnNo);
+                            //甲方
+                            $('#contractOwner').val(sAppContract.partyA);
+                            //乙方
+                            $('#contractGuest').val(sAppContract.partyB);
+
+                            //   $("#contractId").val(contractId);
+                        }
+                    }
+
+                    if(attachRefArr.length>0)
+                    {
+                        FileBox.showDelBtn = false;
+                        //初始化文件盒子
+                        FileBox.init(attachRefArr, deleteAttachRef);
+                    }
+                },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+        }
+    }
+
+    function resetDraftDiv()
+    {
+        //甲方
+        $('#contractOwner').val("");
+        //乙方
+        $('#contractGuest').val("");
+        $("#attachIdsIn").val("");
+        $("#img-group").remove();
+        //重新初始化图片上传控件
+        var  html = getImgHtml();
+        $("#imgTopHr").after(html);
+    }
+
+    function getImgHtml()
+    {
+        var  html =
+                '<div id="img-group">'+
+                '<div class="form-group">'+
+                '<label class="col-sm-2 control-label">合同附件</label>'+
+                '<div class="col-sm-10">'+
+                '<div id="filebox">'+
+                '<ul class="filelist"></ul>'+
+                '</div>'+
+                '</div>'+
+                '</div>'+
+                '</div>';
+        return html;
+    }
+
+    function queryApproveInfo()
+    {
+        /*历史审批信息*/
+        $("#approveTable").jqGrid({
+            url: '../../../rentalDraft/rental/queryApproveInfo',
+            postData:{
+                appNo : appStr
+            },
+            datatype : "json",
+            height: 150,
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : ['审批人', '审批结果', '审批意见' , '审批时间'],
+            colModel : [
+                {name : 'approveName',  index : 'approveName',width : 120,  align : "center"},
+                {name : 'apprRslt',     index : 'apprRslt',   width : 110,  align : "center"},
+                {name : 'apprOpinion',  index : 'apprOpinion',width : 300,  align : "left"},
+                {name : 'apprDate',     index : 'apprDate',   width : 160,  align : "center"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#approvePager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            caption : "",
+            hidegrid: false
+        });
+        $("#approveTable").jqGrid("navGrid", "#approvePager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+    }
+
+
+    function moveDataAndBackConsInfo(consId)
+    {
+        $("#cons_id").val(consId);
+        $.ajax( {
+            url:'/rentexpire/apply/moveDataAndBackConsInfo',
+            data:{
+                appNo:appStr,
+                consId : consId
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data)
+            {
+                if(chooseConsIndex != null)
+                {
+                    layer.close(chooseConsIndex);
+                }
+                var consArr = data.data.appConsList;
+                var contractArr = data.data.sAppContractList;
+                $("#contractName").empty();
+                setComboxData($("#contractName"),contractArr);
+                resetDraftDiv();
+                if(null != consArr && consArr.length>0)
+                {
+                    $("#cons_no").val(consArr[0].consNo);
+                    $("#cons_name").val(consArr[0].consName);
+                    $("#cons_addr").val(consArr[0].consAddr);
+                    $("#house_area").val(consArr[0].houseArea);
+                    $("#biz_transactor").val(consArr[0].bizTransactor);
+                    $("#contact_tel").val(consArr[0].contactTel);
+                    $("#contact_add").val(consArr[0].contactAdd);
+                    $("#remark").val(consArr[0].remark);
+                }
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    function setComboxData(comboxObj,dataArr)
+    {
+        comboxObj.append('<option value="">--请选择--</option>');
+        for(var i=0;i<dataArr.length;i++)
+        {
+            var data = dataArr[i];
+            var codeName = data.contractName;
+            var codeValue = data.contractId;
+            var contractNo = data.contractNo;
+            comboxObj.append('<option value="'+codeValue+'">'+codeValue+":"+codeName+'</option>');
+        }
+    }
+
+    function queryContractInfo(me)
+    {
+        if("" == $("#contractName").val())
+        {
+            resetDraftDiv();
+        }else{
+            showDraftInfoDivForSingle($("#contractName").val());
+        }
+    }
+
+    function showDraftInfoDivForSingle(contractId)
+    {
+        resetDraftDiv();
+        if("" != contractId)
+        {
+            $.ajax( {
+                url:'../../../rentalDraft/rental/queryDraftInfoByIdFromC',
+                data:{
+                    contractId:contractId,
+                    belongId:contractId+'_01',
+                    appNo:appStr
+                },
+                type:'post',
+                dataType:'json',
+                success:function(data) {
+                    var attachRefArr = data.data.attachRefList;
+                    var sAppContractArr = data.data.sAppContractList;
+                    //逐一回填
+                    /*合同信息*/
+                    if(sAppContractArr.length>0)
+                    {
+                        var sAppContract = sAppContractArr[0];
+
+                        if (null != sAppContract) {
+                            //合同名称
+                        //    $('#contractName').val(sAppContract.contractName);
+                            //甲方
+                            $('#contractOwner').val(sAppContract.partyA);
+                            //乙方
+                            $('#contractGuest').val(sAppContract.partyB);
+
+                         //   $("#contractId").val(contractId);
+                        }
+                    }
+
+                    if(attachRefArr.length>0)
+                    {
+                        FileBox.showDelBtn = false;
+                        //初始化文件盒子
+                        FileBox.init(attachRefArr, deleteAttachRef);
+                    }
+                },
+                error : function() {
+                    alert("异常！");
+                }
+            });
+        }
+    }
+
+    function deleteAttachRef(data)
+    {
+        var layerIndex = layer.confirm('确定要删除该图片？', {
+            btn: ['是','否'], //按钮
+            icon: 3
+        }, function(){
+            //删除与图片关联关系
+            $.ajax({
+                type: "POST",
+                url: "/system/attachRef/deleteAttachRefsById",
+                data: data,
+                success: function(json){
+                    if ('0' == json.status)
+                    {
+                        //删除文件
+                        FileBox.deleteFile(data.attachRefId);
+                    }
+                    else
+                    {
+                        layer.alert(json.msg, {icon: 0});
+                    }
+                    layer.close(layerIndex);
+                }
+            });
+        }, function(){
+
+        });
+    }
+
+
+    var chooseConsIndex = null;
+    function showConsChooseWin()
+    {
+        chooseConsIndex = layer.open({
+            type: 1,
+            title: "用户选择",
+            // skin: 'layui-layer-rim', //加上边框
+            area: ['627px','360px'], //宽高
+            content: $('#chooseConsDiv')
+        });
+        $("#consTable_ConsName").val("");
+        queryConsByName(1);
+    }
+
+    function queryConsByName(page)
+    {
+        $.post('../../../relet/apply/queryConsByNameForPage',
+                {
+                    page: page,
+                    rows: 10,
+                    consName: $("#consTable_ConsName").val()
+                }, function (res) {
+                    if(res.data.totalPage > 1){
+                        $('#pagination').bootstrapPaginator({
+                            currentPage: res.data.pageNo,//当前页
+                            totalPages: res.data.totalPage,//总页数
+                            numberofPages: res.data.pageSize,//显示的页数
+                            alignment:'right',
+                            showFirst:false,
+                            showLast:false,
+                            itemTexts: function (type, page, current) { //修改显示文字
+                                switch (type) {
+                                    case 'first':
+                                        return '首页';
+                                    case 'prev':
+                                        return '上一页';
+                                    case 'next':
+                                        return '下一页';
+                                    case 'last':
+                                        return '末页';
+                                    case 'page':
+                                        return page;
+                                }
+                            }, onPageClicked: function (event, originalEvent, type, page) { //异步换页
+                                queryConsByName(page);
+                            }
+                        });
+                    }
+                    var trs = '';
+                    trs += '<thead>'+
+                    '<tr>'+
+                    '<th>用户编号</th>'+
+                    '<th>用户名称</th>'+
+                    '<th>用户地址</th>'+
+                    '<th>操作</th>'+
+                    '</tr>'+
+                    '</thead>';
+                    $.each(res.data.results, function (index, item) {
+                        trs +=
+                                '<tr>' +
+                                '<td>' + item.CONS_NO + '</td>' +
+                                '<td>' + item.CONS_NAME + '</td>' +
+                                '<td>' + item.CONS_ADDR + '</td>' +
+                                '<td class="client-status" onclick="moveDataAndBackConsInfo(\''+item.CONS_ID+'\')"><span class="label label-primary">选择</span></td>' +
+                                '</tr>';
+
+                    });
+                    $('#consTable').empty();
+                    $('#consTable').append(trs);
+                }, 'json');
+    }
+
+    function judgeIsCanSend()
+    {
+        if("" != $("#contractName").val() && null != $("#contractName").val())
+        {
+            var flag = $("#form").validate().element(document.getElementsByName("biz_transactor"))&&
+                    $("#form").validate().element(document.getElementsByName("contact_tel"));
+            if(flag)
+            {
+                sendFlow();
+            }
+        }else
+        {
+            layer.alert("请选择合同");
+        }
+
+    }
+
+    //同时将选定的合同表从正式表迁入在途表
+    function sendFlow()
+    {
+        $.ajax({
+            url:'/rentexpire/apply/updateAppConsInfo',
+            data:{
+                appNo:appStr,
+                bizTransactor:$("#biz_transactor").val(),
+                contactTel:$("#contact_tel").val(),
+                contactAdd:$("#contact_add").val(),
+                remark:$("#remark").val(),
+                contractId:$("#contractName").val()
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                alert("走起!");
+
+                parent.$.workflow.completeTask();
+            },
+            error : function() {
+                alert("异常1！");
+            }
+        });
+    }
+
+</script>
+<!-- 上传图片-->
+<script src="../../../js/common/plugins/webuploader/webuploader.js"></script>
+<script src="../../../js/common/filebox.js"></script>
+<script src="../../../js/rental/buildingRent/uploaderDraft.js"></script>
+<script src="../../../js/common/plugins/blueimp/jquery.blueimp-gallery.min.js"></script>
+</body>
+
+</html>

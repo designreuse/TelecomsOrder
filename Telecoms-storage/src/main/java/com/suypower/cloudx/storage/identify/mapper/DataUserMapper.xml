@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.suypower.cloudx.storage.identify.dao.DataUserMapper">
+    <resultMap type="com.suypower.cloudx.storage.identify.entity.DataUser" id="dataUserMap">
+        <id property="userID" column="USER_ID" javaType="java.lang.String"/>
+        <result property="username" column="USER_NAME" javaType="java.lang.String"/>
+        <result property="password" column="PASSWORD" javaType="java.lang.String"/>
+        <result property="readOnly" column="READ_ONLY" javaType="java.lang.String"/>
+        <result property="createTime" column="CREATE_TIME" javaType="java.util.Date"/>
+        <result property="status" column="STATUS" javaType="java.lang.String"/>
+        <association property="dataApp" column="APP_ID" select="com.suypower.cloudx.storage.identify.dao.DataAppMapper.queryDataApp"/>
+    </resultMap>
+    <select id="queryDataUser" resultMap="dataUserMap">
+        SELECT * FROM DATA_USER U WHERE U.USER_NAME=#{username}
+    </select>
+    <select id="queryDataUserByID" resultMap="dataUserMap">
+        SELECT * FROM DATA_USER U WHERE U.USER_ID=#{userID}
+    </select>
+</mapper>

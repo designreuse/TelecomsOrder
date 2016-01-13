@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link href="../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/common/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../css/common/animate.css" rel="stylesheet">
+    <link href="../../css/common/style.css" rel="stylesheet">
+</head>
+<body class="white-bg">
+<div id="wrapper">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>流程名称</th>
+            <th>当前版本</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+</body>
+<script src="../../js/common/jquery-2.1.1.js"></script>
+<script src="../../js/common/bootstrap.min.js"></script>
+<script src="../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+<script src="../../js/common/plugins/layer/layer.js"></script>
+<script src="../../js/common/common.js"></script>
+<script src="../../js/common/workflow.js"></script>
+<script>
+    var _idx;
+    $(function () {
+        _idx = layer.load(0, {shade: false});
+        $('body').slimScroll({
+            height: '100%',
+            railOpacity: 0.4,
+            wheelStep: 10
+        });
+        $.post('../../workflow/getMyProcess', {}, function (res) {
+            if (res.status == '0') {
+                var trs = '';
+                $.each(res.data.list, function (index, item) {
+                    trs += '<tr>' +
+                            '<td>' + (index + 1) + '</td>' +
+                            '<td>' + item.processDefinitionName + '</td>' +
+                            '<td>' + parseFloat(item.version).toFixed(1) + '</td>' +
+                            '<td><button onclick="startTask(\'' + item.processDefinitionKey + '\')" class="btn btn-primary btn-circle" title="发起" type="button"><i class="fa fa-plus"></i></button>' +
+                            '<button onclick="showflowGraph(\'' + item.processDefinitionName + '\',null,\'' + item.processDefinitionKey + '\')" class="btn btn-success btn-circle" title="流程图" type="button"><i class="fa fa-sitemap"></i></button></td>' +
+                            '</tr>';
+                });
+                $('tbody').empty();
+                $('tbody').append(trs);
+                layer.close(_idx);
+            }
+        }, 'json');
+    });
+    function startTask( processDefinitionKey) {
+        $.post('../../workflow/startTask',{
+            processDefinitionKey:processDefinitionKey
+        },function(res){
+            if(res.status == '0'){
+                BModal.msg(res.msg);
+                parent.getActivedTab()[0].contentWindow.loadTasks(1,'01');
+                var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                parent.layer.close(index); //再执行关闭
+            }else{
+                BModal.alert(res.msg);
+            }
+        },'json');
+    }
+    function showflowGraph(processDefinitionName,processInstanceId, processDefinitionKey) {
+        processInstanceId = processInstanceId ? processInstanceId : '';
+        processDefinitionKey = processDefinitionKey ? processDefinitionKey : '';
+        var url = '../../html/workflow/workflowGraph.html?processInstanceId=' + processInstanceId + '&processDefinitionKey=' + processDefinitionKey;
+        BModal.open(processDefinitionName+' —— 流程图', url, '800px', '600px');
+    }
+</script>
+</html>

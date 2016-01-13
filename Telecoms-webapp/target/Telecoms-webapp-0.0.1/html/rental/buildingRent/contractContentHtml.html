@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <div id="contractContentId" class="col-sm-12" style="background-color: #fff;">
+        <form class="form-horizontal m-t" id="draftForm">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    合同名称<font style="color:red;">*</font>
+                </label>
+
+                <div class="col-sm-9">
+                    <input type="hidden" id="contractId">
+                    <input type="hidden" id="attachIdsIn" name="attachIds" value="">
+                    <input id="contractName" name="contractName" maxlength="256" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="hr-line-dashed">
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    出租方(甲方)<font style="color:red;">*</font>
+                </label>
+
+                <div class="col-sm-9">
+                    <input id="contractOwner" name="contractOwner" maxlength="64" type="text" class="form-control">
+                </div>
+            </div>
+            <div class="hr-line-dashed">
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    承租方(乙方)<font style="color:red;">*</font>
+                </label>
+
+                <div class="col-sm-9">
+                    <input id="contractGuest" name="contractGuest" maxlength="64" type="text" class="form-control">
+                </div>
+            </div>
+            <div id="imgTopHr" class="hr-line-dashed"></div>
+
+            <div id="img-group">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">企业证件照</label>
+                    <div class="col-sm-10">
+                        <div id="filebox">
+                            <ul class="filelist lightBoxGallery">
+
+                            </ul>
+                            <div id="blueimp-gallery" class="blueimp-gallery">
+                                <div class="slides"></div>
+                                <h3 class="title"></h3>
+                                <a class="prev">‹</a>
+                                <a class="next">›</a>
+                                <a class="close">×</a>
+                                <a class="play-pause"></a>
+                                <ol class="indicator"></ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="uploader" class="wu-example">
+                <div class="queueList">
+                    <div id="dndArea" class="placeholder">
+                        <div id="filePicker"></div>
+                        <p>或将照片拖到这里，最多可选5张</p>
+                    </div>
+                </div>
+                <div class="statusBar" style="display:none;">
+                    <div class="progress">
+                        <span class="text">0%</span>
+                        <span class="percentage"></span>
+                    </div><div class="info"></div>
+                    <div class="btns">
+                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

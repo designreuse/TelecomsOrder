@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.suypower.cloudx.storage.core.dao.DataTokenMapper">
+    <resultMap type="com.suypower.cloudx.storage.core.entity.DataToken" id="dataTokenMap">
+        <id property="tokenID" column="TOKEN_ID" javaType="java.lang.String"/>
+        <result property="token" column="TOKEN" javaType="java.lang.String"/>
+        <result property="createTime" column="CREATE_TIME" javaType="java.util.Date"/>
+        <result property="useTime" column="USE_TIME" javaType="java.util.Date"/>
+        <association property="dataUser" column="USER_ID"
+                     select="com.suypower.cloudx.storage.identify.dao.DataUserMapper.queryDataUserByID"/>
+        <association property="dataFile" column="DATA_ID"
+                     select="com.suypower.cloudx.storage.core.dao.DataFileMapper.queryDataFile"/>
+    </resultMap>
+    <select id="queryDataToken" resultMap="dataTokenMap">
+        SELECT * FROM DATA_TOKEN T WHERE T.USE_TIME IS NULL AND T.TOKEN=#{token}
+    </select>
+    <insert id="insertDataToken" useGeneratedKeys="true">
+        <selectKey resultType="java.lang.String" keyProperty="tokenID" order="BEFORE">
+            SELECT UUID()
+        </selectKey>
+        INSERT INTO DATA_TOKEN(TOKEN_ID,USER_ID,TOKEN,DATA_ID)
+        VALUES(#{tokenID},#{dataUser.userID},#{token},#{dataFile.dataID})
+    </insert>
+    <update id="updateDataToken">
+        UPDATE DATA_TOKEN SET USE_TIME=CURRENT_TIMESTAMP() WHERE TOKEN=#{token}
+    </update>
+</mapper>

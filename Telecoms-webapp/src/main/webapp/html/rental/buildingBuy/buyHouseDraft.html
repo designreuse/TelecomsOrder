@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INSPINIA | Wizards</title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <!-- 弹出框 -->
+    <link href="../../../css/common/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+    <link href="../../../css/common/plugins/dropzone/basic.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/dropzone/dropzone.css" rel="stylesheet">
+
+    <!-- 上传图片 -->
+    <link href="../../../css/common/plugins/webuploader/webuploader.css" rel="stylesheet">
+    <link href="../../../css/asset/building/uploader.css" rel="stylesheet">
+    <link href="../../../css/common/filebox.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/blueimp/css/blueimp-gallery.min.css" rel="stylesheet">
+
+    <style type="text/css">
+
+        .carousel-control.right {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 1) 0, rgba(0, 0, 0, .0001) 100%);
+            width: 0px;
+        }
+
+        .carousel-control.left {
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 1) 0, rgba(0, 0, 0, .0001) 100%);
+            width: 0px;
+        }
+
+        .carousel-control .glyphicon-chevron-left, .carousel-control .icon-prev {
+            background-color: rgb(136, 133, 133);
+        }
+
+        .carousel-control .glyphicon-chevron-right, .carousel-control .icon-next {
+            background-color: rgb(136, 133, 133);
+        }
+
+        .carousel-control .glyphicon-chevron-left, .carousel-control .glyphicon-chevron-right, .carousel-control .icon-next, .carousel-control .icon-prev {
+            margin-top: -35px;
+        }
+
+        .rentCommonTruncateCss
+        {
+            width:280px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+
+        .truncateCss
+        {
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+            display: block;
+            margin-bottom: 0px;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+<div id="mainDiv" class="wrapper wrapper-content animated fadeIn">
+    <div  class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins border-bottom">
+                <div class="ibox-title">
+                    <h5>
+                        购房信息
+                    </h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-down">
+                            </i>
+                        </a>
+                    </div>
+                </div>
+
+
+                <div class="ibox-content" style="display:none;">
+                    <div class="row">
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title">
+                                <h5>
+                                    基本信息
+                                </h5>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <form class="form-horizontal m-t">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label ">
+                                            客户名称
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <input id="name_id" disabled="disabled" type="text"
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label ">
+                                            业务办理人
+                                        </label>
+
+                                        <div class="col-sm-9">
+                                            <input id="consNameId" disabled="disabled" type="hidden"
+                                                   class="form-control"/>
+                                            <input id="bizTransactor_id" disabled="disabled" type="text"
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed"></div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label ">
+                                            联系电话
+                                        </label>
+
+                                        <div class="col-sm-9">
+                                            <input id="contactTel_id" type="text" disabled="disabled"
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label ">
+                                            通讯地址
+                                        </label>
+
+                                        <div class="col-sm-9">
+                                            <input id="contactAdd_id" type="text" disabled="disabled"
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+                                    <div class="hr-line-dashed"></div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="ibox float-e-margins  border-bottom">
+
+                            <div class="ibox-title">
+                                <h5>
+                                    房屋信息
+                                </h5>
+
+                                <div class="ibox-tools">
+                                    <a class="collapse-link">
+                                        <i class="fa fa-chevron-down">
+                                        </i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="ibox-content" style="display:none;">
+                                <div class="full-height-scroll">
+                                    <div  class="col-sm-12" style="padding: 5px; margin-botton:0px;">
+                                        <div class="jqGrid_wrapper" id="rentInfoTable_id">
+                                            <table id="rentInfoTable"></table>
+                                            <div id="rentInfoPager"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label style="float: right;">购置房屋总面积：
+                                        <font id="houseArea_id" style="font-size: 18px;color: red;"></font>
+                                        &nbsp平方米&nbsp,总金额：<font id="housePrice_id" style="font-size: 18px;color: red;"></font>&nbsp万元
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ibox float-e-margins  border-bottom">
+                <div class="ibox-title">
+                    <h5>
+                        历史审批信息
+                    </h5>
+
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-down">
+                            </i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" style="display:none;">
+                    <div class="full-height-scroll">
+                        <div class="col-sm-12" style="padding: 5px; margin-botton:0px;">
+                            <div class="jqGrid_wrapper" id="approveTable_id">
+                                <table id="approveTable"></table>
+                                <div id="approvePager"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="draftsDiv" class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>
+                        合同起草
+                    </h5>
+                    <div class="ibox-tools">
+                        <button class="btn btn-primary btn-xs" style="width:60px;height:25px;margin-right: 100px" onclick="saveRentDraft();">流程传递</button>
+                    </div>
+                </div>
+                <div class="ibox-content wrapper wrapper-content animated fadeInRight"
+                     style="padding-bottom:0px;padding-top:30px;">
+                    <!--<div class="col-sm-12" style="background-color: #fff;">-->
+                        <form class="form-horizontal m-t" id="draftForm">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    合同名称<font style="color:red;">*</font>
+                                </label>
+
+                                <div class="col-sm-9">
+                                    <input type="hidden" id="contractId">
+                                    <input type="hidden" id="attachIdsIn" name="attachIds" value="">
+                                    <input id="contractName" name="contractName" maxlength="256" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    出售方(甲方)<font style="color:red;">*</font>
+                                </label>
+
+                                <div class="col-sm-9">
+                                    <input id="contractOwner" name="contractOwner" maxlength="64" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    购置方(乙方)<font style="color:red;">*</font>
+                                </label>
+
+                                <div class="col-sm-9">
+                                    <input id="contractGuest" name="contractGuest" maxlength="64" type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    付款比例及条件</label>
+
+                                <div class="col-sm-9">
+                                    <textarea id="payMode" name="payMode" maxlength="256" class="form-control" required="" aria-required="true" style="height:75px;" ></textarea>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">
+                                    特殊条款</label>
+
+                                <div class="col-sm-9">
+                                    <textarea id="specialItem" name="specialItem" maxlength="256" class="form-control" required="" aria-required="true" style="height:75px;" ></textarea>
+                                </div>
+                            </div>
+                            <div id="imgTopHr" class="hr-line-dashed"></div>
+
+                            <div id="img-group">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">合同附件</label>
+                                    <div class="col-sm-10">
+                                        <div id="filebox">
+                                            <ul class="filelist lightBoxGallery">
+
+                                            </ul>
+                                            <div id="blueimp-gallery" class="blueimp-gallery">
+                                                <div class="slides"></div>
+                                                <h3 class="title"></h3>
+                                                <a class="prev">‹</a>
+                                                <a class="next">›</a>
+                                                <a class="close">×</a>
+                                                <a class="play-pause"></a>
+                                                <ol class="indicator"></ol>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="uploader" class="wu-example">
+                                <div class="queueList">
+                                    <div id="dndArea" class="placeholder">
+                                        <div id="filePicker"></div>
+                                        <p></p>
+                                    </div>
+                                </div>
+                                <div class="statusBar" style="display:none;">
+                                    <div class="progress">
+                                        <span class="text">0%</span>
+                                        <span class="percentage"></span>
+                                    </div><div class="info"></div>
+                                    <div class="btns">
+                                        <div id="filePicker2"></div><div class="uploadBtn">开始上传</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    <!--</div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script src="../../../js/common/jquery-2.1.1.js"></script>
+<script src="../../../js/common/bootstrap.min.js"></script>
+<script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<!-- Custom and plugin javascript -->
+<script src="../../../js/common/inspinia.js"></script>
+<script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+<!-- Steps -->
+<script src="../../../js/common/plugins/staps/jquery.steps.min.js"></script>
+
+<!-- Jquery Validate -->
+<script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+
+<script src="../../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+
+<!-- 弹出框 -->
+<script src="../../../js/common/plugins/sweetalert/sweetalert.min.js"></script>
+<script src="../../../js/common/common.js"></script>
+
+<!-- 表格 -->
+<script src="../../../js/common/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="../../../js/common/plugins/layer/layer.js"></script>
+
+<script>
+    var appNo = "9846541896165";
+
+    var uploaderParam = {
+        uploadServer: '/rentalDraft/rental/upload',
+        fileNumLimit: 5
+    };
+
+    $.validator.setDefaults({
+        highlight: function(e) {
+            $(e).closest(".form-group").removeClass("has-success").addClass("has-error")
+        },
+        success: function(e) {
+            e.closest(".form-group").removeClass("has-error").addClass("has-success")
+        },
+        errorElement: "span",
+        errorPlacement: function(e, r) {
+            e.appendTo(r.is(":radio") || r.is(":checkbox") ? r.parent().parent().parent() : r.parent())
+        },
+        errorClass: "help-block m-b-none",
+        validClass: "help-block m-b-none"
+    },{
+        debug:true
+    }),$(document).ready(function () {
+        queryBuyHouseInfo();
+
+        queryRentDraftInfo();
+
+        //初始化历史审批信息
+        queryApproveInfo();
+
+        queryBuyHouseList();
+
+        $(window).bind("resize",
+                function() {
+                    var width = $("#approveTable_id").width();
+                    $("#approveTable").setGridWidth(width);
+                });
+
+        $(window).bind("resize",
+                function() {
+                    var width = $("#rentInfoTable_id").width();
+                    $("#rentInfoTable").setGridWidth(width);
+                });
+
+        var e = "<i class='fa fa-times-circle'></i> ";
+        $("#draftForm").validate({
+            rules: {
+                contractName: {
+                    required:true
+                },
+                contractOwner: {
+                    required:true
+                },
+                contractGuest: {
+                    required:true
+                }
+            },
+            messages: {
+                contractName: {
+                    required:e+"请输入合同名称"
+                },
+                contractOwner: {
+                    required:e+"请输入出售方(甲方)"
+                },
+                contractGuest: {
+                    required:e+"请输入购置方(乙方)"
+                }
+            }
+        });
+
+    });
+
+    function validate()
+    {
+        return $("#draftForm").validate().element(document.getElementsByName("contractName"))&&
+                $("#draftForm").validate().element(document.getElementsByName("contractOwner"))&&
+                $("#draftForm").validate().element(document.getElementsByName("contractGuest"));
+    }
+
+    function saveRentDraft()
+    {
+        if (!validate())
+        {
+            return;
+        }
+        $.ajax({
+            url: '../../../buy/buyHouse/saveBuyDraftInfo',
+            data: {
+                'contractName': $('#contractName').val(),
+                'partyA': $('#contractOwner').val(),
+                'partyB': $('#contractGuest').val(),
+                'appNo' : appNo,
+                //contractId:$("#contractId").val(),
+                'attachIds' : $("#attachIdsIn").val(),
+                //belongId:$("#contractId").val()+'_01',
+                'payMode' : $('#payMode').val(),
+                'specialItem' : $('#specialItem').val(),
+                operTypeCode: '01'
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+
+                if(data.status == 0)
+                {
+                    $("#attachIdsIn").val("");
+
+                    layer.alert("传递成功!");
+                }
+                else
+                {
+                    layer.alert("保存异常!");
+                }
+            },
+            error: function () {
+                layer.alert("保存异常!");
+            }
+        });
+    }
+
+    function queryBuyHouseList()
+    {
+        /* 购买房间详细信息 */
+        $("#rentInfoTable").jqGrid({
+            url:'../../../buy/buyHouse/queryBuyHouseList',
+            postData:{
+                appNo : appNo
+            },
+            datatype : "json",
+            height: 150,
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : ['购房地址', '房屋面积(㎡)', '单价(平方/元)', '总价(万元)'],
+            colModel : [
+                {name : 'houseAddr',  index : 'houseAddr',width : 400,  align : "center"},
+                {name : 'totalArea',     index : 'totalArea',   width : 130,  align : "center"},
+                {name : 'unitPrice',     index : 'unitPrice',   width : 140,  align : "center"},
+                {name : 'totalPrice',     index : 'totalPrice',   width : 140,  align : "center"},
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#rentInfoPager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            caption : "",
+            hidegrid: false,
+            loadComplete:function(e)
+            {
+                var rowsArr = e.rows;
+                //grid 列表加载完数据后将 租赁地址和租赁面积重新拼接
+                // （目的是 如果进行了删除操作，可以不用后台访问，直接获取最新的地址和面积）
+                var housePrice = 0;
+                var houseArea = 0;
+
+                if(null != rowsArr && undefined != rowsArr)
+                {
+                    for(var i=0;i<rowsArr.length;i++)
+                    {
+                        var item = rowsArr[i];
+
+                        houseArea += parseFloat(item.totalArea);
+
+                        housePrice += parseFloat(item.totalPrice);
+                    }
+                }
+
+                //if(housePrice != 0)
+                //{
+                    $("#housePrice_id").html(housePrice);
+                //}
+
+                //if(houseArea != 0)
+                //{
+                    $("#houseArea_id").html(houseArea);
+                //}
+            }
+        });
+        $("#rentInfoTable").jqGrid("navGrid", "#rentInfoPager", {
+            add: false,
+            edit: false,
+            del: false,
+            search: false
+        },
+        {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+    }
+
+    function queryBuyHouseInfo()
+    {
+        $.ajax( {
+            url:'../../../buy/buyHouse/queryBuyHouseInfo',
+            data:{
+                appNo:appNo
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+
+                if(data.status == 0)
+                {
+                    var buyHouseInfo = data.data;
+
+                    if(null != buyHouseInfo)
+                    {
+                        //客户名称
+                        $('#name_id').val(buyHouseInfo.name);
+                        //业务办理人
+                        $('#bizTransactor_id').val(buyHouseInfo.bizTransactor);
+                        //联系电话
+                        $('#contactTel_id').val(buyHouseInfo.contactTel);
+                        //通讯地址
+                        $('#contactAdd_id').val(buyHouseInfo.contactAdd);
+                    }
+                }
+                else
+                {
+                    alert("异常！");
+                }
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    function queryRentDraftInfo()
+    {
+        $.ajax( {
+            url:'../../../buy/buyHouse/queryBuyHouseDraftInfo',
+            data:{
+                //contractId:$("#contractId").val(),
+                //belongId:$("#contractId").val()+'_01',
+                appNo:appNo
+            },
+            type:'post',
+            dataType:'json',
+            success:function(data) {
+                var attachRefArr = data.data.attachRefList;
+                var sAppContractArr = data.data.sAppContractList;
+
+                /*合同信息*/
+                if(sAppContractArr.length>0)
+                {
+                    var sAppContract = sAppContractArr[0];
+
+                    if (null != sAppContract) {
+                        //合同名称
+                        $('#contractName').val(sAppContract.contractName);
+                        //甲方
+                        $('#contractOwner').val(sAppContract.partyA);
+                        //乙方
+                        $('#contractGuest').val(sAppContract.partyB);
+                        //付款比例及条件
+                        $('#payMode').val(sAppContract.payMode);
+                        //特殊条款
+                        $('#specialItem').val(sAppContract.specialItem);
+                    }
+                }
+                else
+                {
+                    $('#contractName').val("房屋出售合同");
+                }
+
+                if(attachRefArr.length>0)
+                {
+                    //初始化文件盒子
+                    FileBox.init(attachRefArr, deleteAttachRef);
+                }
+            },
+            error : function() {
+                alert("异常！");
+            }
+        });
+    }
+
+    function queryApproveInfo()
+    {
+        /*历史审批信息*/
+        $("#approveTable").jqGrid({
+            url: '../../../rentalDraft/rental/queryApproveInfo',
+            postData:{
+                appNo : appNo
+            },
+            datatype : "json",
+            height: 150,
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : ['审批人', '审批结果', '审批意见' , '审批时间'],
+            colModel : [
+                {name : 'approveName',  index : 'approveName',width : 120,  align : "center"},
+                {name : 'apprRslt',     index : 'apprRslt',   width : 110,  align : "center"},
+                {name : 'apprOpinion',  index : 'apprOpinion',width : 300,  align : "left"},
+                {name : 'apprDate',     index : 'apprDate',   width : 160,  align : "center"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#approvePager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            caption : "",
+            hidegrid: false
+        });
+        $("#approveTable").jqGrid("navGrid", "#approvePager", {
+                    add: false,
+                    edit: false,
+                    del: false,
+                    search: false
+                },
+                {
+                    height: 200,
+                    reloadAfterSubmit: true
+                });
+    }
+
+    //图上传成功
+    function uploadImgSuccess(json)
+    {
+        if ("0" == json.status)
+        {
+            var attachId = json.data;
+            var attachIds = $("#attachIdsIn").val();
+            if (isEmpty($("#attachIdsIn").val()))
+            {
+                $("#attachIdsIn").val(attachId);
+            }
+            else
+            {
+                $("#attachIdsIn").val(attachIds + "," + attachId);
+            }
+        }
+    }
+
+    //判断字符串是否为空、undefined、''
+    function isEmpty(obj)
+    {
+        if (undefined == obj || null == obj
+                || 'null' == obj || '' == obj)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    function deleteAttachRef(data)
+    {
+        var layerIndex = layer.confirm('确定要删除该文件？', {
+            btn: ['是','否'], //按钮
+            icon: 3
+        }, function(){
+            $.ajax({
+                type: "POST",
+                url: "/system/attachRef/deleteAttachRefsById",
+                data: data,
+                success: function(json){
+                    if ('0' == json.status)
+                    {
+                        //删除文件
+                        FileBox.deleteFile(data.attachRefId);
+                    }
+                    else
+                    {
+                        layer.alert(json.msg, {icon: 0});
+                    }
+                    layer.close(layerIndex);
+                }
+            });
+        }, function(){
+
+        });
+    }
+</script>
+
+<!-- 上传图片-->
+<script src="../../../js/common/plugins/webuploader/webuploader.js"></script>
+<script src="../../../js/common/filebox.js"></script>
+<script src="../../../js/rental/buildingRent/uploaderDraft.js"></script>
+<script src="../../../js/common/plugins/blueimp/jquery.blueimp-gallery.min.js"></script>
+</body>
+
+</html>

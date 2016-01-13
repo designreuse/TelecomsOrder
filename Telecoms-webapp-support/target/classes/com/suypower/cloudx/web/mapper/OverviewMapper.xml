@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.suypower.cloudx.web.dao.OverviewMapper">
+    <select id="queryOverviewData" resultType="java.util.Map">
+
+    </select>
+
+    <select id="queryYearMonthRcv" resultType="java.util.Map">
+        SELECT
+          IFNULL(SUM((A.RCVED_AMT - A.DERATE_AMT)),0) AS RCV_AMT,
+          IFNULL(SUM(B.THIS_RCVED_AMT),0) AS RCVED_AMT,
+          Y.YM AS RCV_YM
+        FROM
+          (
+            SELECT CONCAT(YEAR(CURDATE()),'01') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'02') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'03') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'04') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'05') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'06') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'07') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'08') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'09') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'10') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'11') AS YM UNION ALL
+            SELECT CONCAT(YEAR(CURDATE()),'12') AS YM
+          ) Y
+          LEFT JOIN A_RCVBL_FLOW A
+          ON Y.YM=A.RCVBL_YM
+          LEFT JOIN A_RCVED_FLOW B
+            ON A.RCVBL_AMT_ID = B.RCVBL_AMT_ID
+          AND A.ORG_NO=#{orgNo}
+        GROUP BY Y.YM
+    </select>
+    
+    <select id="queryYearCharge" resultType="java.util.Map">
+        SELECT
+        -- 出售实收 '0101','0102','0103'
+        SUM(CASE B.AMT_TYPE
+        WHEN '0101' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        WHEN '0102' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        WHEN '0103' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        ELSE 0
+        END) AS SALES_RCVED_AMT,
+        -- 租赁实收 '0121','0122','0123'
+        SUM(CASE B.AMT_TYPE
+        WHEN '0121' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        WHEN '0122' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        WHEN '0123' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        ELSE 0
+        END) AS RENTAL_RCVED_AMT,
+
+        -- 其他实收 '0111','0112','0113'
+        SUM(CASE B.AMT_TYPE
+        WHEN '0111' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        WHEN '0112' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        WHEN '0113' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        ELSE 0
+        END) AS OTHER_RCVED_AMT,
+
+        -- 出售预收 '0221','0222','0223'
+        SUM(CASE B.AMT_TYPE
+        WHEN '0221' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        WHEN '0222' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        WHEN '0223' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        ELSE 0
+        END) AS SALES_PRE_AMT,
+
+        -- 租赁预收 '0201','0202','0203'
+        SUM(CASE B.AMT_TYPE
+        WHEN '0201' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        WHEN '0202' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        WHEN '0203' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        ELSE 0
+        END) AS RENTAL_PRE_AMT,
+
+        -- 其他预收 '0201','0202','0203'
+        SUM(CASE B.AMT_TYPE
+        WHEN '0299' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        ELSE 0
+        END) AS OTHER_PRE_AMT,
+
+        -- 0301房屋租赁押金
+        SUM(CASE B.AMT_TYPE
+        WHEN '0301' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        ELSE 0
+        END) AS ROOM_DEPOSIT_AMT,
+
+        -- 0302车位租赁押金
+        SUM(CASE B.AMT_TYPE
+        WHEN '0302' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        ELSE 0
+        END) AS PARKING_DEPOSIT_AMT,
+
+        -- 0303公共资源租赁押金
+        SUM(CASE B.AMT_TYPE
+        WHEN '0303' THEN IFNULL(B.THIS_RCVED_AMT,0)
+        ELSE 0
+        END) AS PUBLIC_DEPOSIT_AMT
+
+        FROM A_RCVED_FLOW B
+        WHERE B.ORG_NO=#{orgNo}
+        AND B.RCVED_YM>=CONCAT(YEAR(CURDATE()),'01')
+        <![CDATA[
+          AND B.RCVED_YM<=CONCAT(YEAR(CURDATE()),'12')
+        ]]>
+    </select>
+</mapper>

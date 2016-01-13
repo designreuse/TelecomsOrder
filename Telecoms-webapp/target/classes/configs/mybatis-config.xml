@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//ibatis.apache.org//DTD Config 3.0//EN"
+        "http://ibatis.apache.org/dtd/ibatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="jdbcTypeForNull" value="NULL"/>
+    </settings>
+    <typeAliases>
+        <typeAlias type="com.suypower.cloudx.support.jdbc.Page" alias="Page"/>
+    </typeAliases>
+    <plugins>
+        <!-- 引入自动分页拦截器 -->
+        <plugin interceptor="com.suypower.cloudx.support.jdbc.MyBatisPageInterceptor">
+            <!-- 数据库方言 目前支持Oracle和MySql（方言名称固定不可修改） -->
+            <property name="dialect" value="MySql"/>
+        </plugin>
+    </plugins>
+</configuration>

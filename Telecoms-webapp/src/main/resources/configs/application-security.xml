@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+	<http use-expressions="true">
+		<!-- 允许匿名访问地址列表 -->
+		<intercept-url pattern="/css/**" access="permitAll" />
+		<intercept-url pattern="/images/**" access="permitAll" />
+		<intercept-url pattern="js/**" access="permitAll" />
+		<intercept-url pattern="/passport/genImageCode" access="permitAll" />
+		<intercept-url pattern="/index.jsp" access="permitAll" />
+		<intercept-url pattern="/font-awesome/**" access="permitAll" />
+		<intercept-url pattern="/favicon.ico" access="permitAll" />
+		<intercept-url pattern="/data/**" access="permitAll" />
+		<intercept-url pattern="/ws/**" access="permitAll" />
+        <intercept-url pattern="/**" access="isAuthenticated()"/>
+        <access-denied-handler ref="accessDeniedHandler"/>
+		<form-login login-page="/"  
+		   login-processing-url="/j_spring_security_check"
+		   authentication-failure-url="/"/>  
+ 		<logout logout-url="/j_spring_security_logout" invalidate-session="true" logout-success-url="/" />
+		<!-- session固化防护 -->
+		<session-management session-fixation-protection="newSession">
+			<!-- 一个用户仅可产生一个有效会话 -->
+<!-- 			<concurrency-control max-sessions="1" expired-url="/" error-if-maximum-exceeded="false"/> -->
+		</session-management>
+		<!-- 增加一个filter，这点与Acegi是不一样的，不能修改默认的filter了， 这个filter位于FILTER_SECURITY_INTERCEPTOR之前 -->
+		<custom-filter ref="myFilterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR" />
+		<custom-filter before="FORM_LOGIN_FILTER" ref="myUsernamePasswordAuthenticationExtendFilter" />
+	</http>
+	<!-- 生成HttpSessionSecurityContextRepository -->
+	<beans:bean id="securityContextRepository"
+		class="org.springframework.security.web.context.HttpSessionSecurityContextRepository">
+		<beans:property name="allowSessionCreation" value="true" />
+		<beans:property name="disableUrlRewriting" value="true" />
+	</beans:bean>
+	<!-- 一个自定义的filter，必须包含authenticationManager,accessDecisionManager,securityMetadataSource三个属性， 
+		我们的所有控制将在这三个类中实现，解释详见具体配置 -->
+	<beans:bean id="myFilterSecurityInterceptor"
+		class="com.suypower.cloudx.module.system.support.MyFilterSecurityInterceptor">
+		<beans:property name="authenticationManager"
+			ref="authenticationManager" />
+		<!-- 访问决策器，决定某个用户具有的角色，是否有足够的权限去访问某个资源 -->
+		<beans:property name="accessDecisionManager"
+			ref="myAccessDecisionManager" />
+		<!-- 资源源数据定义，将所有的资源和权限对应关系建立起来，即定义某一资源可以被哪些角色访问 -->
+		<beans:property name="securityMetadataSource"
+			ref="myInvocationSecurityMetadataSource" />
+	</beans:bean>
+	
+	<!-- 自定义权限不足处理 --> 
+	<beans:bean id="accessDeniedHandler" class="com.suypower.cloudx.module.system.support.MyAccessDeniedHandler">
+		<beans:property name="ajaxExpiredUrl" value="/passport/ajaxAccessDenied"></beans:property>  
+	    <beans:property name="errorPage" value="/WEB-INF/error/403.jsp"></beans:property>  
+	</beans:bean> 
+	<!-- 资源源数据定义，将所有的资源和权限对应关系建立起来，即定义某一资源可以被哪些角色访问 -->
+	<beans:bean id="myInvocationSecurityMetadataSource"
+		class="com.suypower.cloudx.module.system.support.MyInvocationSecurityMetadataSource">
+		<beans:constructor-arg index="0" ref="roleService" />
+		<beans:constructor-arg index="1" ref="resourceService" />
+	</beans:bean>
+	
+	<!-- 访问决策器，决定某个用户具有的角色，是否有足够的权限去访问某个资源 -->
+	<beans:bean id="myAccessDecisionManager"
+		class="com.suypower.cloudx.module.system.support.MyAccessDecisionManager">
+	</beans:bean>
+
+	<!-- 验证配置，认证管理器，实现用户认证的入口，主要实现UserDetailsService接口即可 -->
+	<authentication-manager alias="authenticationManager">
+		<authentication-provider
+			user-service-ref="userService">
+			<!-- 如果用户的密码采用加密的话 <password-encoder hash="md5" /> -->
+		</authentication-provider>
+	</authentication-manager>
+	
+	<beans:bean id="myUsernamePasswordAuthenticationExtendFilter" 
+	class="com.suypower.cloudx.module.system.support.MyUsernamePasswordAuthenticationExtendFilter">
+		<beans:property name="usernameParameter" value="flute_username"></beans:property>
+		<beans:property name="passwordParameter" value="flute_password"></beans:property>
+		<beans:property name="validateCodeParameter" value="flute_validateCode"></beans:property>
+		<beans:property name="validateCodeEnable" value="false"></beans:property>
+	  	<beans:property name="authenticationSuccessHandler"
+	   ref="loginLogAuthenticationSuccessHandler"></beans:property>
+	  	<beans:property name="authenticationFailureHandler"
+	   ref="simpleUrlAuthenticationFailureHandler"></beans:property>
+	  	<beans:property name="authenticationManager" ref="authenticationManager"></beans:property>
+	</beans:bean>
+	 <!-- 登录成功 -->
+	<beans:bean id="loginLogAuthenticationSuccessHandler"
+	  class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+	  <beans:property name="defaultTargetUrl" value="/passport/login"></beans:property>
+	  <beans:property name="alwaysUseDefaultTargetUrl" value="true"></beans:property>
+	</beans:bean>
+	
+	
+	 <!-- 登录失败 -->
+	<beans:bean id="simpleUrlAuthenticationFailureHandler"
+	  class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">
+	  <beans:property name="defaultFailureUrl" value="/passport/login?error"></beans:property>
+	</beans:bean>
+	
+	<beans:bean class="org.springframework.security.authentication.event.LoggerListener" />  
+	
+	<!-- 国际化信息 -->  
+   <beans:bean id="messageSource"
+	class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<beans:property name="basename" value="classpath:configs/messages"/>
+   </beans:bean>
+   <beans:bean id="localeResolver"
+		class="org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver" />
+</beans:beans>

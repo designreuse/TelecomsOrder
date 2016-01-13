@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.suypower.cloudx.storage.core.dao.DataFileMapper">
+    <resultMap type="com.suypower.cloudx.storage.core.entity.DataFile" id="dataFileMap">
+        <id property="dataID" column="DATA_ID" javaType="java.lang.String"/>
+        <result property="fileName" column="FILE_NAME" javaType="java.lang.String"/>
+        <result property="path" column="PATH" javaType="java.lang.String"/>
+        <result property="fileType" column="FILE_TYPE" javaType="java.lang.String"/>
+        <result property="shaCode" column="SHA_CODE" javaType="java.lang.String"/>
+        <result property="uploadTime" column="UPLOAD_TIME" javaType="java.util.Date"/>
+        <result property="fileSize" column="FILE_SIZE" javaType="java.lang.Long"/>
+        <result property="status" column="STATUS" javaType="java.lang.String"/>
+        <result property="dataGroup" column="DATA_GROUP" javaType="java.lang.String"/>
+        <result property="contentType" column="CONTENT_TYPE" javaType="java.lang.String"/>
+        <association property="dataApp" column="APP_ID"
+                     select="com.suypower.cloudx.storage.identify.dao.DataAppMapper.queryDataApp"/>
+        <association property="uploadUser" column="USER_ID"
+                     select="com.suypower.cloudx.storage.identify.dao.DataUserMapper.queryDataUserByID"/>
+    </resultMap>
+    <select id="queryDataFile" resultMap="dataFileMap">
+        SELECT
+          DATA_ID,
+          FILE_NAME,
+          PATH,
+          FILE_TYPE,
+          SHA_CODE,
+          UPLOAD_TIME,
+          FILE_SIZE,
+          APP_ID,
+          USER_ID,
+          DATA_GROUP,
+          CONTENT_TYPE,
+          STATUS FROM DATA_FILE F WHERE F.DATA_ID=#{dataID}
+    </select>
+    <insert id="insertDataFile" useGeneratedKeys="true">
+        <selectKey keyProperty="dataID" order="BEFORE" resultType="java.lang.String">
+            SELECT UUID()
+        </selectKey>
+        INSERT INTO DATA_FILE (
+          DATA_ID,
+          FILE_NAME,
+          PATH,
+          FILE_TYPE,
+          SHA_CODE,
+          UPLOAD_TIME,
+          FILE_SIZE,
+          APP_ID,
+          USER_ID,
+          DATA_GROUP,
+          CONTENT_TYPE,
+          STATUS
+        ) 
+        VALUES
+          (
+            #{dataID},
+            #{fileName},
+             #{path},
+             #{fileType},
+             #{shaCode},
+            CURRENT_TIMESTAMP(),
+             #{fileSize},
+            (SELECT APP_ID FROM DATA_APP a WHERE a.APP_KEY=#{dataApp.appKey}),
+             #{uploadUser.userID},
+              #{dataGroup},
+             #{contentType},
+            '01'
+          )
+    </insert>
+
+    <delete id="deleteDataFile">
+        DELETE FROM DATA_FILE WHERE DATA_ID=#{dataID}
+    </delete>
+    <insert id="insertTempDataFile">
+        <selectKey keyProperty="dataID" order="BEFORE" resultType="java.lang.String">
+            SELECT UUID()
+        </selectKey>
+        INSERT INTO DATA_FILE_TMP (
+          DATA_ID,
+          FILE_NAME,
+          PATH,
+          FILE_TYPE,
+          SHA_CODE,
+          UPLOAD_TIME,
+          FILE_SIZE,
+          APP_ID,
+          USER_ID,
+          DATA_GROUP,
+          CONTENT_TYPE
+        )
+        VALUES
+          (
+            #{dataID},
+            #{fileName},
+             #{path},
+             #{fileType},
+             #{shaCode},
+            CURRENT_TIMESTAMP(),
+             #{fileSize},
+            (SELECT APP_ID FROM DATA_APP a WHERE a.APP_KEY=#{dataApp.appKey}),
+             #{uploadUser.userID},
+              #{dataGroup},
+             #{contentType}
+          )
+    </insert>
+
+    <insert id="insertFromTempDataFile">
+        INSERT INTO DATA_FILE (
+          DATA_ID,
+          FILE_NAME,
+          PATH,
+          FILE_TYPE,
+          SHA_CODE,
+          UPLOAD_TIME,
+          FILE_SIZE,
+          APP_ID,
+          USER_ID,
+          DATA_GROUP,
+          CONTENT_TYPE,
+          STATUS
+        )
+        SELECT
+        DATA_ID,
+        FILE_NAME,
+        PATH,
+        FILE_TYPE,
+        SHA_CODE,
+        UPLOAD_TIME,
+        FILE_SIZE,
+        APP_ID,
+        USER_ID,
+        DATA_GROUP,
+        CONTENT_TYPE,'01' FROM DATA_FILE_TMP T WHERE T.DATA_ID IN
+        <foreach collection="list" index="index" item="item" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </insert>
+    <select id="queryTempFiles" resultMap="dataFileMap">
+        SELECT
+        DATA_ID,
+        FILE_NAME,
+        PATH,
+        FILE_TYPE,
+        SHA_CODE,
+        UPLOAD_TIME,
+        FILE_SIZE,
+        APP_ID,
+        USER_ID,
+        DATA_GROUP,
+        CONTENT_TYPE FROM DATA_FILE_TMP T WHERE T.DATA_ID IN
+        <foreach collection="list" index="index" item="item" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <delete id="deleteTempFiles">
+        DELETE FROM DATA_FILE_TMP WHERE DATA_ID IN
+        <foreach collection="list" index="index" item="item" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+    <insert id="insertDataFileWithBatch">
+        INSERT INTO DATA_FILE (
+          DATA_ID,
+          FILE_NAME,
+          PATH,
+          FILE_TYPE,
+          SHA_CODE,
+          UPLOAD_TIME,
+          FILE_SIZE,
+          APP_ID,
+          USER_ID,
+          DATA_GROUP,
+          CONTENT_TYPE,
+          STATUS
+        )
+        VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.dataID},#{item.fileName},#{item.path},#{item.fileType},
+            #{item.shaCode},#{item.uploadTime},#{item.fileSize},
+            #{item.dataApp.appID},#{item.uploadUser.userID},
+            #{item.dataGroup},#{item.contentType},'01')
+        </foreach>
+    </insert>
+
+    <select id="queryDataFiles" resultMap="dataFileMap">
+        SELECT
+          DATA_ID,
+          FILE_NAME,
+          PATH,
+          FILE_TYPE,
+          SHA_CODE,
+          UPLOAD_TIME,
+          FILE_SIZE,
+          APP_ID,
+          USER_ID,
+          DATA_GROUP,
+          CONTENT_TYPE,
+          STATUS
+          FROM DATA_FILE F WHERE F.DATA_ID IN
+          <foreach collection="list" open="(" separator="," close=")" item="item">
+            #{item}
+          </foreach>
+    </select>
+
+    <delete id="deleteDataFiles">
+        DELETE FROM DATA_FILE WHERE DATA_ID IN
+        <foreach collection="list" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

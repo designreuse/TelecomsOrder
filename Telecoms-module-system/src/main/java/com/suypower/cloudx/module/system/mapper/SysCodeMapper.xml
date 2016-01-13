@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.suypower.cloudx.module.system.dao.SysCodeMapper">
+
+    <resultMap type="com.suypower.cloudx.module.system.entity.SysCode" id="codeMap">
+        <id property="codeId" column="CODE_ID" javaType="java.lang.String" />
+        <result property="codeSortId" column="CODE_SORT_ID" javaType="java.lang.String" />
+        <result property="value" column="CODE_VALUE" javaType="java.lang.String" />
+        <result property="name" column="CODE_NAME" javaType="java.lang.String" />
+        <result property="sn" column="DISP_SN" javaType="java.lang.String" />
+        <result property="content1" column="CONTENT1" javaType="java.lang.String" />
+        <result property="content2" column="CONTENT2" javaType="java.lang.String" />
+        <result property="content3" column="CONTENT3" javaType="java.lang.String" />
+        <result property="content4" column="CONTENT4" javaType="java.lang.String" />
+        <result property="content5" column="CONTENT5" javaType="java.lang.String" />
+        <association property="superCode" column="P_CODE_ID"
+                     select="com.suypower.cloudx.module.system.dao.SysCodeMapper.querySysCodeById"></association>
+    </resultMap>
+
+    <select id="querySysCodeById" parameterType="java.util.HashMap" resultMap="codeMap">
+        SELECT CI.CODE_ID, CI.CODE_SORT_ID, CI.P_CODE_ID, CI.CODE_VALUE, CI.CODE_NAME, CI.DISP_SN
+        FROM P_CODE_ITEM CI
+        WHERE CI.CODE_ID=#{codeId}
+    </select>
+
+    <select id="querySysCodes" parameterType="java.util.HashMap" resultMap="codeMap">
+        SELECT CI.CODE_ID, CI.CODE_SORT_ID, CI.P_CODE_ID, CI.CODE_VALUE, CI.CODE_NAME, CI.DISP_SN
+              ,CI.CONTENT1,CI.CONTENT2,CI.CONTENT3,CI.CONTENT4,CI.CONTENT5
+        FROM P_CODE_ITEM CI
+        WHERE 1=1
+        <if test="codeSortId != null and codeSortId != ''">
+            AND CI.CODE_SORT_ID=#{codeSortId}
+        </if>
+        <if test="codeSortName != null and codeSortName != ''">
+            AND CI.CODE_SORT_ID=(SELECT CS.CODE_SORT_ID FROM P_CODE_SORT CS WHERE CS.NAME=#{codeSortName})
+        </if>
+        ORDER BY CI.CODE_VALUE
+    </select>
+
+    <select id="querySysCode" parameterType="java.util.HashMap" resultMap="codeMap">
+        SELECT CI.CODE_ID, CI.CODE_SORT_ID, CI.P_CODE_ID, CI.CODE_VALUE, CI.CODE_NAME, CI.DISP_SN
+        FROM P_CODE_ITEM CI
+        WHERE CI.CODE_SORT_ID=(SELECT CS.CODE_SORT_ID FROM P_CODE_SORT CS WHERE CS.NAME=#{codeSortName})
+        AND CI.CODE_VALUE=#{codeValue}
+    </select>
+
+</mapper>

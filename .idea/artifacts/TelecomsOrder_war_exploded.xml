@@ -48,7 +48,7 @@
         </element>
       </element>
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/TelecomsOrder/target/TelecomsOrder-1.0-SNAPSHOT/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="D:\xuhd\Telecoms\TelecomsOrder\target/MANIFEST.MF" />
       </element>
       <element id="javaee-facet-resources" facet="TelecomsOrder/web/Web" />
     </root>

@@ -22,12 +22,23 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
-        <module name="TelecomsOrder" />
+        <module name="Cloudx-webapp" />
+        <module name="Telecoms-webapp" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Telecoms" target="1.5" />
-      <module name="TelecomsOrder" target="1.5" />
+      <module name="Cloudx-module-system" target="1.6" />
+      <module name="Cloudx-support" target="1.6" />
+      <module name="Cloudx-webapp" target="1.6" />
+      <module name="Cloudx-webapp-support" target="1.6" />
+      <module name="Cloudx-webservice" target="1.6" />
+      <module name="Telecoms" target="1.6" />
+      <module name="Telecoms-module-system" target="1.6" />
+      <module name="Telecoms-storage" target="1.6" />
+      <module name="Telecoms-support" target="1.6" />
+      <module name="Telecoms-webapp" target="1.6" />
+      <module name="Telecoms-webapp-support" target="1.6" />
+      <module name="Telecoms-webservice" target="1.6" />
     </bytecodeTargetLevel>
   </component>
 </project>

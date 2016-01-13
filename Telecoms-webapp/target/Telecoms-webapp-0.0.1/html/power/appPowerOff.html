@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>停电申请</title>
+
+    <link href="../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/common/animate.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../css/common/style.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>停电申请</h5>
+                    <div class="ibox-tools">
+                        <button type="button" onclick="saveProcess()">保存</button>
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="ibox-content" style="padding:20px 20px 20px 20px;" id="appPowerOffIboxId">
+                    <div class="jqGrid_wrapper">
+                        <table id="appPowerOffTable"></table>
+                        <div id="appPowerOffPager"></div>
+                    </div>
+                    <br/>
+                    <div class="jqGrid_wrapper">
+                        <table id="otherAppPowerOffTable"></table>
+                        <div id="otherAppPowerOffPager"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>历史审批信息</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-down"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="ibox-content" id="historyApproveIboxId" style="padding:20px 20px 20px 20px;">
+                    <div class="jqGrid_wrapper" id="historyApproveDivId">
+                        <table id="historyApproveTable"></table>
+                        <div id="historyApprovePager"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="../../js/common/jquery-2.1.1.js"></script>
+<script src="../../js/common/bootstrap.min.js"></script>
+<script src="../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<script src="../../js/common/inspinia.js"></script>
+<script src="../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../js/common/plugins/layer/layer.js"></script>
+
+<script src="../../js/common/common.js"></script>
+<script src="../../js/power/power.js"></script>
+
+<script src="../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+
+
+<script>
+    var appNo = "100000002";
+    $(function() {
+
+        $.jgrid.defaults.styleUI = "Bootstrap";
+        //初始化停电用户
+        initAppPowerOffTable();
+        //初始化删除的停电用户
+        initOtherAppPowerOffTable();
+        //初始化历史审批信息
+        queryHistoryApprove();
+
+        //表格自动调整
+        $(window).bind("resize",
+        function() {
+            var width = $("#appPowerOffIboxId").width();
+            $("#appPowerOffTable").setGridWidth(width);
+            $("#otherAppPowerOffTable").setGridWidth(width);
+            $("#historyApproveTable").setGridWidth(width);
+        })
+
+        //对历史审批panel隐藏
+        document.getElementById("historyApproveIboxId").style.display="none";
+    });
+
+    function powerOffOperation(cellvalue, options, row){
+        return '<a style="display: block;color:green;" onClick=delRow("' + (row.apcId) + '")>' + "删除" + '</a>';
+    }
+    function otherPowerOffOperation(cellvalue, options, row){
+        return '<a style="display: block;color:green;" onClick=addRow("' + (row.apcId) + '")>' + "恢复" + '</a>';
+    }
+    function delRow(apcId){
+        delAppPowerOffCons(apcId);
+    }
+    function addRow(apcId){
+        recoverPowerOffCons(apcId);
+    }
+
+    //初始化停电用户
+    function initAppPowerOffTable(){
+        $("#appPowerOffTable").jqGrid({
+            url: "../../../power/appPowerOff/queryAppPowerOffCons",
+            postData:{
+                appNo:appNo,
+                isPowerOffCons: "01"
+            },
+            datatype : "json",
+            height: '150px',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '主键编号', '操作','用户名称', '租赁地址', '联系人', '联系电话','停电类型','停电说明' ],
+            colModel : [
+                {name : 'apcId',index : 'apcId',width : 55, hidden: true},
+                {name:'apoId', label:'操作',width : 55,formatter: powerOffOperation, align : "center"},
+                {name : 'consName',  index : 'consName',width : 100, align : "center"},
+                {name : 'consAddr',index : 'consAddr',width : 80, align : "left"},
+                {name : 'contactName',index : 'contactName',  width : 80,  align : "center"},
+                {name : 'mobile',index : 'mobile',width : 80,align : "center"},
+                {name : 'powerOffTypeName',index : 'powerOffTypeName',width : 120, align : "center"},
+                {name : 'powerOffDesc',index : 'powerOffDesc',width : 120, align : "center"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#appPowerOffPager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            caption : "执行停电用户",
+            hidegrid: false
+        });
+        $("#appPowerOffTable").jqGrid("navGrid", "#appPowerOffPager", {
+            add: false,
+            edit: false,
+            del: false,
+            search: false
+        },
+        {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+    }
+
+    //初始化已删除停电用户
+    function initOtherAppPowerOffTable(){
+        $("#otherAppPowerOffTable").jqGrid({
+            url: "../../power/appPowerOff/queryAppPowerOffCons",
+            postData:{
+                appNo:appNo,
+                isPowerOffCons: "02"
+            },
+            datatype : "json",
+            height: '150px',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '主键编号', '操作','用户名称', '租赁地址', '联系人', '联系电话','停电类型','停电说明' ],
+            colModel : [
+                {name : 'apcId',index : 'apcId',width : 55, hidden: true},
+                {name:'apoId', label:'操作',width : 55,formatter: otherPowerOffOperation, align : "center"},
+                {name : 'consName',  index : 'consName',width : 100, align : "center"},
+                {name : 'consAddr',index : 'consAddr',width : 80, align : "left"},
+                {name : 'contactName',index : 'contactName',  width : 80,  align : "center"},
+                {name : 'mobile',index : 'mobile',width : 80,align : "center"},
+                {name : 'powerOffTypeName',index : 'powerOffTypeName',width : 120, align : "center"},
+                {name : 'powerOffDesc',index : 'powerOffDesc',width : 120, align : "center"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#otherAppPowerOffPager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            caption : "取消停电用户",
+            hidegrid: false
+        });
+        $("#otherAppPowerOffTable").jqGrid("navGrid", "#otherAppPowerOffPager", {
+            add: false,
+            edit: false,
+            del: false,
+            search: false
+        },
+        {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+    }
+
+    //查询历史审批信息
+    function queryHistoryApprove(){
+        initHistoryApproveJqGrid($("#historyApproveTable"), "#historyApprovePager", appNo, "100px");
+    }
+
+    //删除停电用户
+    function delAppPowerOffCons(apcId){
+        if(apcId == ""){
+            BModal.alert("请选择一条或多条用户信息进行删除!");
+        }
+        $.ajax({
+            url: '../../power/appPowerOff/delAppPowerOffCons',
+            data: {
+                appPowerOffConsIds: apcId
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    $("#appPowerOffTable").jqGrid('setGridParam',{
+                        datatype: 'json',
+                        postData:{
+                            appNo:appNo,
+                            isPowerOffCons: "01"
+                        },
+                        page: 1
+                    }).trigger("reloadGrid");
+                    $("#otherAppPowerOffTable").jqGrid('setGridParam',{
+                        datatype: 'json',
+                        postData:{
+                            appNo:appNo,
+                            isPowerOffCons: "02"
+                        },
+                        page: 1
+                    }).trigger("reloadGrid");
+                }else{
+                    BModal.alert(data.msg);
+                }
+            },
+            error: function () {
+                BModal.alert("删除数据异常！");
+            }
+        });
+    }
+
+    //恢复停电用户
+    function recoverPowerOffCons(apcId){
+        if(apcId == ""){
+            BModal.alert("请选择一条或多条用户信息进行恢复!");
+        }
+        $.ajax({
+            url: '../../power/appPowerOff/recoverPowerOffCons',
+            data: {
+                apcId: apcId
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    $("#appPowerOffTable").jqGrid('setGridParam',{
+                        datatype: 'json',
+                        postData:{
+                            appNo:appNo,
+                            isPowerOffCons: "01"
+                        },
+                        page: 1
+                    }).trigger("reloadGrid");
+                    $("#otherAppPowerOffTable").jqGrid('setGridParam',{
+                        datatype: 'json',
+                        postData:{
+                            appNo:appNo,
+                            isPowerOffCons: "02"
+                        },
+                        page: 1
+                    }).trigger("reloadGrid");
+                }else{
+                    BModal.alert(data.msg);
+                }
+            },
+            error: function () {
+                BModal.alert("恢复数据异常！");
+            }
+        });
+    }
+
+    //保存流程信息
+    function saveProcess(){
+        $.ajax({
+            url: '../../power/appPowerOff/saveAppPowerOffProcess',
+            data: {
+                appNo:appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    BModal.alert("流程提交成功");
+                }else{
+                    BModal.alert(data.msg);
+                }
+            },
+            error: function () {
+                BModal.alert("提供流程异常！");
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

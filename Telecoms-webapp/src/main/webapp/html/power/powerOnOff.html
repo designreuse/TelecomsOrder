@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>人工停复电</title>
+
+    <link href="../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/common/animate.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../css/common/style.css" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5>人工停复电</h5>
+            <div class="ibox-tools">
+                <a class="collapse-link">
+                    <i class="fa fa-chevron-up"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="ibox-content">
+            <div id="mrSectTableToolbar" style="margin-bottom: 5px;">
+                <form role="form" class="form-inline" id="queryForm">
+                    <label class="control-label"> 用户名称：</label>
+                    <input type="text" class="form-control" id="consName" placeholder="请输入用户名称">
+                    <label class="control-label"> 停复电日期：</label>
+                    <input class="laydate-icon" id="startTime" style="width:150px;display:inline;height:34px;padding-left:20px;margin-right: 2px;border-color:#E5E6E7;"
+                            placeholder="YYYY-MM-DD" />
+                    <label class="control-label"> 至：</label>
+                    <input class="laydate-icon" id="endTime" style="width:150px;display:inline;height:34px;padding-left:20px;margin-right: 2px;border-color:#E5E6E7;"
+                           placeholder="YYYY-MM-DD" />
+                    <label class="control-label"> 执行状态：</label>
+                    <select id="statusCode" class="form-control m-b" style="margin-bottom:0px;" name="statusCode">
+                    </select>
+                    <button class="btn btn-sm btn-primary pull-right" type="button" onclick="queryPowerOnOff()">查询</button>
+                </form>
+            </div>
+            <div class="jqGrid_wrapper" id="powerOnOffDiv">
+                <table id="powerOnOffTable"></table>
+                <div id="powerOnOffPager"></div>
+            </div>
+            <br/>
+            <div class="jqGrid_wrapper">
+                <table id="directiveTable"></table>
+                <div id="directivePager"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="directiveHisDiv" style="display: none;">
+    <div class="jqGrid_wrapper">
+        <table id="directiveHisTable"></table>
+        <div id="directiveHisPager"></div>
+    </div>
+</div>
+
+<script src="../../js/common/jquery-2.1.1.js"></script>
+<script src="../../js/common/bootstrap.min.js"></script>
+<script src="../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<script src="../../js/common/inspinia.js"></script>
+<script src="../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../js/rental/laydate-master/laydate.js"></script>
+<script src="../../js/common/plugins/dataTables/jquery.dataTables.js"></script>
+<script src="../../js/common/plugins/layer/layer.js"></script>
+<script src="../../js/common/common.js"></script>
+
+<script src="../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+
+<script>
+
+    var startTime = {
+        elem: '#startTime',
+        format: 'YYYY-MM-DD',
+        min: '1900-01-01 00:00:00', //设定最小日期为当前日期
+        max: '2099-06-16 23:59:59', //最大日期
+        istime: false,
+        istoday: false
+    };
+    laydate(startTime);
+
+    var endTime = {
+        elem: '#endTime',
+        format: 'YYYY-MM-DD',
+        min: '1900-01-01 00:00:00', //设定最小日期为当前日期
+        max: '2099-06-16 23:59:59', //最大日期
+        istime: false,
+        istoday: false
+    };
+    laydate(endTime);
+
+    $(function() {
+        $.jgrid.defaults.styleUI = "Bootstrap";
+        //初始化人工停复电
+        initPowerOnOffTable();
+        //初始化停复电指令
+        initDirectiveTable();
+        //初始化执行状态
+        initStatusCode();
+        initDirectiveHisTable("");
+        //表格自动调整
+        $(window).bind("resize",
+        function() {
+            var width = $("#powerOnOffDiv").width();
+            $("#powerOnOffTable").setGridWidth(width);
+            $("#directiveTable").setGridWidth(width);
+        })
+    });
+
+    function initPowerOnOffTable(){
+        $("#powerOnOffTable").jqGrid({
+            url: "../../power/powerOffPlan/queryPowerOffPlan",
+            datatype : "json",
+            height: '310px',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '主键编号', '复电ID', '用户名称', '执行状态', '预计停电时间', '实际停电时间', '预计复电时间', '实际复电时间', '停复电说明' ],
+            colModel : [
+                {name : 'offPlanId',index : 'offPlanId',width : 55, hidden: true},
+                {name : 'onPlanId',index : 'onPlanId',width : 55, hidden: true},
+                {name : 'consName',  index : 'consName',width : 100, align : "center"},
+                {name : 'statusCodeName',index : 'statusCodeName',width : 80, align : "center"},
+                {name : 'powerOffPlanTime',index : 'powerOffPlanTime',  width : 80,  align : "center"},
+                {name : 'powerOffActualTime',index : 'powerOffActualTime',width : 80,align : "center"},
+                {name : 'powerOnPlanTime',index : 'powerOnPlanTime',  width : 80,  align : "center"},
+                {name : 'powerOnActualTime',index : 'powerOnActualTime',width : 80,align : "center"},
+                {name : 'powerOffDesc',index : 'powerOffDesc',width : 120, align : "left"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#powerOnOffPager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            caption : "停电计划",
+            hidegrid: false,
+            onSelectRow: function(id){
+                var rowData = $("#powerOnOffTable").jqGrid("getRowData",id);
+
+                $("#directiveTable").jqGrid('setGridParam',{
+                    datatype: 'json',
+                    postData:{
+                        planId: rowData.offPlanId
+                    },
+                    page: 1
+                }).trigger("reloadGrid");
+            }
+        });
+        $("#powerOnOffTable").jqGrid("navGrid", "#powerOnOffPager", {
+            add: false,
+            edit: false,
+            del: false,
+            search: false
+        },
+        {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+    }
+
+    //加载停复电指令
+    function initDirectiveTable(){
+        $("#directiveTable").jqGrid({
+            url: "../../power/powerOffPlan/queryDirectiveByPlanId",
+            //datatype : "json",
+            datatype:"local",
+            height: '200px',
+            autowidth: true,
+            shrinkToFit: true,
+            colNames : [ '主键编号', '指令执行状态ID', '指令类型ID', '停复电', '操作', '设备编号', '指令类型', '指令执行状态', '指令执行时间', '指令返回时间', '指令执行说明'],
+            colModel : [
+                {name : 'directiveId',index : 'directiveId',width : 55, hidden: true},
+                {name : 'remoteRslt',index : 'remoteRslt',width : 55, hidden: true},
+                {name : 'directiveType',index : 'directiveType',width : 80, hidden: true},
+                {name : 'planId',index : 'planId',width : 80, hidden: true},
+                {name : 'orgNo',label:'操作',index : 'orgNo',width : 55, formatter: directiveOperation, align : "center"},
+                {name : 'barCode',  index : 'barCode',width : 100, align : "center"},
+                {name : 'directiveTypeName',index : 'directiveTypeName',width : 80, align : "center"},
+                {name : 'remoteRsltName',index : 'remoteRsltName',  width : 80,  align : "center"},
+                {name : 'remoteTime',index : 'remoteTime',width : 80,align : "center"},
+                {name : 'remoteRtTime',index : 'remoteRtTime',  width : 80,  align : "center"},
+                {name : 'remoteDesc',index : 'remoteDesc',width : 120,align : "left"}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#directivePager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            caption : "停复电指令下发",
+            hidegrid: false
+        });
+        $("#directiveTable").jqGrid("navGrid", "#directivePager", {
+            add: false,
+            edit: false,
+            del: false,
+            search: false
+        },
+        {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+    }
+
+    function queryPowerOnOff() {
+
+        var params = {
+            consName: $("#consName").val(),
+            startTime: $("#startTime").val(),
+            endTime: $("#endTime").val(),
+            statusCode: $("#statusCode").val()
+        };
+        //alert(JSON.stringify(params));
+        $("#powerOnOffTable").jqGrid('setGridParam',{
+            datatype: 'json',
+            postData: params,
+            page: 1
+        }).trigger("reloadGrid");
+    }
+
+    //初始化执行状态
+    function initStatusCode(){
+        $.ajax({
+            type: 'POST',
+            url: '../../../system/code/querySysCodes',
+            data: {codeSortName: 'STATUS_CODE'},
+            dataType: 'json',
+            success: function(data){
+                //BModal.alert(JSON.stringify(data));
+                if('0' == data.status){
+                    $("#statusCode").empty();
+                    var items = data.data;
+                    $("#statusCode").append("<option value=''>请选择执行状态</option>");
+                    for(var i = 0; i < items.length; i++) {
+                        var option = $("<option>").text(items[i].name).val(items[i].value);
+                        $("#statusCode").append(option);
+                    }
+                } else{
+                    BModal.alert(data.msg);
+                }
+            }
+        });
+    }
+
+    function directiveOperation(cellvalue, options, row){
+        if(row.remoteRslt == '04'){
+            return '<a style="color:green;" onClick=resendDirective("' + (row.directiveId) + '")>' + "重新发送" + '</a>'
+                 + '&nbsp;&nbsp;<a style="color:green;" onClick=queryDirectiveHis("' + (row.directiveId) + '")>' + "历史指令" + '</a>';
+        }else{
+            return '<a style="color:green;" onClick=queryDirectiveHis("' + (row.directiveId) + '")>' + "历史指令" + '</a>';
+        }
+    }
+
+    //停复电指令下发
+    function resendDirective(directiveId){
+        var obj = $("#directiveTable").jqGrid("getRowData");
+        jQuery(obj).each(function(){
+            if(this.directiveId == directiveId){
+                $.ajax({
+                    url: '../../power/powerOffPlan/resendDirective',
+                    data: {
+                        directiveId: this.directiveId,
+                        barCode: this.barCode,
+                        directiveType: this.directiveType,
+                        planId: this.planId
+                    },
+                    type: 'post',
+                    dataType: 'json',
+                    success: function (data) {
+                        if('0' != data.status){
+                            alert(data.msg);
+                        }
+
+                        //重新加载停复电计划
+                        $("#powerOnOffTable").trigger("reloadGrid");
+
+                        //重新加载指令
+                        $("#directiveTable").trigger("reloadGrid");
+                    },
+                    error: function () {
+                        alert("停复电指令下发异常！");
+                    }
+                });
+            }
+        });
+    }
+
+    //查询历史指令
+    function queryDirectiveHis(directiveId){
+        var obj = $("#directiveTable").jqGrid("getRowData");
+        jQuery(obj).each(function(){
+            if(this.directiveId == directiveId){
+                showDirectiveHisWin(directiveId);
+
+            }
+        });
+    }
+
+    function showDirectiveHisWin(directiveId){
+
+        var directiveHisLay = layer.open({
+            type: 1,
+            title: "停复电指令执行历史信息",
+            area: ['627px','340px'], //宽高
+            content: $('#directiveHisDiv')
+        });
+
+        $("#directiveHisTable").jqGrid('setGridParam',{
+            datatype: 'json',
+            postData:{
+                directiveId: directiveId
+            },
+            page: 1
+        }).trigger("reloadGrid");
+
+        $("#directiveHisTable").setGridWidth("600");
+        //对指令历史DIV显示
+        document.getElementById("directiveHisDiv").style.display="block";
+    }
+
+    //初始化停复电指令历史
+    function initDirectiveHisTable(directiveId){
+        $("#directiveHisTable").jqGrid({
+            url: "../../power/powerOffPlan/queryDirectiveHisByDirectiveId",
+            postData:{
+                directiveId: directiveId
+            },
+            datatype : "json",
+            height: '200px',
+            shrinkToFit: true,
+            colNames : ['指令执行状态','指令回执时间','指令执行说明' ],
+            colModel : [
+                {name : 'remoteRsltName',index : 'remoteRsltName',width : 80,align : "center"},
+                {name : 'remoteRtTime',index : 'remoteRtTime',width : 120, align : "center"},
+                {name : 'remoteDesc',index : 'remoteDesc',width : 120}
+            ],
+            rowNum : 10,
+            rowList : [ 10, 20, 30 ],
+            pager : '#directiveHisPager',
+            viewrecords: true,
+            rownumbers: true,
+            //multiselect : true,
+            hidegrid: false
+        });
+        $("#directiveHisTable").jqGrid("navGrid", "#directiveHisPager", {
+            add: false,
+            edit: false,
+            del: false,
+            search: false
+        },
+        {
+            height: 200,
+            reloadAfterSubmit: true
+        });
+    }
+</script>
+</body>
+</html>

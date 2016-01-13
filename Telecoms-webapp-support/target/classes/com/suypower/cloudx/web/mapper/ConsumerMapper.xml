@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.suypower.cloudx.web.dao.ConsumerMapper">
+
+    <resultMap type="com.suypower.cloudx.web.entity.Consumer" id="consMap">
+        <id property="consId" column="CONS_ID" javaType="java.lang.String" />
+        <result property="consNo" column="CONS_No" javaType="java.lang.String" />
+        <result property="consName" column="CONS_NAME" javaType="java.lang.String" />
+        <result property="consAddr" column="CONS_ADDR" javaType="java.lang.String" />
+        <result property="consSortCode" column="CONS_SORT_CODE" javaType="java.lang.String" />
+        <result property="consSortName" column="CONS_SORT_NAME" javaType="java.lang.String" />
+        <association property="org" column="ORG_NO"
+                     select="com.suypower.cloudx.module.system.dao.OrgMapper.queryOrgByOgrNo"></association>
+    </resultMap>
+
+    <select id="queryConsumers" parameterType="java.util.HashMap" resultMap="consMap">
+        SELECT C.CONS_ID,C.CONS_No,C.CONS_NAME,C.CONS_ADDR,C.CONS_SORT_CODE,
+        (SELECT CI.CODE_NAME FROM P_CODE_ITEM CI WHERE CI.CODE_SORT_ID=(SELECT CS.CODE_SORT_ID FROM P_CODE_SORT CS WHERE CS.NAME='CONS_SORT_CODE') AND CI.CODE_VALUE=C.CONS_SORT_CODE) CONS_SORT_NAME
+        FROM C_CONS C
+        WHERE C.CONS_STATUS='01'
+        <if test="orgNo != null and orgNo != ''">
+            AND C.ORG_NO=#{orgNo}
+        </if>
+        <if test="consName != null and consName != ''">
+            AND C.CONS_NAME LIKE CONCAT('%',#{consName},'%')
+        </if>
+        ORDER BY C.CONS_ID
+    </select>
+
+
+</mapper>

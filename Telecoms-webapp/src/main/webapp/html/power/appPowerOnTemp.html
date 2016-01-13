@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>临时复电申请</title>
+
+    <link href="../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jQueryUI/jquery-ui-1.10.4.custom.min.css" rel="stylesheet">
+    <link href="../../css/common/plugins/jqGrid/ui.jqgrid.css" rel="stylesheet">
+    <link href="../../css/common/animate.css" rel="stylesheet">
+    <link href="../../css/common/style.css" rel="stylesheet">
+    <link href="../../css/common/style.min.css?4.0.0" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg" onload="init()">
+    <div class="wrapper wrapper-content animated fadeInRight">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>临时复电申请 </h5>
+                        <div class="ibox-tools">
+                            <button type="button" onclick="saveAppPowerOnTemp()">保存
+                            </button>
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-up"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" style="padding: 23px 20px 8px 20px;">
+                        <form method="get" id="appPowerOnTempForm" class="form-horizontal" style="width:105%">
+                            <div class="form-group">
+                                <input type="hidden" id="aptId">
+                                <input type="hidden" id="offPlanId">
+                                <input type="hidden" id="contactId">
+                                <label class="col-sm-2 control-label">用户名称<span style="color:red;">*</span></label>
+                                <div class="col-sm-9">
+                                    <select id="consName" name="consName" data-placeholder="选择用户名称..." class="form-control"
+                                            style="width:100%;" tabindex="2" onchange="setFromOtherValue(this)">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-2 control-label">租赁地址</label>
+                                <div class="col-sm-9">
+                                    <textarea name="consAddr" id="consAddr" disabled="" class="form-control" required=""
+                                              aria-required="true" style="height:75px;"></textarea>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">联系人<span style="color:red;">*</span></label>
+                                <div class="col-sm-9">
+                                    <select id="contactName" name="contactName"  class="form-control"
+                                            style="width:100%;" tabindex="2" onchange="setMobileValue(this)">
+                                    </select>
+                                    <!--
+                                    <input type="text" id="contactName" name="contactName" class="form-control" >
+                                    -->
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">联系电话<span style="color:red;">*</span></label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="mobile" name="mobile" class="form-control" >
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">停电原因</label>
+                                <div class="col-sm-9">
+                                    <input type="hidden" id="powerOffType" >
+                                    <input type="text" id="powerOffTypeName" name="powerOffTypeName"
+                                           disabled="" class="form-control">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">停电时间</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="powerOffActualTime" name="powerOffActualTime"
+                                           disabled="" class="form-control">
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-2 control-label">复电有效期<span
+                                    style="color:red;">*</span></label>
+                                <div class="col-sm-9">
+                                    <input class="laydate-icon form-control layer-date" id="validTime"
+                                           style="display:inline;width:100%;height:34px;padding-left:20px;margin-right: 2px;border-color:#E5E6E7;"
+                                           placeholder="YYYY-MM-DD hh:mm:ss" name="validTime"
+                                           onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss'})"/>
+                                </div>
+                            </div>
+                            <div class="hr-line-dashed"></div>
+                            <div class="form-group"><label class="col-sm-2 control-label">复电说明<span
+                                    style="color:red;">*</span></label>
+                                <div class="col-sm-9">
+                                    <textarea name="powerOnDesc" id="powerOnDesc" class="form-control" required=""
+                                              aria-required="true" style="height:100px;"></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="historyApproveId">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>历史审批信息 </h5>
+                        <div class="ibox-tools">
+                            <a class="collapse-link">
+                                <i class="fa fa-chevron-down"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="ibox-content" id="historyApproveIboxId" style="padding:20px 20px 20px 20px;">
+                        <div class="jqGrid_wrapper" id="historyApproveDivId">
+                            <table id="historyApproveTable"></table>
+                            <div id="historyApprovePager"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="../../js/common/jquery-2.1.1.js"></script>
+<script src="../../js/common/bootstrap.min.js"></script>
+<script src="../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+<script src="../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+<script src="../../js/common/plugins/validate/jquery.validate.min.js"></script>
+<script src="../../js/common/inspinia.js"></script>
+<script src="../../js/common/plugins/pace/pace.min.js"></script>
+
+<script src="../../js/common/demo/flot-demo.js"></script>
+<script src="../../../js/rental/laydate-master/laydate.js"></script>
+<script src="../../js/common/plugins/dataTables/jquery.dataTables.js"></script>
+
+<script src="../../js/common/common.js"></script>
+<script src="../../js/power/power.js"></script>
+
+<script src="../../js/common/plugins/jqGrid/jquery.jqGrid.min.js"></script>
+<script src="../../js/common/plugins/jqGrid/i18n/grid.locale-cn.js"></script>
+
+<script>
+    var appNo = '100000001';               //流程申请编号
+    var powerOnTempList = [];      //停电计划信息
+    var contactList = [];       //联系人信息
+    var updateContactName = "";         //修改时联系人
+    var start = {
+        elem: '#start',
+        format: 'YYYY/MM/DD',
+        min: '1900-01-01 00:00:00', //设定最小日期为当前日期
+        max: '2099-06-16 23:59:59', //最大日期
+        istime: false,
+        istoday: false,
+        choose: function (datas) {
+            end.min = datas; //开始日选好后，重置结束日的最小日期
+            end.start = datas //将结束日的初始值设定为开始日
+        }
+    };
+    var end = {
+        elem: '#end',
+        format: 'YYYY/MM/DD',
+        min: '1900-01-01 00:00:00',
+        max: '2099-06-16 23:59:59',
+        istime: false,
+        istoday: false,
+        choose: function (datas) {
+            start.max = datas; //结束日选好后，重置开始日的最大日期
+        }
+    };
+    laydate(start);
+    laydate(end);
+    validateInit();
+
+    function init() {
+        //根据appNO初始化表单信息
+        initAppPowerOnTemp();
+
+        formValidateMsg();
+
+        //对历史审批table隐藏
+        document.getElementById("historyApproveIboxId").style.display="none";
+    }
+
+    function initAppPowerOnTemp() {
+
+        $.ajax({
+            url: '../../power/appPowerOnTemp/queryAppPowerOnTemp',
+            data: {
+                appNo: appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+
+                    if (data.data.results.length > 0) {
+                        var appPowerOnTemp = data.data.results[0];
+
+                        //alert(JSON.stringify(appPowerOnTemp));
+                        $("#aptId").val(appPowerOnTemp["aptId"]);
+                        $("#offPlanId").val(appPowerOnTemp["offPlanId"]);
+                        $("#contactId").val(appPowerOnTemp["contactId"]);
+                        $("#consAddr").val(appPowerOnTemp["consAddr"]);
+                        $("#contactName").val(appPowerOnTemp["contactName"]);
+                        $("#mobile").val(appPowerOnTemp["mobile"]);
+                        $("#powerOffType").val(appPowerOnTemp["powerOffType"]);
+                        $("#powerOffTypeName").val(appPowerOnTemp["powerOffTypeName"]);
+                        $("#validTime").val(appPowerOnTemp["validTime"]);
+                        $("#powerOnDesc").val(appPowerOnTemp["powerOnDesc"]);
+                        $("#powerOffActualTime").val(appPowerOnTemp["powerOffActualTime"]);
+
+                        $("#consName").append("<option value='" + appPowerOnTemp["offPlanId"] + "'>" + (appPowerOnTemp["consName"]) + "</option>");
+                        $("#consName").prop("disabled", true);
+                        updateContactName = appPowerOnTemp["contactName"];
+
+                        setContactNameAndMobile(appPowerOnTemp["consId"]);
+
+
+
+
+                        //获取历史审批信息
+                        queryHistoryApprove();
+
+                    } else {
+                        //查询已停电用户信息
+                        queryPowerOffPlan();
+                        //隐藏历史审批信息panel
+                        document.getElementById("historyApproveId").style.display="none";
+                    }
+                }else{
+                    alert(data.msg);
+                }
+            },
+            error: function () {
+                alert("根据申请编号查询延时停电信息异常！");
+            }
+        });
+    }
+
+    //查询已停电用户信息
+    function queryPowerOffPlan(){
+        //获取停电计划用户信息
+        $.ajax({
+            url: '../../power/appPowerOnTemp/queryPowerOffPlanToPowerOnTemp',
+            data: {
+                statusCode: "03",
+                appNo: appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    if (data.data.results.length > 0) {
+                        powerOnTempList = data.data.results;
+                    }
+                    //$("#consName").append("<option value=''>请选择用户名称</option>");
+                    for (var i = 0; i < powerOnTempList.length; i++) {
+                        $("#consName").append("<option value='" + powerOnTempList[i]["offPlanId"] + "'>" + (powerOnTempList[i]["consName"]) + "</option>");
+                    }
+                    //alert("获取停电计划信息["+JSON.stringify(data.data));
+                }else{
+                    alert(data.msg);
+                }
+            },
+            error: function (e) {
+                alert("查询停电用户信息异常!");
+            }
+        });
+    }
+
+    //延时停电申请验证
+    function formValidateMsg(){
+        var e = "<i class='fa fa-times-circle'></i> ";
+        $("#appPowerOnTempForm").validate({
+            rules: {
+                consName: {
+                    required:true
+                },
+                contactName: {
+                    required:true
+                },
+                mobile: {
+                    required:true
+                },
+                validTime: {
+                    required:true
+                },
+                powerOnDesc: {
+                    required:true
+                }
+            },
+            messages: {
+                consName: {
+                    required:e+"请输入或选择用户名称"
+                },
+                contactName: {
+                    required:e+"请输入联系人"
+                },
+                mobile: {
+                    required:e+"请输入联系电话"
+                },
+                validTime: {
+                    required:e+"请输入复电有效期"
+                },
+                powerOnDesc: {
+                    required:e+"请输入复电说明"
+                }
+            }
+        });
+    }
+
+    //选择联系人时，改变联系电话
+    function setMobileValue(obj){
+        var objValue = obj.options[obj.selectedIndex].value;
+
+        for (var i = 0; i < contactList.length; i++) {
+            if(contactList[i]["contactId"] == objValue){
+                $("#mobile").val(contactList[i]["mobile"]);
+                break;
+            }
+        }
+    }
+
+    //动态获取联系人和联系电话
+    function setContactNameAndMobile(consId){
+        //根据用户标识查询联系信息
+        $.ajax({
+            url: '../../power/powerOffPlan/queryContactByConsId',
+            data: {
+                consId: consId
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    if (data.data.results.length > 0) {
+                        contactList = data.data.results;
+                    }
+
+                    for (var i = 0; i < contactList.length; i++) {
+                        if(updateContactName == contactList[i]["contactName"]){
+                            $("#contactName").append("<option selected = 'selected' value='" + contactList[i]["contactId"] + "'>" + (contactList[i]["contactName"]) + "</option>");
+                        }else{
+                            $("#contactName").append("<option value='" + contactList[i]["contactId"] + "'>" + (contactList[i]["contactName"]) + "</option>");
+                        }
+                        if(updateContactName == "" && i == 0){
+                            $("#mobile").val(contactList[i]["mobile"]);
+                        }
+                    }
+                    //alert("获取停电计划信息["+JSON.stringify(data.data));
+                }else{
+                    alert(data.msg);
+                }
+            },
+            error: function (e) {
+                alert("根据用户标识查询联系信息异常!");
+            }
+        });
+    }
+
+    //选择用户名称时，给表单其它字段赋值
+    function setFromOtherValue(obj) {
+        var objValue = obj.options[obj.selectedIndex].value;
+
+        //清空联系人、联系方式
+        $("#contactName").empty();
+        $("#mobile").val("");
+
+        if(objValue == ""){
+            $("#aptId").val("");
+            $("#offPlanId").val("");
+            $("#contactId").val("");
+            $("#consAddr").val("");
+            $("#contactName").val("");
+            $("#mobile").val("");
+            $("#powerOffType").val("");
+            $("#powerOffTypeName").val("");
+            $("#powerOffActualTime").val("");
+
+            return;
+        }
+        for (var i = 0; i < powerOnTempList.length; i++) {
+            if(powerOnTempList[i]["offPlanId"] == objValue){
+
+                $("#offPlanId").val(powerOnTempList[i]["offPlanId"]);
+                $("#consAddr").val(powerOnTempList[i]["consAddr"]);
+                $("#contactId").val(powerOnTempList[i]["contactId"]);
+                //$("#contactName").val(powerOnTempList[i]["contactName"]);
+                //$("#mobile").val(powerOnTempList[i]["mobile"]);
+                $("#powerOffType").val(powerOnTempList[i]["powerOffType"]);
+                $("#powerOffTypeName").val(powerOnTempList[i]["powerOffTypeName"]);
+                $("#powerOffActualTime").val(powerOnTempList[i]["powerOffActualTime"]);
+
+                setContactNameAndMobile(powerOnTempList[i]["consId"]);
+                break;
+            }
+        }
+    }
+
+    //查询历史审批信息
+    function queryHistoryApprove() {
+        initHistoryApproveJqGrid($("#historyApproveTable"), "#historyApprovePager", appNo, "100px");
+        $(window).bind("resize",
+        function() {
+            var width = $("#historyApproveDivId").width();
+            $("#historyApproveTable").setGridWidth(width);
+        })
+    }
+
+    //临时复电申请验证
+    function formValidate(){
+        var boolean1 = $("#appPowerOnTempForm").validate().element(document.getElementsByName("consName"));
+        var boolean2 = $("#appPowerOnTempForm").validate().element(document.getElementsByName("contactName"));
+        var boolean3 = $("#appPowerOnTempForm").validate().element(document.getElementsByName("mobile"));
+        var boolean4 = $("#appPowerOnTempForm").validate().element(document.getElementsByName("validTime"));
+        var boolean5 = $("#appPowerOnTempForm").validate().element(document.getElementsByName("powerOnDesc"));
+        return boolean1&&boolean2&&boolean3&&boolean4&&boolean5;
+    }
+
+    //保存临时复电申请
+    function saveAppPowerOnTemp() {
+
+        if (!formValidate()){
+            return;
+        }
+
+        var aptId = $("#aptId").val();
+        var offPlanId = $("#offPlanId").val();
+        var contactId = $("#contactId").val();
+        var consName = $("#consName").val();
+        var contactName = $("#contactName").find("option:selected").text();
+        var mobile = $("#mobile").val();
+        var powerOffActualTime = $("#powerOffActualTime").val();
+        var validTime = $("#validTime").val();
+        var powerOnDesc = $("#powerOnDesc").val();
+
+        if(powerOffActualTime > validTime){
+            alert("复电有效期不能小于停电时间");
+            return false;
+        }
+
+        $.ajax({
+            url: '../../power/appPowerOnTemp/saveAppPowerOnTemp',
+            data: {
+                aptId: aptId,
+                offPlanId: offPlanId,
+                contactId: contactId,
+                contactName: contactName,
+                mobile: mobile,
+                validTime: validTime,
+                powerOnDesc: powerOnDesc,
+                appNo: appNo
+            },
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                if('0' == data.status){
+                    alert("数据保存成功,成功流转至下一节点。");
+                }else{
+                    alert(data.msg);
+                }
+            },
+            error: function () {
+                alert("保存数据异常！");
+            }
+        });
+    }
+</script>
+</body>
+</html>

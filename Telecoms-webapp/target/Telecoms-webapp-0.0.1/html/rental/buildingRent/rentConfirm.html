@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>INSPINIA | Wizards</title>
+
+    <link href="../../../css/common/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="../../../css/common/plugins/steps/jquery.steps.css" rel="stylesheet">
+    <link href="../../../css/common/animate.css" rel="stylesheet">
+    <link href="../../../css/common/style.css" rel="stylesheet">
+    <!-- 上传图片 -->
+    <link href="../../../css/common/demo.css" rel="stylesheet">
+
+    <!-- 表格 -->
+    <link href="../../../css/common/plugins/dataTables/jquery.dataTables.css" rel="stylesheet">
+
+
+    <style type="text/css">
+    </style>
+</head>
+
+<body class="gray-bg">
+        <div class="wrapper wrapper-content animated fadeIn">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>
+                                租户信息
+                            </h5>
+                            <div class="ibox-tools">
+                                <a class="collapse-link">
+                                    <i class="fa fa-chevron-up">
+                                    </i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="ibox-content" style="display:none;">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form class="form-horizontal m-t">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label mycss">
+                                                用户名称
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input id="consName_id" type="text" disabled="" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label  mycss">
+                                                租赁地址
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input id="consAddr_id" type="text" disabled="" class="form-control"">
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label  mycss">
+                                                业务办理人
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input id="bizTransactor_id" type="text" disabled="" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label  mycss">
+                                                联系电话
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input id="contactTel_id" type="text" disabled="" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label  mycss">
+                                                通讯地址
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input id="contactAdd_id" type="text" disabled="" class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="hr-line-dashed">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-12">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5>
+                                付款确认
+                            </h5>
+                            <div class="ibox-tools">
+                                <button class="btn btn-primary btn-xs" style="width:60px;height:25px;margin-right: 110px" onclick="savePage();">流程传递</button>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="row">
+                                <div class="ibox float-e-margins">
+                                    <div class="col-sm-12">
+                                        <form class="form-horizontal m-t">
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label mycss">
+                                                    应缴金额
+                                                </label>
+                                                <div class="col-sm-9">
+                                                    <input id="shouldMoney_id" type="text" disabled="" class="form-control">
+                                                    <span class="help-block m-b-none">
+                                                         <i class="fa fa-info-circle">
+                                                         </i>
+                                                             单位：元  &nbsp; &nbsp; &nbsp;其中押金<font id="deposit_id" style="color:red;"></font>,房租<font id="charge_id" style="color:red;"></font>。
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="hr-line-dashed">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label  mycss">
+                                                    应缴截止日期
+                                                </label>
+                                                <div class="col-sm-9">
+                                                    <input id="should_id" type="text" disabled="" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="hr-line-dashed">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label  mycss">
+                                                    实际缴费日期
+                                                </label>
+                                                <div class="col-sm-9">
+                                                    <input id="actual_id" type="text" disabled="" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="hr-line-dashed"></div>
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label  mycss">
+                                                    缴费状态
+                                                </label>
+                                                <div class="col-sm-9">
+                                                    <input id="status_id" type="text" disabled="" class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="hr-line-dashed">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Mainly scripts -->
+        <script src="../../../js/common/jquery-2.1.1.js"></script>
+
+        <script src="../../../js/common/bootstrap.min.js"></script>
+        <script src="../../../js/common/plugins/metisMenu/jquery.metisMenu.js"></script>
+        <script src="../../../js/common/plugins/slimscroll/jquery.slimscroll.min.js"></script>\
+
+        <!-- Custom and plugin javascript -->
+        <script src="../../../js/common/inspinia.js"></script>
+        <script src="../../../js/common/plugins/pace/pace.min.js"></script>
+
+        <!-- Steps -->
+        <script src="../../../js/common/plugins/staps/jquery.steps.min.js"></script>
+
+        <!-- Jquery Validate -->
+        <script src="../../../js/common/plugins/validate/jquery.validate.min.js"></script>
+
+        <!-- 弹出框 -->
+        <script src="../../../js/common/plugins/sweetalert/sweetalert.min.js"></script>
+        <script src="../../../js/common/common.js"></script>
+
+        <!-- 表格 -->
+        <script src="../../../js/common/plugins/dataTables/jquery.dataTables.js"></script>
+        <script src="../../../js/common/plugins/layer/layer.js"></script>
+
+        <script>
+            var appNo = "789465418961";
+
+            $(document).ready(function () {
+                queryHistory();
+            });
+
+            function queryHistory() {
+                $.ajax({
+                    url: '../../../rentalDraft/rental/queryHistoryForNew',
+                    data: {
+                        appNo: appNo
+                    },
+                    type: 'post',
+                    dataType: 'json',
+                    success: function (data) {
+                        if('0' == data.status)
+                        {
+                            //加载付款确认信息（暂时没有接口，写死）
+                            $.ajax({
+                                type: 'POST',
+                                url: '../../../rentalDraft/rental/queryRentConfirm',
+                                data: {
+                                    appNo: appNo
+                                },
+                                dataType: 'json',
+                                success: function(data1){
+                                    if('0' == data1.status)
+                                    {
+                                        var confirmInfo = data1.data;
+
+                                        if(null != confirmInfo)
+                                        {
+                                            $("#shouldMoney_id").val(confirmInfo.shouldMoney);
+                                            $("#deposit_id").html(confirmInfo.deposit);
+                                            $("#charge_id").html(confirmInfo.charge);
+                                            $("#should_id").val(confirmInfo.should);
+                                            $("#actual_id").val(confirmInfo.actual);
+                                            $("#status_id").val(confirmInfo.status);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        layer.alert("查询付款确认信息异常!");
+                                    }
+                                }
+                            });
+
+
+                            //加载租户信息
+                            var rentalDraftInfo = data.data;
+
+                            if(null != rentalDraftInfo)
+                            {
+                                //用户名称
+                                $('#consName_id').val(rentalDraftInfo.consName);
+
+                                //租赁地址
+                                $('#consAddr_id').val(rentalDraftInfo.consAddr);
+
+                                //业务办理人
+                                $('#bizTransactor_id').val(rentalDraftInfo.bizTransactor);
+
+                                //联系电话
+                                $('#contactTel_id').val(rentalDraftInfo.contactTel);
+
+                                //通讯地址
+                                $('#contactAdd_id').val(rentalDraftInfo.contactAdd);
+                            }
+                        }
+                        else
+                        {
+                            layer.alert("查询租户信息异常!");
+                        }
+                    },
+                    error: function () {
+
+                        layer.alert("查询租户信息异常!");
+                    }
+                });
+            }
+
+            function savePage()
+            {
+                if('已缴费' != $("#status_id").val())
+                {
+                    layer.alert("尚未完成缴费，完成缴费后流程方可继续!");
+
+                    return;
+                }
+                else
+                {
+                    //流程到下一步骤
+                }
+            }
+
+        </script>
+</body>
+
+</html>
