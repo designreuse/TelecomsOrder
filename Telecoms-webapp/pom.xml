@@ -242,13 +242,13 @@
             <version>0.0.1</version>
             <scope>compile</scope>
         </dependency>
-        <!--
+
         <dependency>
             <groupId>telecoms</groupId>
             <artifactId>Telecoms-webservice</artifactId>
             <version>0.0.1</version>
         </dependency>
-        -->
+
 
 
     </dependencies>

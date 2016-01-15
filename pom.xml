@@ -12,6 +12,7 @@
         <module>Telecoms-webservice</module>
         <module>Telecoms-module-system</module>
         <module>Telecoms-storage</module>
+        <module>Telecoms-mess</module>
     </modules>
     <packaging>pom</packaging>
 

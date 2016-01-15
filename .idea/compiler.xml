@@ -23,6 +23,12 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
         <module name="Cloudx-webapp" />
+      </profile>
+      <profile default="false" name="Annotation profile for Telecoms-webapp" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
         <module name="Telecoms-webapp" />
       </profile>
     </annotationProcessing>
@@ -33,6 +39,7 @@
       <module name="Cloudx-webapp-support" target="1.6" />
       <module name="Cloudx-webservice" target="1.6" />
       <module name="Telecoms" target="1.6" />
+      <module name="Telecoms-message" target="1.6" />
       <module name="Telecoms-module-system" target="1.6" />
       <module name="Telecoms-storage" target="1.6" />
       <module name="Telecoms-support" target="1.6" />

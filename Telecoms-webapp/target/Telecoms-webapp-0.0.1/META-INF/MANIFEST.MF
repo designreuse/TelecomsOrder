@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Built-By: zhao
+Built-By: Administrator
 Created-By: IntelliJ IDEA
-Build-Jdk: 1.7.0_67
 

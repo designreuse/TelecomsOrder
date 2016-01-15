@@ -193,7 +193,7 @@
         </element>
       </element>
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="D:\xuhd\Telecoms\Telecoms-webapp\target/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/Telecoms-webapp/target/Telecoms-webapp-0.0.1/META-INF/MANIFEST.MF" />
       </element>
       <element id="javaee-facet-resources" facet="Telecoms-webapp/web/Web" />
     </root>

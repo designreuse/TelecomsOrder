@@ -10,20 +10,17 @@
         <result property="orgNo" column="ORG_NO" javaType="java.lang.String"/>
         <!--<result property="folder" column="MENU_FOLDER_FLAG" javaType="java.lang.String"/>-->
         <result property="remark" column="REMARK" javaType="java.lang.String"/>
-        <collection property="subMenus" select="querySubMenus" column="{P_MENU_ID=MENU_ID,ORG_NO=ORG_NO}"/>
+        <collection property="subMenus" select="querySubMenus" column="{P_MENU_ID=MENU_ID}"/>
     </resultMap>
     <select id="queryMenus" resultMap="menuMap">
-        SELECT M.*,R.ORG_NO FROM P_MENU M,P_MENU_ORG_REF R
-        WHERE M.MENU_ID=R.MENU_ID
-        AND R.ORG_NO = #{orgNo}
-        AND M.P_MENU_ID IS NULL
+        SELECT M.* FROM P_MENU M
+        WHERE M.P_MENU_ID IS NULL
         ORDER BY M.DISP_SN
     </select>
     <select id="querySubMenus" parameterType="java.util.Map" resultMap="menuMap">
-        SELECT M.*,R.ORG_NO FROM P_MENU M,P_MENU_ORG_REF R
-        WHERE M.MENU_ID=R.MENU_ID
-        AND R.ORG_NO = #{ORG_NO}
-        AND M.P_MENU_ID=#{P_MENU_ID}
+        SELECT M.* FROM P_MENU M
+        WHERE
+         M.P_MENU_ID=#{P_MENU_ID}
         ORDER BY M.DISP_SN
     </select>
 </mapper>
